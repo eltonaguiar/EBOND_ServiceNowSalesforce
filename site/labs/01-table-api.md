@@ -130,12 +130,10 @@ WSL is a Linux terminal inside Windows. If you are in a prompt that looks like `
 
 Do not save the password in a file. Type it at the prompt and clear the scrollback when you are done. If you pasted a password into a chat, change it on the Developer Site before you continue.
 
-**Windows PowerShell — paste this one line.** Replace `YOUR_PASSWORD`. No file. No backslash.
-
-`curl.exe -d '{...}'` cannot be a reliable one-liner here. PowerShell 5.1 strips the quotes before curl sees them, and ServiceNow returns `The payload is not valid JSON`. This call is the same POST, done by PowerShell itself, so the JSON stays intact.
+**Windows PowerShell — paste this one line.** It asks for the password. Type it and press Enter. Do not put the password in the command. `%`, `^`, `&`, `|`, `$`, and quotes are then just characters, not syntax.
 
 ```powershell
-Invoke-RestMethod -Method Post -Uri 'https://dev296154.service-now.com/api/now/table/incident' -Headers @{Authorization=('Basic '+[Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes('admin:YOUR_PASSWORD')));Accept='application/json'} -ContentType 'application/json' -Body '{"short_description":"Lab 1 - curl","urgency":"2","impact":"2"}'
+Invoke-RestMethod -Method Post -Uri 'https://dev296154.service-now.com/api/now/table/incident' -Headers @{Authorization=('Basic '+[Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes('admin:'+(Read-Host 'PDI password'))));Accept='application/json'} -ContentType 'application/json' -Body '{"short_description":"Lab 1 - curl","urgency":"2","impact":"2"}'
 ```
 
 This is what a successful paste looks like. `result` is the created Incident. The password is covered.
@@ -152,12 +150,10 @@ curl -sS -u 'admin:YOUR_PASSWORD' \
   -d '{"short_description":"Lab 1 — curl","urgency":"2","impact":"2"}'
 ```
 
-**Windows Command Prompt — do not use this if the PowerShell line already worked.** Command Prompt rewrites the password before curl sees it. `%` starts a variable, and `^` escapes the next character. A correct password then comes back as `User is not authenticated`. That is not a ServiceNow failure.
-
-If you still want Command Prompt, quote `-u` and double every `%` and `^` in the password (`%` becomes `%%`, `^` becomes `^^`). A password of `a%b^c` must be typed as `a%%b^^c`.
+**Windows Command Prompt — paste this, then type the password when asked.** Do not put the password after `-u`. Command Prompt rewrites `%` and `^` on the command line, which is why a correct password came back as `User is not authenticated`. Curl's own prompt does not do that.
 
 ```bat
-curl.exe -sS -u "admin:YOUR_PASSWORD" -H "Accept: application/json" -H "Content-Type: application/json" -X POST "https://dev296154.service-now.com/api/now/table/incident" -d "{\"short_description\":\"Lab 1 - curl\",\"urgency\":\"2\",\"impact\":\"2\"}"
+curl.exe -sS -u admin -H "Accept: application/json" -H "Content-Type: application/json" -X POST "https://dev296154.service-now.com/api/now/table/incident" -d "{\"short_description\":\"Lab 1 - curl\",\"urgency\":\"2\",\"impact\":\"2\"}"
 ```
 
 ### What each piece does
