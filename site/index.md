@@ -7,6 +7,11 @@ permalink: /
 
 <p class="hero">Bond a free ServiceNow instance to a free Salesforce org</p>
 
+<div class="note">
+<span class="label">Prerequisite</span>
+<p>Read the integration background first. Start at the <a href="https://eltonaguiar.github.io/ServiceNow_Learning_TSOM-_CSM_FSM_SalesCRM_HAM_ITSM/#available-guides-1">module guides</a>, then the <a href="https://eltonaguiar.github.io/ServiceNow_Learning_TSOM-_CSM_FSM_SalesCRM_HAM_ITSM/docs/cross-cutting/#integrations">Cross-Cutting Integrations</a> page. This lab is the hands-on version of that page. Paid middleware such as Boomi is covered separately in the <a href="https://eltonaguiar.github.io/ServiceNow_Learning_TSOM-_CSM_FSM_SalesCRM_HAM_ITSM/docs/modules/other/other-guide/#1-boomi-dell-boomi--atomsphere--enterprise-ipaas">Other guide</a>. You do not need Boomi for this lab.</p>
+</div>
+
 <section class="all-labs" id="all-labs">
   <h2>All labs</h2>
   <p>Every lab is a page on this site. Use this list if you get lost.</p>
