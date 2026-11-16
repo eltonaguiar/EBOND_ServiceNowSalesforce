@@ -13,7 +13,8 @@ evidence:
 
 ## Rate limits
 
-- **Salesforce:** daily API request limits apply (check your org: Settings → Company Information / “API Request” usage). For a DE org keep integration volume low; spread requests; use Composite/Bulk endpoints when batching on- **ServiceNow:** the platform enforces per-minute/per-user API thresholds. Keep outbound call volume modest and add retry-on-429.
+- **Salesforce:** daily API request limits apply (check your org: Settings → Company Information / “API Request” usage). For a DE org keep integration volume low; spread requests; use Composite/Bulk endpoints when batching on larger volumes.
+- **ServiceNow:** the platform enforces per-minute/per-user API thresholds. Keep outbound call volume modest and add retry-on-429.
 - Always read the `Retry-After`/`RateLimit-*` headers if present and honor them.
 
 ## Monitoring

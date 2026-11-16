@@ -29,7 +29,7 @@ Once an integration is **bi-directional**, the hardest problems are not transpor
 
 ## 2. Correlation IDs (the linchpin)
 
-- ServiceNow stores the Salesforce **Case Id** (`correlation_id` or a custom field).
+- ServiceNow stores the Salesforce **Case Id** in the custom field `x_snc_ebond_sf_case_id`.
 - Salesforce stores the ServiceNow **sys_id/number** (custom field).
 - Every sync checks the key first: exists → **update**; missing → **create** and persist the key. This makes operations **idempotent** and prevents duplicate counterpart records on retry.
 
