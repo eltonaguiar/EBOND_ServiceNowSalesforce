@@ -1,0 +1,22 @@
+title: ServiceNow ⇄ Salesforce Free Integration Lab
+description: A hands-on lab to provision free ServiceNow and Salesforce instances and bond them into a proof-of-concept integration, using out-of-box and custom methods with best-practice security.
+theme: jekyll-theme-minimal
+show_downloads: false
+google_analytics:
+plugins:
+  - jekyll-relative-links
+  - jekyll-optional-front-matter
+
+# Rewrite [...](...md) links to their built URLs so markdown cross-links work on Pages.
+relative_links:
+  enabled: true
+  collections: false
+markdown: kramdown
+highlighter: rouge
+permalink: pretty
+exclude:
+  - .git/
+  - .github/
+  - 2026-11-16-SWARM/
+  - tools/
+  - .gitignore

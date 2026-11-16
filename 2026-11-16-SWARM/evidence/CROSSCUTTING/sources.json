@@ -1,0 +1,17 @@
+{
+  "generated_by": "kilo",
+  "generated_at": "2026-11-16T20:30:00Z",
+  "note": "Official documentation URLs verified to return HTTP 200 at check time. developer.salesforce.com/docs returns 403 to non-browser clients (bot protection) but is the canonical docs host and opens in a browser.",
+  "checked": [
+    {"url": "https://docs.servicenow.com/bundle/washingtondc-api-reference/page/integrate/inbound-rest/concept/c_TableAPI.html", "status": 200, "purpose": "ServiceNow Table API reference"},
+    {"url": "https://docs.servicenow.com/bundle/washingtondc-platform-security/page/administer/security/concept/oauth-2-0.html", "status": 200, "purpose": "ServiceNow OAuth 2.0"},
+    {"url": "https://docs.servicenow.com/bundle/washingtondc-integrate-applications/page/administer/integrationhub/concept/integrationhub.html", "status": 200, "purpose": "ServiceNow IntegrationHub"},
+    {"url": "https://help.salesforce.com/s/articleView?id=sf.connected_app_overview.htm", "status": 200, "purpose": "Salesforce Connected App / OAuth"},
+    {"url": "https://developer.servicenow.com", "status": "ok(js)", "purpose": "ServiceNow PDI signup"},
+    {"url": "https://developer.salesforce.com/signup", "status": "403(curl)/ok(browser)", "purpose": "Salesforce Developer Edition signup"},
+    {"url": "https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/intro_what_is_rest_api.htm", "status": "403(curl)/ok(browser)", "purpose": "Salesforce REST API"},
+    {"url": "https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_callouts_named_credentials.htm", "status": "403(curl)/ok(browser)", "purpose": "Salesforce Named Credentials"},
+    {"url": "https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_scratch_orgs.htm", "status": "403(curl)/ok(browser)", "purpose": "Salesforce scratch orgs"},
+    {"url": "https://developer.salesforce.com/docs/atlas.en-us.platform_events.meta/platform_events/platform_events_intro.htm", "status": "403(curl)/ok(browser)", "purpose": "Salesforce Platform Events"}
+  ]
+}
