@@ -84,6 +84,11 @@ sf project deploy start --source-dir lab/salesforce/force-app --target-org lab
 
 The callout endpoint is `callout:EBOND_ServiceNow/api/now/table/incident`. The Named Credential name must match.
 
+<div class="note">
+<span class="label">Screenshot</span>
+<p>Save <code>02-case-fields.png</code>, <code>02-named-credential.png</code>, and <code>02-case-and-incident.png</code> into <a href="https://github.com/eltonaguiar/EBOND_ServiceNowSalesforce_RUN/blob/main/README.MD">the run repo</a>. No secret in the Named Credential frame. Also useful: the permission set that grants External Credential Principal Access.</p>
+</div>
+
 ## Prove it {#prove}
 
 <ul class="check">

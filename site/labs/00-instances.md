@@ -50,6 +50,11 @@ A PDI you can log into, and a Salesforce org whose API host you have copied from
 
 Breadcrumb: gear icon → **Setup** → Quick Find. Every later Salesforce step starts there.
 
+<div class="note">
+<span class="label">Screenshot</span>
+<p>Lab 0 captures are already in <a href="https://github.com/eltonaguiar/EBOND_ServiceNowSalesforce_RUN/blob/main/README.MD">the run repo</a>. Still worth one more: Setup → My Domain, so the API host is on record. The welcome shot is the Lightning URL, which is the wrong host for API calls.</p>
+</div>
+
 ## Check before Lab 1 {#check}
 
 <ul class="check">

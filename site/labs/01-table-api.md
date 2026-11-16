@@ -65,6 +65,11 @@ curl -sS -u 'admin:YOUR_PASSWORD' \
 
 The repo script `lab/scripts/curl_level1.sh` does the same thing if `SN_INSTANCE`, `SN_USER`, and `SN_PASSWORD` are set in your shell.
 
+<div class="note">
+<span class="label">Screenshot</span>
+<p>Save <code>01-explorer-201.png</code> and <code>01-incident-list.png</code> into <a href="https://github.com/eltonaguiar/EBOND_ServiceNowSalesforce_RUN/blob/main/README.MD">the run repo</a>. Cover nothing on these two unless a password is in the frame.</p>
+</div>
+
 ## Prove it {#prove}
 
 <ul class="check">

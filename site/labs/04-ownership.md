@@ -59,6 +59,11 @@ If an agent types in the Incident description, set `u_sync_source` to `serviceno
 
 Do not use `setWorkflow(false)` to "make it quiet." That also skips the rules you still want. The flag is the smaller switch.
 
+<div class="note">
+<span class="label">Screenshot</span>
+<p>Save <code>04-ownership.png</code> into <a href="https://github.com/eltonaguiar/EBOND_ServiceNowSalesforce_RUN/blob/main/README.MD">the run repo</a>. A <code>syslog.list</code> filter on EBOND that shows one write, not a loop, is the better shot if you have it.</p>
+</div>
+
 ## Prove it {#prove}
 
 <ul class="check">

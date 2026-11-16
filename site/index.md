@@ -21,6 +21,20 @@ permalink: /
   <p>Also: <a href="{{ '/primer/' | relative_url }}">Primer</a> · <a href="{{ '/methods/' | relative_url }}">Methods</a> · <a href="{{ '/labs/' | relative_url }}">All labs page</a></p>
 </section>
 
+<div class="warn" id="screenshots">
+<span class="label">Screenshots still needed</span>
+<p>Drop captures in <a href="https://github.com/eltonaguiar/EBOND_ServiceNowSalesforce_RUN/blob/main/README.MD">EBOND_ServiceNowSalesforce_RUN</a>. Same filename as the placeholder. Cover passwords, tokens, and consumer secrets before you commit.</p>
+<p>Lab 0 is in. Still needed:</p>
+<ul>
+<li>Lab 1 — REST API Explorer 201, and the Incident list with that INC number.</li>
+<li>Lab 2 — the three Case fields, Named Credential <code>EBOND_ServiceNow</code> with no secret in frame, and the Case next to the linked Incident.</li>
+<li>Lab 3 — External Client App with the secret covered, REST Message test HTTP 200, and the Case after one Incident update.</li>
+<li>Lab 4 — a screen that shows Salesforce owns the title and ServiceNow owns state.</li>
+<li>Lab 5 — optional. One real failure and the screen after the fix.</li>
+</ul>
+<p>Worth adding if you have them: the My Domain page (API host, not the Lightning URL), the permission set that grants External Credential Principal Access, the Incident columns <code>u_ebond_sf_case_id</code> and <code>u_sync_source</code>, and <code>syslog.list</code> filtered to EBOND showing one write rather than a loop.</p>
+</div>
+
 A hands-on lab that takes you from two empty free accounts to a working **Incident ⇄ Case** proof of concept. You create a Case in Salesforce and an Incident appears in ServiceNow. You change the Incident and the Case updates. No paid Integration Hub license. No middleware.
 
 <nav class="toc" aria-label="Contents">
