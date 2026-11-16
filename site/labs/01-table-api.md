@@ -130,22 +130,12 @@ WSL is a Linux terminal inside Windows. If you are in a prompt that looks like `
 
 Do not save the password in a file. Type it at the prompt and clear the scrollback when you are done. If you pasted a password into a chat, change it on the Developer Site before you continue.
 
-**Windows PowerShell — paste these two lines.** Replace `YOUR_PASSWORD`. Do not put the JSON on the `curl.exe` line.
+**Windows PowerShell — paste this one line.** Replace `YOUR_PASSWORD`. No file. No backslash.
 
-Windows PowerShell 5.1 removes the quotes inside a `-d '{...}'` body before `curl.exe` sees them. ServiceNow then says `The payload is not valid JSON`. The password was fine. The body was not. Writing the body to a file avoids that.
-
-```powershell
-Set-Content -Path "$env:TEMP\lab1.json" -Value '{"short_description":"Lab 1 - curl","urgency":"2","impact":"2"}' -Encoding ascii
-curl.exe -sS -u 'admin:YOUR_PASSWORD' -H 'Accept: application/json' -H 'Content-Type: application/json' -X POST 'https://dev296154.service-now.com/api/now/table/incident' --data-binary "@$env:TEMP\lab1.json"
-```
-
-If you would rather not use curl on Windows, this is the same call with no quoting bug:
+`curl.exe -d '{...}'` cannot be a reliable one-liner here. PowerShell 5.1 strips the quotes before curl sees them, and ServiceNow returns `The payload is not valid JSON`. This call is the same POST, done by PowerShell itself, so the JSON stays intact.
 
 ```powershell
-$pair = 'admin:YOUR_PASSWORD'
-$basic = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes($pair))
-$body = @{ short_description = 'Lab 1 - curl'; urgency = '2'; impact = '2' } | ConvertTo-Json
-Invoke-RestMethod -Method Post -Uri 'https://dev296154.service-now.com/api/now/table/incident' -Headers @{ Authorization = "Basic $basic"; Accept = 'application/json' } -ContentType 'application/json' -Body $body
+Invoke-RestMethod -Method Post -Uri 'https://dev296154.service-now.com/api/now/table/incident' -Headers @{Authorization=('Basic '+[Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes('admin:YOUR_PASSWORD')));Accept='application/json'} -ContentType 'application/json' -Body '{"short_description":"Lab 1 - curl","urgency":"2","impact":"2"}'
 ```
 
 **Linux, macOS, WSL, or Git Bash — do not paste this into PowerShell**
