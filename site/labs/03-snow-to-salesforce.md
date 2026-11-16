@@ -106,6 +106,11 @@ Use **Test** on the method with a real `sys_id` from Lab 2 before you automate i
 
 The first line is the loop guard. Lab 2 set `u_sync_source` to `salesforce`, so the echo of that create does not call Salesforce again.
 
+<div class="note">
+<span class="label">Screenshot</span>
+<p>Save <code>03-external-client-app.png</code>, <code>03-rest-message-200.png</code>, and <code>03-case-after-update.png</code> into <a href="https://github.com/eltonaguiar/EBOND_ServiceNowSalesforce_RUN/blob/main/README.MD">the run repo</a>. Cover the consumer secret.</p>
+</div>
+
 ## Prove it {#prove}
 
 <ul class="check">
