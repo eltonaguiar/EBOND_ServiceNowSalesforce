@@ -57,7 +57,9 @@ curl -X POST https://login.salesforce.com/services/oauth2/token \
   -d client_secret=*** \
   -d username=$SF_USERNAME -d password=***
 ```
-Store the returned `access_token` in a script/alias; refresh when expired. Replace the `***` placeholder with secrets from your local `.env`. For production-shaped flows prefer client-credentials or JWT and a Named Credential on the SF side where applicable.
+Store the returned `access_token` in a script/alias; refresh when expired. Replace the `***` placeholder with secrets from your local `.env`.
+
+> ⚠️ **Deprecation:** the `grant_type=password` (username-password) OAuth flow is being deprecated by Salesforce. Prefer **client-credentials** (machine-to-machine) or **JWT bearer** for anything beyond a quick dev check — both avoid storing a user password in the token request.
 
 ## Failure handling
 

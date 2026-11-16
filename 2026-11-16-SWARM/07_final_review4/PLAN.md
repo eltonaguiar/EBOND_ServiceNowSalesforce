@@ -1,6 +1,14 @@
-# PLAN — Round 1 (v1) final plan
+# PLAN — ServiceNow ⇄ Salesforce integration lab (v3)
 
 **Goal:** Publish an EBOND ServiceNow⇄Salesforce integration lab with a GitHub Pages site and a doc for linking it from the ServiceNow_Learning cross-cutting page.
+
+## Round history
+
+| Round | Agent | What changed |
+|-------|-------|--------------|
+| v1 | ebond-v2 | SWARM scaffold, setup guides, patterns, POC, best practices, QA plan, Pages deploy |
+| v2 | ebond-v2 | Round-1 review: fixed site label + README beginner-path link + `level1_smoke_test.sh` |
+| v3 | kilo (this) | Correlation-field consistency, OAuth password-grant deprecation note, POC loop-guard spec, rate-limit formatting fix; `06_final_review3/ROUND3_REVIEW.md` |
 
 ## Scope
 
