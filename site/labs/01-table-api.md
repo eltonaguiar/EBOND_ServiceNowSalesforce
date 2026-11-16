@@ -138,6 +138,10 @@ Do not save the password in a file. Type it at the prompt and clear the scrollba
 Invoke-RestMethod -Method Post -Uri 'https://dev296154.service-now.com/api/now/table/incident' -Headers @{Authorization=('Basic '+[Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes('admin:YOUR_PASSWORD')));Accept='application/json'} -ContentType 'application/json' -Body '{"short_description":"Lab 1 - curl","urgency":"2","impact":"2"}'
 ```
 
+This is what a successful paste looks like. `result` is the created Incident. The password is covered.
+
+![PowerShell success, password covered]({{ '/assets/img/01-powershell-201.png' | relative_url }})
+
 **Linux, macOS, WSL, or Git Bash — do not paste this into PowerShell**
 
 ```bash
