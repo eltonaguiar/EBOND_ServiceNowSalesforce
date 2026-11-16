@@ -87,7 +87,7 @@ HTTP 201 from `POST /api/now/table/incident`, and a new row on the Incident list
 <tr><td><code>now</code></td><td><code>/api/now/table/incident</code></td><td>This lab. Plain create, read, update, delete on a table you are allowed to touch. Also Attachment API and Import Set API.</td></tr>
 <tr><td><code>sn_sc</code></td><td><code>/api/sn_sc/servicecatalog/items</code></td><td>You want to order a catalog item the way the portal does, not insert an Incident row by hand.</td></tr>
 <tr><td><code>sn_chg_rest</code></td><td><code>/api/sn_chg_rest/v1/change</code></td><td>Change-specific actions. Do not use it to create an Incident.</td></tr>
-<tr><td>your company code, or <code>x_…</code></td><td><code>/api/&lt;code&gt;/bond/case</code></td><td>You wrote a Scripted REST API. Global scope uses the company code from the system property <code>glide.appcreator.company.code</code>. A scoped app uses its scope name. Not <code>now</code>.</td></tr>
+<tr><td>your company code, or <code>x_…</code></td><td><code>/api/&lt;code&gt;/&lt;api_id&gt;/&lt;resource&gt;</code></td><td>Only if you create a Scripted REST API. <code>&lt;api_id&gt;</code> and <code>&lt;resource&gt;</code> are names you type. This lab used <code>bond</code> and <code>case</code> as those names. They are not built in. Global scope uses the company code from <code>glide.appcreator.company.code</code>. A scoped app uses its scope name. Not <code>now</code>. This lab's working call does not use this row. It uses <code>/api/now/table/incident</code>.</td></tr>
 </tbody>
 </table>
 
