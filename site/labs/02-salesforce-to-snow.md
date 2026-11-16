@@ -75,7 +75,9 @@ The platform blocks `x_snc_` so a PDI cannot create a column that looks like it 
 
 ## Salesforce fields {#fields-sf}
 
-Setup → **Object Manager** → **Case** → **Fields & Relationships** → New.
+The gear icon is at the top right of Salesforce, next to the bell. Click it, then **Setup**. That opens Setup. It is not the same screen as the Case you create later.
+
+In Setup, open **Object Manager**. Search `case`. Open the row whose API name is **Case**, not Case Related Issue. Then **Fields & Relationships** → New.
 
 | Label | API name | Type | Extra |
 |-------|----------|------|-------|
