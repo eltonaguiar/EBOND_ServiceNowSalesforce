@@ -23,6 +23,7 @@ evidence:
 - Never commit secrets (see security doc); `.gitignore` covers `.env`, keys, credentials dumps.
 - No force-push; small focused commits; PR review per the AGENT_FOLDERFRAMEWORK round model.
 - Only stage intended files; don't push others' work.
+- **Automatic gate:** `.github/workflows/validate.yml` runs `swarm_librarian.py validate` (0 errors required), a secret scan, and `bash -n` on lab scripts for every push/PR to `main`. A PR that fails these gates is not ready to merge.
 
 ## Deployment cadence
 

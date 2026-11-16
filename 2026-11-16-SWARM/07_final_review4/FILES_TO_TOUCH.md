@@ -6,6 +6,7 @@ All files authored/created this round (Round 1, v1).
 - `README.md`
 - `.gitignore`
 - `.github/workflows/gh-pages.yml`
+- `.github/workflows/validate.yml`
 - `site/index.html`
 - `lab-scripts/level1_smoke_test.sh`
 

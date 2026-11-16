@@ -1,0 +1,35 @@
+name: Validate SWARM
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate SWARM structure and contract
+        run: |
+          python3 tools/swarm/swarm_librarian.py validate --dir 2026-11-16-SWARM --repo-root .
+
+      - name: Secret scan (fail on real secrets)
+        run: |
+          set -euo pipefail
+          HITS=$(grep -rInE \
+            "(api[_-]?key|secret|password|passwd|token|BEGIN [A-Z ]*PRIVATE KEY)[=:].{8,}" \
+            --include=*.md --include=*.html --include=*.yml --include=*.sh --include=*.py . \
+            || true)
+          HITS=$(printf '%s' "$HITS" | grep -v 'verify current' | grep -v 'Never commit' || true)
+          if [ -n "$HITS" ]; then
+            echo "Secret-like strings found:"; printf '%s\n' "$HITS"; exit 1
+          fi
+          echo "Secret scan: clean"
+
+      - name: Shell syntax check (lab scripts)
+        run: |
+          set -euo pipefail
+          for f in lab-scripts/*.sh; do [ -e "$f" ] && bash -n "$f" && echo "OK $f"; done
