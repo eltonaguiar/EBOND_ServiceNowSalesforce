@@ -16,6 +16,7 @@ This repository is the working copy of the EBOND ServiceNow↔Salesforce integra
    - [Salesforce Developer org setup](2026-11-16-SWARM/03_DONE/INSTANCES/salesforce_dev_org_setup.md)
 3. **Choose an integration approach** — `03_DONE/INTEGRATION/` compares OOTB and custom approaches:
    - [Integration architecture options](2026-11-16-SWARM/03_DONE/INTEGRATION/integration_architecture_options.md)
+   - [Beginner path (Level 1→4)](2026-11-16-SWARM/03_DONE/INTEGRATION/lab_levels_beginner_path.md)
    - ServiceNow → Salesforce outbound REST pattern
    - Salesforce → ServiceNow outbound pattern
    - Integration Hub (Salesforce spoke) low-code pattern

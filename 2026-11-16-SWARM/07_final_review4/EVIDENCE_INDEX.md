@@ -11,6 +11,7 @@ Each substantive claim in the lab (" a path, URL, or SHA. Index of the primary e
 | Salesforce Connect external objects | https://developer.salesforce.com/docs/atlas.en-us.222.0.sfdx_dev.meta/sfdx_dev/sfdx_dev_extobj_intro.htm |
 | Beginner path (Levels 1–4) | repo-local `03_DONE/INTEGRATION/lab_levels_beginner_path.md` |
 | Field ownership / manual edits | repo-local `03_DONE/BESTPRACTICES/field_ownership_and_manual_edits.md` |
+| Round 1 review & v2 synthesis | repo-local `04_final_review/ROUND1_REVIEW.md`, `05_final_reviewv2/SYNTHESIS.md` |
 | GitHub Pages live URL | https://eltonaguiar.github.io/EBOND_ServiceNowSalesforce/ |
 | Cross-cutting target page | https://eltonaguiar.github.io/ServiceNow_Learning_TSOM-_CSM_FSM_SalesCRM_HAM_ITSM/docs/cross-cutting/ |
 | Config/architecture | repo-local docs under `2026-11-16-SWARM/03_DONE/` (paths in FILES_TO_TOUCH) |

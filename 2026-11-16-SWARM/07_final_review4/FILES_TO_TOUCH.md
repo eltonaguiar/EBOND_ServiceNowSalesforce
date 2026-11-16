@@ -7,6 +7,7 @@ All files authored/created this round (Round 1, v1).
 - `.gitignore`
 - `.github/workflows/gh-pages.yml`
 - `site/index.html`
+- `lab-scripts/level1_smoke_test.sh`
 
 ## SWARM tooling
 - `tools/swarm/swarm_librarian.py`
@@ -33,3 +34,7 @@ All files authored/created this round (Round 1, v1).
 
 ## 07_final_review4
 - `PLAN.md`, `TESTING_PLAN.md`, `IMPLEMENTATION_STEPS.md`, `FILES_TO_TOUCH.md`, `EVIDENCE_INDEX.md`
+
+## Review phases (v1 → v2)
+- `04_final_review/ROUND1_REVIEW.md`
+- `05_final_reviewv2/SYNTHESIS.md`
