@@ -45,6 +45,8 @@ Need bidirectional sync between ServiceNow and Salesforce?
 
 Use **A + B** (bi-directional REST, fully under our control, minimal moving parts) as the primary lab path, with **C** documented as the low-code alternative and **D** as the read-only option. Document field mapping once (see `data_model_field_mapping.md`) and reuse it across patterns.
 
+For a guided beginner route (Level 1→4: curl → Flow → Scripted REST → bi-directional), see `lab_levels_beginner_path.md`.
+
 ## Should you use an iPaaS instead?
 
 Tools like Workato / MuleSoft / Zapier can host this integration with less code, but they are typically **not free** and add a third party. For a free, self-contained POC the platform-native REST + low-code paths are the most instructive and lowest-cost.

@@ -63,3 +63,4 @@ To avoid duplicate/loop sync:
 
 - Use **picklist/choice** matching; if a value doesn't map, log it (see best practices).
 - Keep the mapping in one file so every pattern and the POC walkthrough reference the same source of truth.
+- For the **field-ownership** and **manual-edit** policies that govern how this mapping is applied in both directions, see `03_DONE/BESTPRACTICES/field_ownership_and_manual_edits.md`.

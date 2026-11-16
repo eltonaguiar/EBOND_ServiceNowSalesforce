@@ -58,4 +58,12 @@ This guide provisions a **free personal ServiceNow Developer instance** usable f
 - [ ] You can create a record in the **Incident** table (`incident`).
 - [ ] (Optional) Integration Hub / Flow Designer opens without errors.
 
+## Breadcrumbs (Application Navigator / All)
+
+- Table API testing → **System Web Services > REST > REST API Explorer**
+- Scripted REST APIs → **System Web Services > Scripted Web Services > Scripted REST APIs**
+- Outbound REST → **System Web Services > Outbound > REST Message**
+- Business Rules → **System Definition > Business Rules**
+- Incidents → type `incident.list` in the filter, or **Incident > All**
+
 > 💡 Record your instance URL, but **never** commit your admin password. Use a local env file or your secret manager.

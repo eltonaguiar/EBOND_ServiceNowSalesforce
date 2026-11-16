@@ -59,4 +59,12 @@ This guide provisions a **free Salesforce Developer Edition (DE) org** — the s
 - [ ] (Recommended) Install **Salesforce CLI** (`sf`) and connect it to your org for versioned source control:
   `sf org login web --alias myDevOrg` (or device/username flows).
 
+## Breadcrumbs (Setup → Quick Find)
+
+- Named Credentials → **Named Credentials** (with **External Credentials** tab)
+- Flows → **Flows**
+- Connected App → **App Manager** (or Setup → App Manager)
+- Object/fields → **Object Manager**
+- Limits/usage → Setup → **Company Information** (API Request usage)
+
 > 💡 Never commit your password, security token, or connected-app secrets. Use Named Credentials / env vars as described in the best-practices docs.

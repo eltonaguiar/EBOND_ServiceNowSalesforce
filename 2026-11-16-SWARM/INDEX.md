@@ -1,18 +1,20 @@
 # INDEX — 2026-11-16-SWARM
-Generated 2026-11-16 20:31 UTC by swarm_librarian.py
+Generated 2026-11-16 20:34 UTC by swarm_librarian.py
 
 | File | Size (bytes) | Modified |
 |------|--------------|----------|
 | 00_CHARTER.md | 1,936 | 2026-11-16 20:30 UTC |
+| 03_DONE/BESTPRACTICES/field_ownership_and_manual_edits.md | 3,186 | 2026-11-16 20:34 UTC |
 | 03_DONE/BESTPRACTICES/rate_limits_monitoring_logging.md | 1,601 | 2026-11-16 20:30 UTC |
 | 03_DONE/BESTPRACTICES/reliability_retries_idempotency.md | 1,918 | 2026-11-16 20:30 UTC |
 | 03_DONE/BESTPRACTICES/security_identity_secrets.md | 2,050 | 2026-11-16 20:31 UTC |
 | 03_DONE/BESTPRACTICES/source_control_deployment.md | 1,442 | 2026-11-16 20:31 UTC |
 | 03_DONE/INSTANCES/lab_environment_and_credentials.md | 1,950 | 2026-11-16 20:31 UTC |
-| 03_DONE/INSTANCES/salesforce_dev_org_setup.md | 2,911 | 2026-11-16 20:30 UTC |
-| 03_DONE/INSTANCES/servicenow_dev_instance_setup.md | 3,369 | 2026-11-16 20:30 UTC |
-| 03_DONE/INTEGRATION/data_model_field_mapping.md | 2,452 | 2026-11-16 20:30 UTC |
-| 03_DONE/INTEGRATION/integration_architecture_options.md | 2,737 | 2026-11-16 20:30 UTC |
+| 03_DONE/INSTANCES/salesforce_dev_org_setup.md | 3,230 | 2026-11-16 20:33 UTC |
+| 03_DONE/INSTANCES/servicenow_dev_instance_setup.md | 3,789 | 2026-11-16 20:33 UTC |
+| 03_DONE/INTEGRATION/data_model_field_mapping.md | 2,636 | 2026-11-16 20:34 UTC |
+| 03_DONE/INTEGRATION/integration_architecture_options.md | 2,868 | 2026-11-16 20:34 UTC |
+| 03_DONE/INTEGRATION/lab_levels_beginner_path.md | 6,691 | 2026-11-16 20:34 UTC |
 | 03_DONE/INTEGRATION/pattern_integrationhub_salesforce_spoke.md | 2,188 | 2026-11-16 20:30 UTC |
 | 03_DONE/INTEGRATION/pattern_salesforce_connect_external_objects.md | 2,085 | 2026-11-16 20:30 UTC |
 | 03_DONE/INTEGRATION/pattern_salesforce_outbound_to_sn.md | 2,878 | 2026-11-16 20:30 UTC |
@@ -26,8 +28,8 @@ Generated 2026-11-16 20:31 UTC by swarm_librarian.py
 | 04_final_review/README.md | 183 | 2026-11-16 20:30 UTC |
 | 05_final_reviewv2/README.md | 95 | 2026-11-16 20:30 UTC |
 | 06_final_review3/README.md | 136 | 2026-11-16 20:30 UTC |
-| 07_final_review4/EVIDENCE_INDEX.md | 1,376 | 2026-11-16 20:30 UTC |
-| 07_final_review4/FILES_TO_TOUCH.md | 1,571 | 2026-11-16 20:31 UTC |
+| 07_final_review4/EVIDENCE_INDEX.md | 1,580 | 2026-11-16 20:34 UTC |
+| 07_final_review4/FILES_TO_TOUCH.md | 1,641 | 2026-11-16 20:34 UTC |
 | 07_final_review4/IMPLEMENTATION_STEPS.md | 1,065 | 2026-11-16 20:31 UTC |
 | 07_final_review4/PLAN.md | 1,108 | 2026-11-16 20:30 UTC |
 | 07_final_review4/TESTING_PLAN.md | 933 | 2026-11-16 20:30 UTC |
