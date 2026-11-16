@@ -17,10 +17,10 @@ This repository is the working copy of the EBOND ServiceNow↔Salesforce integra
 3. **Choose an integration approach** — `03_DONE/INTEGRATION/` compares OOTB and custom approaches:
    - [Integration architecture options](2026-11-16-SWARM/03_DONE/INTEGRATION/integration_architecture_options.md)
    - [Beginner path (Level 1→4)](2026-11-16-SWARM/03_DONE/INTEGRATION/lab_levels_beginner_path.md)
-   - ServiceNow → Salesforce outbound REST pattern
-   - Salesforce → ServiceNow outbound pattern
-   - Integration Hub (Salesforce spoke) low-code pattern
-   - Salesforce Connect external objects
+   - [ServiceNow → Salesforce outbound REST pattern](2026-11-16-SWARM/03_DONE/INTEGRATION/pattern_sn_outbound_rest_to_salesforce.md)
+   - [Salesforce → ServiceNow outbound pattern](2026-11-16-SWARM/03_DONE/INTEGRATION/pattern_salesforce_outbound_to_sn.md)
+   - [Integration Hub (Salesforce spoke) low-code pattern](2026-11-16-SWARM/03_DONE/INTEGRATION/pattern_integrationhub_salesforce_spoke.md)
+   - [Salesforce Connect external objects](2026-11-16-SWARM/03_DONE/INTEGRATION/pattern_salesforce_connect_external_objects.md)
 4. **Run the step-by-step POC** — [Incident ↔ Case synchronization walkthrough](2026-11-16-SWARM/03_DONE/WORKFLOWS/step_by_step_poc_incident_case_sync.md)
 5. **Apply best practices & QA** — `03_DONE/BESTPRACTICES/` and `03_DONE/TESTING/`
 

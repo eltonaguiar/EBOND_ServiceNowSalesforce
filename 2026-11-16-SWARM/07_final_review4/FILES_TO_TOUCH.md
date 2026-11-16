@@ -34,7 +34,7 @@ All files authored/created this round (Round 1, v1).
 - `2026-11-16-SWARM/evidence/INSTANCES/lab_env_vars_template.md`
 
 ## 07_final_review4
-- `PLAN.md`, `TESTING_PLAN.md`, `IMPLEMENTATION_STEPS.md`, `FILES_TO_TOUCH.md`, `EVIDENCE_INDEX.md`
+- `PLAN.md`, `TESTING_PLAN.md`, `IMPLEMENTATION_STEPS.md`, `FILES_TO_TOUCH.md`, `EVIDENCE_INDEX.md`, `FINAL_V4_REVIEW.md`
 
 ## Review phases (v1 → v2)
 - `04_final_review/ROUND1_REVIEW.md`
