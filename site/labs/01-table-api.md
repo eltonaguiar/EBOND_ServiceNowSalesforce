@@ -54,7 +54,7 @@ HTTP 201 from `POST /api/now/table/incident`, and a new row on the Incident list
 
 <div class="eli5">
 <span class="label">ELI5</span>
-<p>The URL has three different kinds of word in it. <code>now</code> is the mailbox ServiceNow owns. <code>table</code> is the kind of letter (create or read a record). <code>incident</code> is which drawer the letter goes in. There is no "incident" namespace. Incident is a table.</p>
+<p>This is an analogy, not a ServiceNow object. Think of the URL as three different kinds of word. <code>now</code> is like the mailbox ServiceNow owns. <code>table</code> is like the kind of letter, create or read a record. <code>incident</code> is like which drawer that letter goes in. There is no mailbox record and no drawer record. There is also no "incident" namespace. Incident is a table.</p>
 </div>
 
 <p><code>POST /api/now/table/incident</code> is read as: call a platform API (<code>now</code>), use the Table API (<code>table</code>), on the Incident table (<code>incident</code>).</p>
