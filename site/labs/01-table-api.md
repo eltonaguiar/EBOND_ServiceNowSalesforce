@@ -108,17 +108,61 @@ Headers the explorer sets for you, and that you must set yourself later: `Accept
 
 ## Same call from a terminal {#curl}
 
-Replace the host. Use your scratch-note password. Do not save this line in the repo.
+<div class="eli5">
+<span class="label">ELI5</span>
+<p><code>curl</code> is a small program that sends the same web request the explorer just sent, from a terminal instead of a browser. You do not need it to pass Lab 1 if the explorer already returned 201. Use it when you want to prove the call works without the explorer filling in the headers for you.</p>
+</div>
+
+`curl` is not PowerShell, and it is not Command Prompt. It is a separate program those shells can launch. Windows 10 and 11 already include it as `curl.exe`. Linux and macOS include it as `curl`.
+
+| Where you are | What to type | Why |
+|---------------|--------------|-----|
+| Linux, macOS, WSL, Git Bash | `curl` | Real curl. Backslash at the end of a line continues the command. |
+| Windows PowerShell | `curl.exe` | `curl` with no `.exe` is a nickname for `Invoke-WebRequest`. That is a different command. The flags below will not work on it. |
+| Windows Command Prompt | `curl.exe` | No nickname problem. Quotes work differently from PowerShell. Use the Command Prompt block below, or use PowerShell. |
+
+WSL is a Linux terminal inside Windows. If you are in a prompt that looks like `user@machine:~$`, you are in Linux or WSL. Use the Linux block. If the prompt is `PS C:\>`, you are in PowerShell. Use `curl.exe`.
+
+Do not save the password in a file. Type it at the prompt and clear the scrollback when you are done.
+
+**Linux, macOS, WSL, or Git Bash**
 
 ```bash
 curl -sS -u 'admin:YOUR_PASSWORD' \
   -H 'Accept: application/json' \
   -H 'Content-Type: application/json' \
-  -X POST 'https://devNNNNN.service-now.com/api/now/table/incident' \
+  -X POST 'https://dev296154.service-now.com/api/now/table/incident' \
   -d '{"short_description":"Lab 1 — curl","urgency":"2","impact":"2"}'
 ```
 
-The repo script `lab/scripts/curl_level1.sh` does the same thing if `SN_INSTANCE`, `SN_USER`, and `SN_PASSWORD` are set in your shell.
+**Windows PowerShell** — one line, and the program name is `curl.exe`. PowerShell does not treat `\` as "continue on the next line".
+
+```powershell
+curl.exe -sS -u 'admin:YOUR_PASSWORD' -H 'Accept: application/json' -H 'Content-Type: application/json' -X POST 'https://dev296154.service-now.com/api/now/table/incident' -d '{"short_description":"Lab 1 - curl","urgency":"2","impact":"2"}'
+```
+
+**Windows Command Prompt** — double quotes, and the quotes inside the JSON are escaped with a backslash.
+
+```bat
+curl.exe -sS -u admin:YOUR_PASSWORD -H "Accept: application/json" -H "Content-Type: application/json" -X POST "https://dev296154.service-now.com/api/now/table/incident" -d "{\"short_description\":\"Lab 1 - curl\",\"urgency\":\"2\",\"impact\":\"2\"}"
+```
+
+### What each piece does
+
+| Piece | Meaning |
+|-------|---------|
+| `curl` or `curl.exe` | The program. On PowerShell, the `.exe` is required. |
+| `-sS` | `-s` hides the progress meter. `-S` still prints an error if the call fails. Together: quiet when it works, loud when it does not. |
+| `-u 'admin:YOUR_PASSWORD'` | Basic authentication. The user and password from the Developer Site, separated by a colon. This is the same login the explorer used as "Send as me". |
+| `-H 'Accept: application/json'` | One header. Ask for a JSON answer. See the header note above. |
+| `-H 'Content-Type: application/json'` | A second header. Tell ServiceNow the body is JSON. Missing this is a 400. |
+| `-X POST` | The HTTP method. POST creates. GET would only read. |
+| The URL | Host plus `/api/now/table/incident`. `now` is the namespace. `incident` is the table. Use your PDI host if it is not `dev296154`. |
+| `-d '{...}'` | The body. Same fields you typed in the explorer. `-d` implies POST, but `-X POST` is here so the method is obvious. |
+
+A 201 and a new `INC` number means it worked. Then refresh `incident.list`.
+
+The repo script `lab/scripts/curl_level1.sh` is the Linux form. It reads `SN_INSTANCE`, `SN_USER`, and `SN_PASSWORD` from the shell. It does not run unchanged in PowerShell.
 
 <div class="note">
 <span class="label">Screenshot</span>
