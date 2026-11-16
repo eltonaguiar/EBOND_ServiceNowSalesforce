@@ -30,6 +30,9 @@
   </div>
 </header>
 <main>
+  <aside class="review-status" role="note">
+    <strong>Live integration validation pending.</strong> Repository contracts and mock tests are not end-to-end certification. The bidirectional capstone is under final-v6 review; see the <a href="https://github.com/eltonaguiar/EBOND_ServiceNowSalesforce#validation-status">validation status and review gate</a> before deployment.
+  </aside>
   {% if page.title %}<h1>{{ page.title }}</h1>{% endif %}
   {% if page.lab %}<p class="labtag">Lab {{ page.lab }}<span class="dot">·</span>{{ page.time }}<span class="dot">·</span>{{ page.level }}</p>{% endif %}
   {{ content }}
@@ -42,7 +45,7 @@
   {% endif %}
 </main>
 <footer>
-  <p>Free ServiceNow Personal Developer Instance and free Salesforce Developer Edition. No Integration Hub license required.</p>
+  <p>Free ServiceNow Personal Developer Instance and free Salesforce Developer Edition. Core REST labs do not require IntegrationHub; optional spokes are subscription/entitlement dependent.</p>
 </footer>
 <script src="{{ '/assets/js/theme.js' | relative_url }}"></script>
 </body>

@@ -7,7 +7,7 @@ permalink: /
 
 <p class="hero">Bond a free ServiceNow instance to a free Salesforce org</p>
 
-A hands-on lab that takes you from two empty free accounts to a working **Incident ⇄ Case** proof of concept. You create a Case in Salesforce and an Incident appears in ServiceNow. You change the Incident and the Case updates. No paid Integration Hub license. No middleware.
+A progressive hands-on lab that takes you from two empty free accounts toward an **Incident ⇄ Case** proof of concept. The intended capstone is: create a Case in Salesforce, see a linked Incident in ServiceNow, then send ServiceNow-owned updates back to the Case. The core path needs no paid IntegrationHub license or middleware; the capstone remains live-validation pending while final-v6 findings are resolved.
 
 <nav class="toc" aria-label="Contents">
   <div>
