@@ -43,8 +43,8 @@ ServiceNow already has the integration fields. Incident inherits them from Task.
 
 | Field | What it is for | This lab |
 |-------|----------------|----------|
-| `correlation_id` | The other system's id. One string. The usual place for a Salesforce Case Id. | Leave it alone. Pretend another integration already stores its key here. |
-| `correlation_display` | The human-readable value from that other system, such as a Case number. | Leave it alone. It belongs to the same other integration. |
+| `correlation_id` | The other system's id. One string. The usual place for a Salesforce Case Id. | Leave this field alone. We are pretending another integration already stores its key here, so we create our own equivalent field instead. |
+| `correlation_display` | The human-readable value from that other system, such as a Case number. | Leave this field alone too. It belongs to that same pretend integration. We are not creating an equivalent for it. |
 
 A custom column is normal only when `correlation_id` is already taken, or when you need your own unique index so one Case cannot create two Incidents. This lab is that situation. We add `u_ebond_sf_case_id` instead of overwriting `correlation_id`.
 
