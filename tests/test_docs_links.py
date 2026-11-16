@@ -15,3 +15,12 @@ def test_relative_markdown_links_resolve():
             if not path.exists():
                 broken.append(f"{md.name} -> {target}")
     assert broken == []
+
+
+def test_live_validation_status_is_visible():
+    readme = (ROOT / "README.md").read_text()
+    layout = (ROOT / "site" / "_layouts" / "default.html").read_text()
+    assert "## Validation status" in readme
+    assert "Live integration validation pending" in readme
+    assert "Live integration validation pending" in layout
+    assert "FINAL_V6_REVIEW.md" in readme
