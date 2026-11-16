@@ -152,10 +152,12 @@ curl -sS -u 'admin:YOUR_PASSWORD' \
   -d '{"short_description":"Lab 1 — curl","urgency":"2","impact":"2"}'
 ```
 
-**Windows Command Prompt** — double quotes, and the quotes inside the JSON are escaped with a backslash.
+**Windows Command Prompt — do not use this if the PowerShell line already worked.** Command Prompt rewrites the password before curl sees it. `%` starts a variable, and `^` escapes the next character. A correct password then comes back as `User is not authenticated`. That is not a ServiceNow failure.
+
+If you still want Command Prompt, quote `-u` and double every `%` and `^` in the password (`%` becomes `%%`, `^` becomes `^^`). A password of `a%b^c` must be typed as `a%%b^^c`.
 
 ```bat
-curl.exe -sS -u admin:YOUR_PASSWORD -H "Accept: application/json" -H "Content-Type: application/json" -X POST "https://dev296154.service-now.com/api/now/table/incident" -d "{\"short_description\":\"Lab 1 - curl\",\"urgency\":\"2\",\"impact\":\"2\"}"
+curl.exe -sS -u "admin:YOUR_PASSWORD" -H "Accept: application/json" -H "Content-Type: application/json" -X POST "https://dev296154.service-now.com/api/now/table/incident" -d "{\"short_description\":\"Lab 1 - curl\",\"urgency\":\"2\",\"impact\":\"2\"}"
 ```
 
 ### What each piece does
