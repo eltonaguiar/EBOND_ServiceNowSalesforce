@@ -108,6 +108,11 @@ Headers the explorer sets for you, and that you must set yourself later: `Accept
 
 ## Same call from a terminal {#curl}
 
+<div class="warn">
+<span class="label">If your prompt is PS C:\&gt;</span>
+<p>You are in PowerShell. Do not paste the Linux command. <code>curl</code> there is not curl, and <code>\</code> does not continue the line. That is the error <code>Parameter name 'u' is ambiguous</code> and then <code>-H is not recognized</code>. Use the one line below. The program name is <code>curl.exe</code>.</p>
+</div>
+
 <div class="eli5">
 <span class="label">ELI5</span>
 <p><code>curl</code> is a small program that sends the same web request the explorer just sent, from a terminal instead of a browser. You do not need it to pass Lab 1 if the explorer already returned 201. Use it when you want to prove the call works without the explorer filling in the headers for you.</p>
@@ -123,9 +128,15 @@ Headers the explorer sets for you, and that you must set yourself later: `Accept
 
 WSL is a Linux terminal inside Windows. If you are in a prompt that looks like `user@machine:~$`, you are in Linux or WSL. Use the Linux block. If the prompt is `PS C:\>`, you are in PowerShell. Use `curl.exe`.
 
-Do not save the password in a file. Type it at the prompt and clear the scrollback when you are done.
+Do not save the password in a file. Type it at the prompt and clear the scrollback when you are done. If you pasted a password into a chat, change it on the Developer Site before you continue.
 
-**Linux, macOS, WSL, or Git Bash**
+**Windows PowerShell — paste this one line only.** Replace `YOUR_PASSWORD`. Do not add a backslash. Do not press Enter until the whole line is in.
+
+```powershell
+curl.exe -sS -u 'admin:YOUR_PASSWORD' -H 'Accept: application/json' -H 'Content-Type: application/json' -X POST 'https://dev296154.service-now.com/api/now/table/incident' -d '{"short_description":"Lab 1 - curl","urgency":"2","impact":"2"}'
+```
+
+**Linux, macOS, WSL, or Git Bash — do not paste this into PowerShell**
 
 ```bash
 curl -sS -u 'admin:YOUR_PASSWORD' \
@@ -133,12 +144,6 @@ curl -sS -u 'admin:YOUR_PASSWORD' \
   -H 'Content-Type: application/json' \
   -X POST 'https://dev296154.service-now.com/api/now/table/incident' \
   -d '{"short_description":"Lab 1 — curl","urgency":"2","impact":"2"}'
-```
-
-**Windows PowerShell** — one line, and the program name is `curl.exe`. PowerShell does not treat `\` as "continue on the next line".
-
-```powershell
-curl.exe -sS -u 'admin:YOUR_PASSWORD' -H 'Accept: application/json' -H 'Content-Type: application/json' -X POST 'https://dev296154.service-now.com/api/now/table/incident' -d '{"short_description":"Lab 1 - curl","urgency":"2","impact":"2"}'
 ```
 
 **Windows Command Prompt** — double quotes, and the quotes inside the JSON are escaped with a backslash.
