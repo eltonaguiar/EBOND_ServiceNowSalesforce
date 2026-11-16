@@ -10,8 +10,10 @@ This repository is the working copy of the EBOND ServiceNow↔Salesforce integra
 
 ## How to use the lab
 
-1. **Read the mission & charter** — [`2026-11-16-SWARM/00_CHARTER.md`](2026-11-16-SWARM/00_CHARTER.md)
-2. **Provision your free instances** — see `03_DONE/INSTANCES/`:
+Do the lab on the site. Do not start from the raw markdown files.
+
+1. **Open the lab** — https://eltonaguiar.github.io/EBOND_ServiceNowSalesforce/ — table of contents, then Labs 0–5.
+2. **Source notebook** (not the student path) — [`2026-11-16-SWARM/00_CHARTER.md`](2026-11-16-SWARM/00_CHARTER.md). Instance notes also live under `03_DONE/INSTANCES/`:
    - [ServiceNow Developer instance setup](2026-11-16-SWARM/03_DONE/INSTANCES/servicenow_dev_instance_setup.md)
    - [Salesforce Developer org setup](2026-11-16-SWARM/03_DONE/INSTANCES/salesforce_dev_org_setup.md)
 3. **Choose an integration approach** — `03_DONE/INTEGRATION/` compares OOTB and custom approaches:

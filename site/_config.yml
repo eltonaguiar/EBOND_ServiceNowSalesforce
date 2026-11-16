@@ -1,0 +1,13 @@
+title: EBOND Lab
+description: Bond a free ServiceNow PDI to a free Salesforce Developer org
+baseurl: "/EBOND_ServiceNowSalesforce"
+url: "https://eltonaguiar.github.io"
+markdown: kramdown
+plugins: []
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: default
+exclude:
+  - README.md
