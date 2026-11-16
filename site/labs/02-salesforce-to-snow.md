@@ -39,9 +39,18 @@ A Salesforce Case insert creates or updates one ServiceNow Incident. The Inciden
 
 ## ServiceNow fields {#fields-sn}
 
+ServiceNow already has the integration fields. Incident inherits them from Task. Your Lab 1 response body showed them empty:
+
+| Field | What it is for | This lab |
+|-------|----------------|----------|
+| `correlation_id` | The other system's id. One string. The usual place for a Salesforce Case Id. | Leave it alone. Pretend another integration already stores its key here. |
+| `correlation_display` | The human-readable value from that other system, such as a Case number. | Leave it alone. It belongs to the same other integration. |
+
+A custom column is normal only when `correlation_id` is already taken, or when you need your own unique index so one Case cannot create two Incidents. This lab is that situation. We add `u_ebond_sf_case_id` instead of overwriting `correlation_id`.
+
 1. Filter: **System Definition > Tables**, open **Incident**.
-2. Add a string column **EBOND SF Case Id**, column name `u_ebond_sf_case_id`, length 18.
-3. Add a string column **Sync source**, column name `u_sync_source`, length 20.
+2. Add a string column **EBOND SF Case Id**, column name `u_ebond_sf_case_id`, length 18. This is the stand-in. It is not a second copy of `correlation_id` for fun.
+3. Add a string column **Sync source**, column name `u_sync_source`, length 20. This one is also custom. It is the loop guard, not the external id.
 
 You cannot create `x_snc_ebond_sf_case_id` on a free PDI. `x_snc_` is ServiceNow's own scope prefix.
 
