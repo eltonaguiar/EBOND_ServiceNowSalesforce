@@ -97,7 +97,7 @@ HTTP 201 from `POST /api/now/table/incident`, and a new row on the Incident list
 
 <ol>
 <li>REST API Explorer. The Namespace dropdown is the list for this instance. If a name is not in that list, do not call it.</li>
-<li>Official reference: <a href="https://www.servicenow.com/docs/r/api-reference/rest-apis.html">ServiceNow REST APIs</a>. Match the family your PDI is running (this lab's instance is Australia).</li>
+<li>Official reference: <a href="https://www.servicenow.com/docs/r/api-reference/rest-apis/api-rest.html">ServiceNow REST APIs</a>. Match the family your PDI is running (this lab's instance is Australia).</li>
 <li>Do not copy a namespace from a blog. Store apps and scoped apps add namespaces only after they are installed. A free PDI will not have all of them.</li>
 </ol>
 
