@@ -7,6 +7,20 @@ permalink: /
 
 <p class="hero">Bond a free ServiceNow instance to a free Salesforce org</p>
 
+<section class="all-labs" id="all-labs">
+  <h2>All labs</h2>
+  <p>Every lab is a page on this site. Use this list if you get lost.</p>
+  <ol>
+    <li><a href="{{ '/labs/00-instances/' | relative_url }}">Lab 0 — Free instances</a></li>
+    <li><a href="{{ '/labs/01-table-api/' | relative_url }}">Lab 1 — Table API</a></li>
+    <li><a href="{{ '/labs/02-salesforce-to-snow/' | relative_url }}">Lab 2 — Salesforce to ServiceNow</a></li>
+    <li><a href="{{ '/labs/03-snow-to-salesforce/' | relative_url }}">Lab 3 — ServiceNow to Salesforce</a></li>
+    <li><a href="{{ '/labs/04-ownership/' | relative_url }}">Lab 4 — Ownership and loops</a></li>
+    <li><a href="{{ '/labs/05-troubleshooting/' | relative_url }}">Lab 5 — Troubleshooting</a></li>
+  </ol>
+  <p>Also: <a href="{{ '/primer/' | relative_url }}">Primer</a> · <a href="{{ '/methods/' | relative_url }}">Methods</a> · <a href="{{ '/labs/' | relative_url }}">All labs page</a></p>
+</section>
+
 A hands-on lab that takes you from two empty free accounts to a working **Incident ⇄ Case** proof of concept. You create a Case in Salesforce and an Incident appears in ServiceNow. You change the Incident and the Case updates. No paid Integration Hub license. No middleware.
 
 <nav class="toc" aria-label="Contents">

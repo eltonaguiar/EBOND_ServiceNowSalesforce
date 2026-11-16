@@ -71,7 +71,11 @@ details.glossary[open] summary { margin-bottom:.4rem; }
 .toc-list { margin:0; padding-left:1.15rem; }
 .toc ul.toc-list { list-style:none; padding-left:0; }
 .toc li { margin:.2rem 0; break-inside:avoid; }
-.toc a { color:var(--ink); text-decoration:none; }
+.toc a { color:var(--accent); text-decoration:underline; }
+.all-labs { margin:1.2rem 0 1.6rem; padding:1rem 1.2rem; border:1px solid var(--line); border-radius:10px; background:var(--panel); }
+.all-labs h2 { margin:0 0 .6rem; padding:0; border:0; font-size:1.05rem; }
+.all-labs ol { margin:.2rem 0 0; padding-left:1.3rem; }
+.all-labs a { font-weight:650; }
 .toc a:hover { color:var(--accent); text-decoration:underline; }
 .toc-wide { grid-column:1 / -1; border-top:1px solid var(--line); padding-top:.9rem; }
 .toc-labs { columns:1; column-gap:1.6rem; }
