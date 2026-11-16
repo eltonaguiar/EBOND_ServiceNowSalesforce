@@ -26,7 +26,7 @@ The POC syncs **ServiceNow Incident** ⇄ **Salesforce Case**. This is the canon
 | `number` (INC0010001) | `CaseNumber` | read-only | System-generated on each side; correlate via id fields below |
 | `short_description` | `Subject` | both | Title line |
 | `description` | `Description` | both | Body |
-| `priority` → `urgency` | `Priority` | SN→SF | Map value sets (e.g. 1..5 → High/Medium/Low) |
+| `priority` (1–5) | `Priority` | SN→SF | Map value sets below (1–5 → High/Medium/Low); `urgency` is a separate SN choice, not mapped here |
 | `state` | `Status` | SN→SF | Map state enums (e.g. New/In Progress/Resolved → New/Working/Closed) |
 | `assigned_to` | `OwnerId` | SN→SF | optional; may need user/owner mapping |
 | `category` | `Type` | SN→SF | optional category fit |
@@ -39,7 +39,7 @@ To avoid duplicate/loop sync:
 
 - Store the ServiceNow `sys_id` on the Salesforce record (custom field).
 - Store the Salesforce `Id` on the ServiceNow record (custom field).
-- All apps check the correlation key first: if it exists, **update** the existing counterpart; if not, **create** (and then persist the key). This makes the flow **idempotent** and prevents ping-pong loops.
+- All apps check the correlation key first: if it exists, **update** the existing counterpart; if not, **create** (and then persist the key). Correlation keys make operations **idempotent** (no duplicates on retry). They do **not** by themselves stop sync loops — apply the source-flag/delta guards in `step_by_step_poc_incident_case_sync.md` Phase 3 and `03_DONE/BESTPRACTICES/field_ownership_and_manual_edits.md`.
 
 ## Value-set mapping table (example)
 

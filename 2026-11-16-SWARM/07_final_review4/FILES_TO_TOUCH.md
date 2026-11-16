@@ -38,3 +38,4 @@ All files authored/created this round (Round 1, v1).
 ## Review phases (v1 → v2)
 - `04_final_review/ROUND1_REVIEW.md`
 - `05_final_reviewv2/SYNTHESIS.md`
+- `06_final_review3/FINAL_V3_SYNTHESIS.md`

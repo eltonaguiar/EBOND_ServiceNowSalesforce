@@ -47,8 +47,12 @@ Goal: a new ServiceNow **Incident** creates a Salesforce **Case**; a Salesforce 
 
 ## Phase 3 — Prevent loops
 
-- The SF flow only writes back when the **SN-side** field (e.g. `state`/`priority`) actually changed from what SN sent; otherwise skip.
-- Alternatively, gate updates on "source" flags (e.g. only sync when the change originated from the human side). For a POC, the correlation-key gate usually suffices; note the loop risk and guard.
+The correlation key (Phase 1/2) prevents duplicates but does **not** stop feedback loops. Gate every write-back:
+
+1. **Source flag** — add `u_synced_from_integration` on ServiceNow and an equivalent flag on Salesforce. Set it on every record written **by** the integration; exclude those records in both record-triggered triggers so integration writes do not re-fire.
+2. **Timestamp compare** — write back only when the sender's `sys_updated_on` (SN) / `LastModifiedDate` (SF) is newer than the last applied sync.
+3. **Owned-field delta** — fire outbound sync only when a field owned by the sending system changed (`data_model_field_mapping.md` + `field_ownership_and_manual_edits.md`); if no owned field changed, skip.
+4. **Convergence test** — create→update in both directions and confirm the system settles (no repeated writes).
 
 ## Phase 4 — Run & verify
 

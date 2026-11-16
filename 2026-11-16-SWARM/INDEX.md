@@ -1,5 +1,5 @@
 # INDEX — 2026-11-16-SWARM
-Generated 2026-11-16 20:37 UTC by swarm_librarian.py
+Generated 2026-11-16 20:39 UTC by swarm_librarian.py
 
 | File | Size (bytes) | Modified |
 |------|--------------|----------|
@@ -12,26 +12,27 @@ Generated 2026-11-16 20:37 UTC by swarm_librarian.py
 | 03_DONE/INSTANCES/lab_environment_and_credentials.md | 1,950 | 2026-11-16 20:31 UTC |
 | 03_DONE/INSTANCES/salesforce_dev_org_setup.md | 3,230 | 2026-11-16 20:33 UTC |
 | 03_DONE/INSTANCES/servicenow_dev_instance_setup.md | 3,789 | 2026-11-16 20:33 UTC |
-| 03_DONE/INTEGRATION/data_model_field_mapping.md | 2,636 | 2026-11-16 20:34 UTC |
+| 03_DONE/INTEGRATION/data_model_field_mapping.md | 2,895 | 2026-11-16 20:39 UTC |
 | 03_DONE/INTEGRATION/integration_architecture_options.md | 2,868 | 2026-11-16 20:34 UTC |
-| 03_DONE/INTEGRATION/lab_levels_beginner_path.md | 6,691 | 2026-11-16 20:34 UTC |
+| 03_DONE/INTEGRATION/lab_levels_beginner_path.md | 6,771 | 2026-11-16 20:39 UTC |
 | 03_DONE/INTEGRATION/pattern_integrationhub_salesforce_spoke.md | 2,188 | 2026-11-16 20:30 UTC |
 | 03_DONE/INTEGRATION/pattern_salesforce_connect_external_objects.md | 2,085 | 2026-11-16 20:30 UTC |
 | 03_DONE/INTEGRATION/pattern_salesforce_outbound_to_sn.md | 2,878 | 2026-11-16 20:30 UTC |
-| 03_DONE/INTEGRATION/pattern_sn_outbound_rest_to_salesforce.md | 3,342 | 2026-11-16 20:31 UTC |
+| 03_DONE/INTEGRATION/pattern_sn_outbound_rest_to_salesforce.md | 4,193 | 2026-11-16 20:39 UTC |
 | 03_DONE/PAGES/github_pages_deploy.md | 1,236 | 2026-11-16 20:30 UTC |
 | 03_DONE/PAGES/link_crosscutting_plan.md | 2,542 | 2026-11-16 20:30 UTC |
 | 03_DONE/TESTING/qa_test_plan.md | 2,176 | 2026-11-16 20:30 UTC |
 | 03_DONE/TESTING/verification_checklist.md | 1,148 | 2026-11-16 20:31 UTC |
 | 03_DONE/WORKFLOWS/ootb_workflows.md | 2,269 | 2026-11-16 20:30 UTC |
-| 03_DONE/WORKFLOWS/step_by_step_poc_incident_case_sync.md | 2,985 | 2026-11-16 20:31 UTC |
+| 03_DONE/WORKFLOWS/step_by_step_poc_incident_case_sync.md | 3,494 | 2026-11-16 20:39 UTC |
 | 04_final_review/README.md | 183 | 2026-11-16 20:30 UTC |
 | 04_final_review/ROUND1_REVIEW.md | 1,660 | 2026-11-16 20:36 UTC |
 | 05_final_reviewv2/README.md | 95 | 2026-11-16 20:30 UTC |
 | 05_final_reviewv2/SYNTHESIS.md | 1,005 | 2026-11-16 20:36 UTC |
+| 06_final_review3/FINAL_V3_SYNTHESIS.md | 1,723 | 2026-11-16 20:39 UTC |
 | 06_final_review3/README.md | 136 | 2026-11-16 20:30 UTC |
-| 07_final_review4/EVIDENCE_INDEX.md | 1,696 | 2026-11-16 20:37 UTC |
-| 07_final_review4/FILES_TO_TOUCH.md | 1,780 | 2026-11-16 20:37 UTC |
+| 07_final_review4/EVIDENCE_INDEX.md | 1,738 | 2026-11-16 20:39 UTC |
+| 07_final_review4/FILES_TO_TOUCH.md | 1,823 | 2026-11-16 20:39 UTC |
 | 07_final_review4/IMPLEMENTATION_STEPS.md | 1,065 | 2026-11-16 20:31 UTC |
 | 07_final_review4/PLAN.md | 1,108 | 2026-11-16 20:30 UTC |
 | 07_final_review4/TESTING_PLAN.md | 933 | 2026-11-16 20:30 UTC |

@@ -89,7 +89,7 @@ A progressive, lab-first route. It intentionally starts with the **simplest poss
      gr.short_description = body.short_description;
      gr.description = body.description || '';
      gr.urgency = body.urgency || '3';
-     gr.correlation_id = body.salesforce_id || '';
+     gr.setValue('x_snc_ebond_sf_case_id', body.salesforce_id || '');  // canonical SN correlation field
      var sysId = gr.insert();
      response.setStatus(201);
      response.setBody({sys_id: sysId, number: gr.number});
@@ -104,7 +104,7 @@ A progressive, lab-first route. It intentionally starts with the **simplest poss
 
 **Goal:** understand the mechanics needed to go two-way without chaos. Full build-out is the POC walkthrough; the ownership/conflict model is in `03_DONE/BESTPRACTICES/field_ownership_and_manual_edits.md`.
 
-- **Correlation IDs:** store SF Case Id in SN `correlation_id` (or custom field) and SN `sys_id`/number on the SF Case.
+- **Correlation IDs:** store the SF Case Id in the SN correlation field `x_snc_ebond_sf_case_id`, and the SN `sys_id`/number on the SF Case.
 - **Loop prevention:** in Business Rules/Flows, check a flag (e.g. `u_synced_from_integration`) and compare `sys_updated_on` / `LastModifiedDate` before pushing back.
 - **Outbound from ServiceNow:** an Outbound REST Message (System Web Services > Outbound > REST Message) to Salesforce's REST API, triggered by a Business Rule — only when owned fields change and the inbound flag is not set.
 - **Manual edits:** integration wins on owned fields; human edits on non-owned fields are preserved until the owner updates them; log conflicts; option to require an explicit "push" action.
@@ -113,5 +113,5 @@ A progressive, lab-first route. It intentionally starts with the **simplest poss
 
 1. Level 1 (connectivity + Basic Auth).
 2. Level 2 (Salesforce Flow / Named Credentials) — or continue with Postman while learning credentials.
-3. Level 3 (Scripted REST) to add `correlation_id`.
+3. Level 3 (Scripted REST) to add the correlation field.
 4. Level 4 + POC (bi-directional: Outbound REST Message + Business Rule).
