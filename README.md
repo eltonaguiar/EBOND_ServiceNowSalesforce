@@ -22,13 +22,15 @@ This repository is the working copy of the EBOND ServiceNow↔Salesforce integra
    - Salesforce Connect external objects
 4. **Run the step-by-step POC** — [Incident ↔ Case synchronization walkthrough](2026-11-16-SWARM/03_DONE/WORKFLOWS/step_by_step_poc_incident_case_sync.md)
 5. **Apply best practices & QA** — `03_DONE/BESTPRACTICES/` and `03_DONE/TESTING/`
+6. **Deploy the runnable lab** — [`lab/README.md`](lab/README.md) (Apex, Scripted REST, curl). Contract tests: `python3 -m pytest tests -q`
 
 ## Repository layout
 
 | Path | Purpose |
 |------|---------|
 | `README.md` | This index; links to the live GitHub Pages site. |
-| `site/` | Static content deployed to GitHub Pages (the lab landing page). |
+| `site/` | Static content deployed to GitHub Pages (`index.html`, `lab.html`). |
+| `lab/` | Deployable Apex, ServiceNow scripts, and the Level 1 curl. |
 | `.github/workflows/gh-pages.yml` | GitHub Actions workflow that builds and deploys `site/` to Pages. |
 | `2026-11-16-SWARM/` | Dated lab notebook (charter, domains, deliverables, review phases, templates). |
 | `tools/swarm/swarm_librarian.py` | Canonical scaffold / collect / index / validate tooling. |

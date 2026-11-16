@@ -1,4 +1,10 @@
-# TESTING_PLAN — Round 1 validation
+# TESTING_PLAN
+
+Round 2 executable gate (no orgs): `python3 -m pytest tests -q` from the repo root. CI: `.github/workflows/ci.yml`.
+
+Apex (needs a Developer Edition org): `sf apex run test --test-level RunLocalTests --code-coverage --target-org lab`.
+
+## Round 1 validation (retained)
 
 Validates the lab content (not a live integration, which runs on the free instances).
 

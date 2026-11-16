@@ -18,6 +18,10 @@
 3. Secrets never in repo; platform-native credential handling.
 4. Free-tier terms flagged "verify current" where they drift.
 
+## Round 2
+
+Runnable lab is in `lab/`. Review is `04_final_review/round2_review.md`. Cross-cutting patch is `05_final_reviewv2/cross_cutting_patch.md`.
+
 ## Deliverables map
 
 See `FILES_TO_TOUCH.md` for every file in this round and `EVIDENCE_INDEX.md` for backing evidence.
