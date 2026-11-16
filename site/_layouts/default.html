@@ -24,8 +24,8 @@
       <a href="{{ '/labs/' | relative_url }}">All labs</a>
       <a href="{{ '/primer/' | relative_url }}">Primer</a>
       <a href="{{ '/methods/' | relative_url }}">Methods</a>
-      <a href="{{ '/labs/00-instances/' | relative_url }}">Start</a>
-      <a href="{{ '/labs/05-troubleshooting/' | relative_url }}">Troubleshooting</a>
+      <a href="{{ '/labs/00-instances/' | relative_url }}">Lab 0: Free instances</a>
+      <a href="{{ '/labs/05-troubleshooting/' | relative_url }}">Lab 5: Troubleshooting</a>
     </nav>
     <button class="theme-toggle" type="button" aria-label="Toggle dark mode">☾ Dark</button>
   </div>
@@ -37,8 +37,8 @@
   {% assign n = page.order %}
   {% if n %}
   <nav class="pager">
-    {% if n > 0 %}{% assign prev = n | minus: 1 %}{% for p in site.pages %}{% if p.order == prev %}<a class="prev" href="{{ p.url | relative_url }}">← {{ p.title }}</a>{% endif %}{% endfor %}{% endif %}
-    {% assign next = n | plus: 1 %}{% for p in site.pages %}{% if p.order == next %}<a class="next" href="{{ p.url | relative_url }}">{{ p.title }} →</a>{% endif %}{% endfor %}
+    {% if n > 0 %}{% assign prev = n | minus: 1 %}{% for p in site.pages %}{% if p.order == prev %}<a class="prev" href="{{ p.url | relative_url }}">← {% if p.lab != nil %}Lab {{ p.lab }}: {% endif %}{{ p.title }}</a>{% endif %}{% endfor %}{% endif %}
+    {% assign next = n | plus: 1 %}{% for p in site.pages %}{% if p.order == next %}<a class="next" href="{{ p.url | relative_url }}">{% if p.lab != nil %}Lab {{ p.lab }}: {% endif %}{{ p.title }} →</a>{% endif %}{% endfor %}
   </nav>
   {% endif %}
 </main>

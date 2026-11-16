@@ -32,7 +32,7 @@ permalink: /
 <li>Lab 4 — a screen that shows Salesforce owns the title and ServiceNow owns state.</li>
 <li>Lab 5 — optional. One real failure and the screen after the fix.</li>
 </ul>
-<p>Worth adding if you have them: the My Domain page (API host, not the Lightning URL), the permission set that grants External Credential Principal Access, the Incident columns <code>u_ebond_sf_case_id</code> and <code>u_sync_source</code>, and <code>syslog.list</code> filtered to EBOND showing one write rather than a loop.</p>
+<p>My Domain is in. Still worth adding: the permission set that grants External Credential Principal Access, the Incident columns <code>u_ebond_sf_case_id</code> and <code>u_sync_source</code>, and <code>syslog.list</code> filtered to EBOND showing one write rather than a loop.</p>
 </div>
 
 A hands-on lab that takes you from two empty free accounts to a working **Incident ⇄ Case** proof of concept. You create a Case in Salesforce and an Incident appears in ServiceNow. You change the Incident and the Case updates. No paid Integration Hub license. No middleware.
