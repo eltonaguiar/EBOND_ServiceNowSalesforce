@@ -23,6 +23,7 @@ This repository is the working copy of the EBOND ServiceNow↔Salesforce integra
    - [Salesforce Connect external objects](2026-11-16-SWARM/03_DONE/INTEGRATION/pattern_salesforce_connect_external_objects.md)
 4. **Run the step-by-step POC** — [Incident ↔ Case synchronization walkthrough](2026-11-16-SWARM/03_DONE/WORKFLOWS/step_by_step_poc_incident_case_sync.md)
 5. **Apply best practices & QA** — `03_DONE/BESTPRACTICES/` and `03_DONE/TESTING/`
+6. **Deploy the runnable lab (v5)** — [`lab/README.md`](lab/README.md). Contract tests: `python3 -m pytest tests -q`
 
 ## Repository layout
 

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EBOND lab steps</title>
+<style>
+  :root { --ink:#1c1e21; --muted:#5b6270; --accent:#0b6e4f; --bg:#f7f8fa; --card:#fff; --border:#e4e7ec; }
+  body { margin:0; font-family:system-ui,sans-serif; background:var(--bg); color:var(--ink); line-height:1.55; }
+  .wrap { max-width:820px; margin:0 auto; padding:32px 20px 64px; }
+  a { color:var(--accent); }
+  pre { background:#111; color:#e8e8e8; padding:12px; overflow:auto; border-radius:8px; font-size:13px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:14px 16px; margin:12px 0; }
+  code { font-size:0.95em; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p><a href="./">← Lab home</a></p>
+  <h1>Build the POC</h1>
+  <p>Free instances only. Code lives in the <a href="https://github.com/eltonaguiar/EBOND_ServiceNowSalesforce/tree/main/lab">lab/</a> directory.</p>
+
+  <div class="card">
+    <h2>0. Instances</h2>
+    <ol>
+      <li>Salesforce: <a href="https://developer.salesforce.com/signup">developer.salesforce.com/signup</a>. Username must look like an email and be globally unique. API host is <code>*.my.salesforce.com</code>, not <code>lightning.force.com</code>.</li>
+      <li>ServiceNow: <a href="https://developer.servicenow.com">developer.servicenow.com</a> → Request Instance. One PDI. Reclaimed after 10 days without Developer Site activity.</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h2>1. Prove the Table API</h2>
+    <pre>export SN_INSTANCE=https://devNNNNN.service-now.com
+export SN_USER=admin
+export SN_PASSWORD='…'
+bash lab/scripts/curl_level1.sh</pre>
+    <p>Expect HTTP 201 and an <code>INC</code> number. ServiceNow is the system of record for that new Incident. Nothing calls back.</p>
+  </div>
+
+  <div class="card">
+    <h2>2. Salesforce → ServiceNow</h2>
+    <ol>
+      <li>On the PDI, add incident fields <code>u_ebond_sf_case_id</code> and <code>u_sync_source</code>. Do not use <code>x_snc_ebond_*</code> — that scope is not creatable on a free PDI.</li>
+      <li>Apex posts to the Table API. Optional Scripted REST script is <code>lab/servicenow/scripted_rest_bond_case.js</code> (upserts on <code>u_ebond_sf_case_id</code>).</li>
+      <li>Salesforce: External Credential + Named Credential <code>EBOND_ServiceNow</code>. Deploy <code>lab/salesforce</code>.</li>
+      <li>Create a Case. The after-insert trigger enqueues a Queueable. The Queueable callout runs after the save, so it does not hit "uncommitted work pending".</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h2>3. ServiceNow → Salesforce</h2>
+    <ol>
+      <li>Salesforce External Client App (not a Connected App). Client credentials or JWT bearer. My Domain token URL only.</li>
+      <li>REST Message <code>EBOND Salesforce Case</code> as in <code>lab/servicenow/rest_message_notes.md</code>. PATCH <code>/sobjects/Case/Snow_Sys_Id__c/${snow_sys_id}</code>.</li>
+      <li>Async business rule <code>lab/servicenow/business_rule_async_sync.js</code>. It returns immediately if <code>u_sync_source</code> is <code>salesforce</code>.</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h2>Field ownership</h2>
+    <p>Salesforce owns Subject and Priority. ServiceNow owns state, assignment, work notes. Shared description uses last writer only when <code>Snow_Sync_Source__c</code> / <code>u_sync_source</code> says the other side did not just write it. Correlation key is <code>Snow_Sys_Id__c</code> (external id, unique) paired with <code>u_ebond_sf_case_id</code>.</p>
+  </div>
+
+  <div class="card">
+    <h2>What not to use on the free tier</h2>
+    <ul>
+      <li>New Connected Apps — creation blocked since Spring '26. Use an External Client App.</li>
+      <li>Salesforce Functions — retired.</li>
+      <li>Integration Hub Salesforce spoke — often not activatable on a PDI. Treat as optional, not the POC path.</li>
+      <li>Guest-user Sites for the webhook — unauthenticated. Use the integration user.</li>
+    </ul>
+  </div>
+</div>
+</body>
+</html>
