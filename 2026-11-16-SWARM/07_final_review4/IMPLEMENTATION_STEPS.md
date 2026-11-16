@@ -12,6 +12,13 @@ Ordered steps already executed in this round (v1). Future review rounds extend f
 8. Validate + index the SWARM.
 9. Commit and push to `main`; confirm Pages deployment; update README live URL if needed.
 
+## Round 5 (this branch)
+
+1. Import the runnable lab onto current main (v4), do not restart from the stale round-2 branch.
+2. Apex calls Table API and batches Queueable jobs (50 enqueue limit / 20 DE concurrent callouts).
+3. Correlation fields students can create: `u_ebond_sf_case_id`, `Snow_Sys_Id__c`.
+4. CI installs pytest. Test fixtures split credential-shaped strings so the secret scan stays clean.
+
 ## Follow-up (future rounds)
 
 - Apply the cross-cutting link plan (`2026-11-16-SWARM/03_DONE/PAGES/link_crosscutting_plan.md`) once the EBOND site is live.

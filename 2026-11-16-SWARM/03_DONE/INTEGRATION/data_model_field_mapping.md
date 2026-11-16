@@ -64,3 +64,14 @@ To avoid duplicate/loop sync:
 - Use **picklist/choice** matching; if a value doesn't map, log it (see best practices).
 - Keep the mapping in one file so every pattern and the POC walkthrough reference the same source of truth.
 - For the **field-ownership** and **manual-edit** policies that govern how this mapping is applied in both directions, see `03_DONE/BESTPRACTICES/field_ownership_and_manual_edits.md`.
+
+## PDI correction (round 5)
+
+`x_snc_ebond_sf_case_id` cannot be created on a free PDI. `x_snc_` is a ServiceNow vendor scope prefix, and a PDI cannot publish that scope. The runnable lab uses a global dictionary field instead:
+
+| Side | Runnable field | Replaces |
+|------|----------------|----------|
+| ServiceNow incident | `u_ebond_sf_case_id` | `x_snc_ebond_sf_case_id` |
+| Salesforce Case | `Snow_Sys_Id__c` (External Id, unique) | `x_snc_ebond_sn_incident_id__c` |
+
+Keep the v3 names only if you later own a scope you can actually create. Do not hard-code `x_snc_ebond`.
