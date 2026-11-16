@@ -25,12 +25,17 @@ permalink: /labs/02-salesforce-to-snow/
 
 <div class="eli5">
 <span class="label">ELI5</span>
-<p>Create a Case. Salesforce calls ServiceNow after the save. An Incident appears, stamped with the Case Id so a second save updates instead of duplicating.</p>
+<p>You create the record in Salesforce. It is a Salesforce Case. You do not create a Case in ServiceNow. After that save, Salesforce calls ServiceNow, and ServiceNow creates an Incident. The Incident is stamped with the Salesforce Case Id, so a second save updates that same Incident instead of making another one.</p>
 </div>
+
+| You create this | In this system | It is not |
+|-----------------|----------------|-----------|
+| Case | Salesforce | a ServiceNow record |
+| Incident | ServiceNow, created by the call | something you type in by hand in this lab |
 
 ## Objective {#objective}
 
-A Case insert creates or updates one Incident. The Incident field `u_ebond_sf_case_id` equals the Case Id.
+A Salesforce Case insert creates or updates one ServiceNow Incident. The Incident field `u_ebond_sf_case_id` equals that Salesforce Case Id.
 
 ## ServiceNow fields {#fields-sn}
 
@@ -69,7 +74,7 @@ Use this if you do not want to deploy code.
 3. Action → **Create HTTP Callout**. Named Credential `EBOND_ServiceNow`. Method POST. URL path `/api/now/table/incident`.
 4. Body maps `Subject` → `short_description`, `Description` → `description`, and a formula or the Case Id → `u_ebond_sf_case_id`. Also send `u_sync_source` = `salesforce`.
 5. Save the returned `sys_id` into `Snow_Sys_Id__c` and `number` into `Snow_Number__c` with an Update Records element. Set `Snow_Sync_Source__c` to `salesforce`.
-6. Activate. Create a Case. Subject is required.
+6. Activate. In Salesforce, create a Case. Subject is required. Do not create an Incident yourself.
 
 ## Apex path {#apex}
 
@@ -92,9 +97,9 @@ The callout endpoint is `callout:EBOND_ServiceNow/api/now/table/incident`. The N
 ## Prove it {#prove}
 
 <ul class="check">
-<li>New Case, subject filled in.</li>
-<li>Within a minute, Incident list shows that subject.</li>
-<li>Incident <code>u_ebond_sf_case_id</code> equals the Case Id (15 or 18 characters).</li>
-<li>Case <code>Snow_Number__c</code> shows the INC number.</li>
-<li>Create the same Case again only if you are testing update: a second push must not create a second Incident.</li>
+<li>New Salesforce Case, subject filled in. You created this one.</li>
+<li>Within a minute, the ServiceNow Incident list shows that subject. ServiceNow created this one.</li>
+<li>ServiceNow Incident <code>u_ebond_sf_case_id</code> equals the Salesforce Case Id (15 or 18 characters).</li>
+<li>Salesforce Case <code>Snow_Number__c</code> shows the INC number.</li>
+<li>Save that same Salesforce Case again only if you are testing update. A second push must not create a second ServiceNow Incident.</li>
 </ul>
