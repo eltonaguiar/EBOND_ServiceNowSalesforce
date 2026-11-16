@@ -48,11 +48,30 @@ ServiceNow already has the integration fields. Incident inherits them from Task.
 
 A custom column is normal only when `correlation_id` is already taken, or when you need your own unique index so one Case cannot create two Incidents. This lab is that situation. We add `u_ebond_sf_case_id` instead of overwriting `correlation_id`.
 
-1. Filter: **System Definition > Tables**, open **Incident**.
-2. Add a string column **EBOND SF Case Id**, column name `u_ebond_sf_case_id`, length 18. This is the stand-in. It is not a second copy of `correlation_id` for fun.
-3. Add a string column **Sync source**, column name `u_sync_source`, length 20. This one is also custom. It is the loop guard, not the external id.
+Two ways to open the Incident table. Either one is fine.
 
-You cannot create `x_snc_ebond_sf_case_id` on a free PDI. `x_snc_` is ServiceNow's own scope prefix.
+- Filter navigator: **System Definition > Tables**, open **Incident**.
+- From an Incident form: the menu (three lines, top left of the form) → **Configure > Table**. That is the path used in this run. The form then says the table is in the **Global** application and extends **Task**.
+
+On the Columns related list, click **New**.
+
+1. Table `Incident [incident]`. Type **String**.
+2. Column label **EBOND SF Case Id**. Column name `u_ebond_sf_case_id`. Max length 18. This is the stand-in. It is not a second copy of `correlation_id` for fun.
+3. Repeat for **Sync source**, column name `u_sync_source`, length 20. That one is the loop guard, not the external id.
+
+### Why `x_snc_` is rejected
+
+`x_snc_ebond_sf_case_id` is not a field you are allowed to invent.
+
+ServiceNow splits names by who owns the application:
+
+| Prefix | Who owns it | Example |
+|--------|-------------|---------|
+| none, or `u_` | Global scope. `u_` is the prefix for a custom field you add in Global. | `u_ebond_sf_case_id` |
+| `x_<company>_<app>_` | A scoped app created by that company. The company code is theirs. | `x_acme_bond_case_id` |
+| `x_snc_` | ServiceNow. `snc` is ServiceNow's own company code. | a field inside a ServiceNow Store app |
+
+The platform blocks `x_snc_` so a PDI cannot create a column that looks like it belongs to a ServiceNow product. If it allowed that, an update of a real ServiceNow app could collide with your column, and other instances would treat your field as if ServiceNow had shipped it. Your company code is not `snc`, so you cannot mint that prefix. Use `u_`.
 
 ## Salesforce fields {#fields-sf}
 
