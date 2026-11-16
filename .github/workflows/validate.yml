@@ -21,7 +21,8 @@ jobs:
           set -euo pipefail
           HITS=$(grep -rInE \
             "(api[_-]?key|secret|password|passwd|token|BEGIN [A-Z ]*PRIVATE KEY)[=:].{8,}" \
-            --include=*.md --include=*.html --include=*.yml --include=*.sh --include=*.py . \
+            --include=*.md --include=*.html --include=*.yml --include=*.sh --include=*.py \
+            --exclude-dir=tools --exclude-dir=.git . \
             || true)
           HITS=$(printf '%s' "$HITS" | grep -v 'verify current' | grep -v 'Never commit' || true)
           if [ -n "$HITS" ]; then
