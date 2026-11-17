@@ -220,7 +220,13 @@ Use this only if you picked Flow above.
 
    ![Filled method and path]({{ '/assets/img/02-http-callout-path-filled.png' | relative_url }})
 
-   Third screen, Sample JSON Request. Paste the block below, click **Review**, then **Next**. These are sample values so Salesforce learns the field names. They are not the live Case.
+   Third screen, Sample JSON Request. These are sample values so Salesforce learns the field names. They are not the live Case. Do these clicks in order. Review does not advance the page. Next is a separate button at the bottom right, and it does not count until Review has succeeded.
+
+   1. Leave Description blank.
+   2. Paste the JSON into Sample JSON Request.
+   3. Click **Review**. The text may be red before this. That is normal.
+   4. Wait until Data Structure on the right lists the six fields. If it still says No sample JSON, Review did not run.
+   5. Click **Next**.
 
    ![Sample JSON Request screen]({{ '/assets/img/02-http-callout-json.png' | relative_url }})
 
