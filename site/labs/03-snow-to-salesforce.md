@@ -131,10 +131,11 @@ The spoke matches the Case by <strong><code>Snow_Sys_Id__c</code> = Incident <co
 
 <details id="optB">
 <summary><strong>1.1B — Integration platform / iPaaS connector</strong> (no-code)</summary>
-<p>Use a visual integration platform that ships prebuilt ServiceNow ⇄ Salesforce connectors, so no scripting or custom endpoint code is involved. Examples: Workato, Tray.io, Zapier, Automate.io, or Dell Boomi.</p>
+<p><strong>System:</strong> this option runs on a <strong>third-party integration platform</strong> (not in ServiceNow or Salesforce). It hosts the connector that talks to both systems, so you do not build REST Messages or business rules in ServiceNow at all.</p>
+<p><strong>How to get there:</strong> sign in to your chosen platform (e.g. Workato, Tray.io, Zapier, Automate.io, Dell Boomi) and create a new recipe/integration that connects your ServiceNow instance and your Salesforce org.</p>
 <ul>
-<li>You configure a trigger (Incident updated) and a field mapping in a UI; the platform handles auth and the call.</li>
-<li>No REST Message and no business rule in ServiceNow.</li>
+<li>You configure a trigger (<strong>Incident updated</strong>, filtered to where <code>u_ebond_sf_case_id</code> is not empty) and a field mapping in a UI; the platform handles auth and the call.</li>
+<li>You connect the platform to both systems using their credentials — ServiceNow's <code>u_ebond_sf_case_id</code> user and the Salesforce External Client App from Section 2.</li>
 <li>Trade-offs: adds a third system and a license, and you still register credentials on both ends (including the External Client App in Section 2).</li>
 <li><strong>Then:</strong> skip Sections 3 and 4 and go to Section 5, Prove it.</li>
 </ul>
@@ -150,13 +151,17 @@ The spoke matches the Case by <strong><code>Snow_Sys_Id__c</code> = Incident <co
 
 ## 2. External Client App <span class="req">[R]</span> {#eca}
 
-<p>Do this in Salesforce. Do not create a Connected App. This step is required for every path in Section 1.</p>
+<p><strong>System:</strong> this step is done <strong>in Salesforce</strong>. Do not create a Connected App. This step is required for every path in Section 1.</p>
 
-1. Setup → **External Client App Manager** → New.
-2. Distribution **Local**. Enable OAuth.
-3. For a server-to-server lab, enable **Client Credentials**. Assign an integration user who has API access and edit rights on Case. Callback URL can be a placeholder for this flow.
-4. Policies → Permitted Users → **Admin approved users are pre-authorized**. Assign a permission set to that user.
-5. Open **Consumer Key and Secret**. Those are the client id and client secret. They stay in ServiceNow's credential record, not in a file.
+<p><strong>How to get there:</strong> in Salesforce, click the <strong>gear icon (Setup)</strong> at the top-right, type <strong>App Manager</strong> in the Quick Find box, then open <strong>External Client App Manager</strong> and click <strong>New</strong>.</p>
+
+<ol>
+<li><strong>Distribution:</strong> choose <strong>Local</strong>. Enable <strong>OAuth</strong>.</li>
+<li>For a server-to-server lab, enable <strong>Client Credentials</strong>.</li>
+<li><strong>Assign an integration user</strong> — a Salesforce user who has API access and edit rights on Case. This is the identity ServiceNow will act as. Callback URL can be a placeholder for this flow.</li>
+<li><strong>Policies → Permitted Users:</strong> choose <strong>Admin approved users are pre-authorized</strong>, then assign a permission set to that integration user (so they can actually use the app).</li>
+<li><strong>Open Consumer Key and Secret.</strong> Those are the client id and client secret. They stay in ServiceNow's credential record (Section 3/4), not in a file.</li>
+</ol>
 
 Token URL (My Domain only):
 
@@ -166,11 +171,16 @@ https://YOUR_DOMAIN.my.salesforce.com/services/oauth2/token
 
 `login.salesforce.com` does not work for client credentials.
 
+<ul class="check">
+<li><strong>Check:</strong> you wrote down the <code>Consumer Key</code> and <code>Consumer Secret</code> (or know where they are) — you will need them in ServiceNow.</li>
+<li><strong>Check:</strong> the integration user is set as an Admin-approved pre-authorized user, and that user has API access and edit rights on Case.</li>
+</ul>
+
 ## 3. REST Message <span class="req">[R · C]</span> {#rest}
 
-<p>Only for path <strong>1.1C</strong> (coded). If you chose 1.1A or 1.1B, skip to Section 5.</p>
+<p><strong>System:</strong> this step is done <strong>in ServiceNow</strong> (the PDI). Only for path <strong>1.1C</strong> (coded). If you chose 1.1A or 1.1B, skip to Section 5.</p>
 
-In the PDI: **System Web Services > Outbound > REST Message** → New.
+<p><strong>How to get there:</strong> in your ServiceNow instance, open the left navigation menu (the "All" menu, top-left) and go to <strong>System Web Services → Outbound → REST Message</strong>, then click <strong>New</strong>.</p>
 
 | Field | Value |
 |-------|-------|
@@ -178,7 +188,7 @@ In the PDI: **System Web Services > Outbound > REST Message** → New.
 | Endpoint | `https://YOUR_DOMAIN.my.salesforce.com/services/data/v68.0` |
 | Authentication | OAuth 2.0, profile pointed at the token URL above |
 
-HTTP method:
+<p>On the REST Message record, open the <strong>HTTP Methods</strong> tab and click <strong>New</strong> to create the method:</p>
 
 | Field | Value |
 |-------|-------|
@@ -197,13 +207,20 @@ Body. Do not put `Snow_Sys_Id__c` in the JSON. It is already in the URL.
 }
 ```
 
-Use **Test** on the method with a real `sys_id` from Lab 2 before you automate it. Expect 200.
+<p><strong>Validate the method works before automating it.</strong> Use the <strong>Test</strong> button on the HTTP method with a real <code>sys_id</code> from Lab 2 (the Incident's unique ID) and a real <code>Snow_Sys_Id__c</code> Case link.</p>
+
+<ul class="check">
+<li><strong>Expect HTTP 200.</strong> If you get <strong>404</strong>, the <code>Snow_Sys_Id__c</code> value in the URL doesn't match a Case — double-check the Case link. If you get <strong>401</strong>, the OAuth profile/credential is wrong.</li>
+<li><strong>Check the Case actually changed:</strong> open that Case in Salesforce and confirm its Subject/Description reflected the test values you sent.</li>
+</ul>
 
 ## 4. Async business rule <span class="req">[R · C]</span> {#rule}
 
-<p>Only for path <strong>1.1C</strong> (coded). If you chose 1.1A or 1.1B, skip to Section 5.</p>
+<p><strong>System:</strong> this step is done <strong>in ServiceNow</strong> (the PDI). Only for path <strong>1.1C</strong> (coded). If you chose 1.1A or 1.1B, skip to Section 5.</p>
 
-**System Definition > Business Rules** → New. Table `incident`. When **async**. Insert and Update. Filter: `u_ebond_sf_case_id` is not empty.
+<p><strong>How to get there:</strong> in your ServiceNow instance, open the left navigation menu (the "All" menu, top-left) and go to <strong>System Definition → Business Rules</strong>, then click <strong>New</strong>.</p>
+
+<p>Configure the rule: <strong>Table:</strong> <code>incident</code>. <strong>When to run:</strong> <code>async</code>. <strong>Insert and Update</strong>. <strong>Filter (condition):</strong> <code>u_ebond_sf_case_id</code> is not empty.</p>
 
 ```javascript
 (function executeRule(current, previous) {
@@ -226,7 +243,12 @@ Use **Test** on the method with a real `sys_id` from Lab 2 before you automate i
 })(current, previous);
 ```
 
-The first line is the loop guard. Lab 2 set `u_sync_source` to `salesforce`, so the echo of that create does not call Salesforce again.
+<p>The first line is the loop guard. Lab 2 set <code>u_sync_source</code> to <code>salesforce</code>, so the echo of that create does not call Salesforce again.</p>
+
+<ul class="check">
+<li><strong>Check you saved the rule in the right place:</strong> Table = <code>incident</code>, When = <code>async</code>, checked = Insert and Update, Filter set to <code>u_ebond_sf_case_id</code> is not empty.</li>
+<li><strong>Validate it fires:</strong> edit a linked Incident's short description by hand (with <code>u_sync_source</code> blank or <code>servicenow</code>) and confirm the matching Case updates. If nothing happens, open <strong>System Logs → Application Logs</strong> and look for an <code>EBOND patch failed</code> entry — that tells you the rule ran but the call errored.</li>
+</ul>
 
 <div class="note">
 <span class="label">Screenshot</span>
@@ -235,12 +257,17 @@ The first line is the loop guard. Lab 2 set `u_sync_source` to `salesforce`, so 
 
 ## 5. Prove it <span class="req">[R]</span> {#prove}
 
+<p>These checks apply no matter which path you chose. Do them to confirm your integration actually works end-to-end:</p>
+
 <ul class="check">
-<li>REST Message test against a known <code>Snow_Sys_Id__c</code> returns 200, not 404.</li>
-<li>Edit the Incident short description by hand. Set <code>u_sync_source</code> to blank or <code>servicenow</code> first, or the rule will skip.</li>
-<li>The Case subject changes. <code>Snow_Sync_Source__c</code> becomes <code>servicenow</code>.</li>
-<li>No second Case was created.</li>
+<li><strong>Edit the Incident short description by hand.</strong> Set <code>u_sync_source</code> to blank or <code>servicenow</code> first (otherwise the loop guard skips the update), then change the short description and save.</li>
+<li><strong>The matching Case updates.</strong> Open the Salesforce Case linked via <code>u_ebond_sf_case_id</code> and confirm its Subject reflects what you typed on the Incident.</li>
+<li><strong><code>Snow_Sync_Source__c</code> becomes <code>servicenow</code></strong> on the Case.</li>
+<li><strong>No second Case was created.</strong> This integration updates the existing Case — it must not create a duplicate.</li>
+<li><strong>An unlinked Incident is left alone.</strong> Create/edit an Incident with an empty <code>u_ebond_sf_case_id</code>; the integration must ignore it (no call, no change).</li>
 </ul>
+
+<p>If you took the <strong>coded path (1.1C)</strong>, additionally confirm the REST Message test returned <strong>200</strong> (Section 3) and the business rule ran (Section 4). If you took <strong>1.1A</strong> or <strong>1.1B</strong>, verify the same end result (Case updates, no duplicate) through your Flow/spoke or iPaaS run history.</p>
 
 ## 6. Linking existing tickets (bulk) <span class="req">[O]</span> {#bulk}
 
