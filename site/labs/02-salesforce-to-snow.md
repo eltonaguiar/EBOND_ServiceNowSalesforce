@@ -295,7 +295,7 @@ Use this only if you picked Flow above.
    | `{!IncidentBody.u_ebond_sf_case_id}` | `{!$Record.Id}` |
    | `{!IncidentBody.u_sync_source}` | `salesforce` |
 
-   Search `IncidentBody` in the Variable box, then pick the field. Search `$Record` in the Value box for Subject, Description, and Id. Type `2` and `salesforce` as text. Click Done.
+   In the Variable box, search `IncidentBody`. Do not select the whole resource. Click the arrow beside it and pick one field for that row. Selecting the whole `IncidentBody` replaces the box instead of filling a field. Search `$Record` in the Value box for Subject, Description, and Id. Type `2` and `salesforce` as text. Click Done.
 
    ![The plus above Create Incident]({{ '/assets/img/02-assignment-plus-circled.png' | relative_url }})
 5. Save the returned `sys_id` into `Snow_Sys_Id__c` and `number` into `Snow_Number__c` with an Update Records element. Set `Snow_Sync_Source__c` to `salesforce`.
