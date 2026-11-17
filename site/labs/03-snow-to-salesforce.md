@@ -12,7 +12,11 @@ permalink: /labs/03-snow-to-salesforce/
   <div>
     <p class="toc-title">On this page</p>
     <ol class="toc-list">
-      <li><a href="#bg">Background <span class="req">[R]</span></a></li>
+      <li><a href="#bg">Background <span class="req">[R]</span></a>
+        <ol class="toc-list">
+          <li><a href="#unlinked">What if an Incident has no <code>u_ebond_sf_case_id</code></a></li>
+        </ol>
+      </li>
       <li><a href="#path">1. Choose your integration path <span class="req">[R]</span></a>
         <ol class="toc-list">
           <li><a href="#optA">1.1A Flow Designer + Salesforce spoke (low-code)</a></li>
@@ -49,9 +53,8 @@ permalink: /labs/03-snow-to-salesforce/
 
 <p>This lab is the return path to Lab 2. In Lab 2 a Salesforce Case created an Incident and stored the Case link on the Incident in <code>u_ebond_sf_case_id</code>. This lab makes a change on the Incident flow back and update that Case. The match key is <code>Snow_Sys_Id__c</code> on the Case.</p>
 
-<div class="note">
-<span class="label">What if an Incident has no u_ebond_sf_case_id</span>
-<h3 id="unlinked">What if an Incident has no <code>u_ebond_sf_case_id</code></h3>
+<details class="note" id="unlinked">
+<summary><strong>What if an Incident has no <code>u_ebond_sf_case_id</code></strong> <em>(tap to open)</em></summary>
 <p><code>u_ebond_sf_case_id</code> is the link between an Incident and a Salesforce Case. It holds the Salesforce record Id (the 18-character <code>500…</code> value) of the Case that created the Incident.</p>
 <ul>
 <li>If the field is <strong>empty</strong>, the Incident is <strong>not linked to Salesforce</strong>. This lab's business rule and the REST call both depend on that field being set, so an empty value means <strong>nothing happens</strong>: ServiceNow will not call Salesforce, and Salesforce has no way to find the owning Case.</li>
@@ -59,7 +62,7 @@ permalink: /labs/03-snow-to-salesforce/
 <li>Every path below guards on this. Unlinked Incidents are simply skipped, never written back.</li>
 </ul>
 <p>So the presence of <code>u_ebond_sf_case_id</code> is the definitive signal of "this Incident belongs to a Salesforce Case." If it is missing, the Incident is independent of Salesforce and will never be written back.</p>
-</div>
+</details>
 
 ## 1. Choose your integration path <span class="req">[R]</span> {#path}
 
@@ -103,14 +106,27 @@ permalink: /labs/03-snow-to-salesforce/
 
 <details id="optA">
 <summary><strong>1.1A — ServiceNow Flow Designer + Salesforce spoke</strong> (low-code, recommended)</summary>
-<p>Replace the REST Message and the JavaScript business rule with a <strong>Flow</strong> built visually in Flow Designer, using IntegrationHub's official <strong>Salesforce spoke</strong> action ("Update Case").</p>
+
+<p><strong>System:</strong> you work <strong>inside ServiceNow</strong> (the PDI), not in Salesforce. You build a <strong>Flow</strong> there that calls Salesforce on your behalf using the External Client App credentials from Section 2.</p>
+
+<p><strong>How to get there:</strong> in your ServiceNow instance, open the left navigation menu (the "All" menu, top-left) and choose <strong>Process Automation → Flows</strong>, then click <strong>New Flow</strong> and pick <strong>Flow for Record</strong>.</p>
+
+<ol>
+<li><strong>Trigger.</strong> In the Flow's trigger step, set the table to <strong>Incident [incident]</strong>, the trigger to <strong>Record created or updated</strong>, and the condition (filter) to <strong><code>u_ebond_sf_case_id</code> is not empty</strong>. This means the Flow only runs for Incidents that are already linked to a Salesforce Case; unlinked ones are ignored (this is the same guard the coded rule uses).</li>
+<li><strong>(Optional but recommended) Loop guard condition.</strong> Add a condition that the Flow also skips when <strong><code>u_sync_source</code> = <code>salesforce</code></strong>. Lab 2 set that value when it created the Incident from Salesforce, so this stop the Flow from "echoing" its own update back to Salesforce forever.</li>
+<li><strong>Action — call Salesforce.</strong> Add an action of type <strong>Salesforce → Update Case</strong> (provided by the Salesforce spoke / IntegrationHub). In this action, choose the External Client App connection (from Section 2) as the credential.</li>
+<li><strong>Map the fields.</strong> Tell the action which Incident value goes into which Case field:
 <ul>
-<li>Trigger: <code>incident</code> record, async, when <code>u_ebond_sf_case_id</code> is not empty (same filter as the coded rule).</li>
-<li>Action: Salesforce spoke → <strong>Update Case</strong>, then map <code>Subject</code>, <code>Description</code>, <code>Snow_Number__c</code>, and <code>Snow_Sync_Source__c</code>.</li>
-<li>The loop guard is a Flow condition (skip when <code>u_sync_source = salesforce</code>) instead of the <code>if</code> in code.</li>
-<li>No hand-written REST Message, no JavaScript. The credentials still come from the External Client App (Section 2).</li>
-<li><strong>Then:</strong> skip Sections 3 and 4 (they are the coded path) and go to Section 5, Prove it.</li>
+<li>Case <strong>Subject</strong> ← Incident <strong>short_description</strong></li>
+<li>Case <strong>Description</strong> ← Incident <strong>description</strong></li>
+<li>Case <strong>Snow_Number__c</strong> ← Incident <strong>number</strong></li>
+<li>Case <strong>Snow_Sync_Source__c</strong> ← the fixed text <strong>servicenow</strong></li>
 </ul>
+The spoke matches the Case by <strong><code>Snow_Sys_Id__c</code> = Incident <code>u_ebond_sf_case_id</code></strong> — the reverse of the match key.</li>
+<li><strong>Save, activate, and test.</strong> Save and activate the Flow, then edit an Incident's short description by hand (with <code>u_sync_source</code> blank or <code>servicenow</code>) and confirm the matching Case updates.</li>
+</ol>
+
+<p><strong>Then:</strong> you are done — skip Sections 3 and 4 (they are the coded path) and go to Section 5, Prove it.</p>
 </details>
 
 <details id="optB">
