@@ -125,10 +125,14 @@ permalink: /labs/03-snow-to-salesforce/
 
 <details id="optC">
 <summary><strong>1.1C — Coded REST Message + business rule</strong> (recommended for this lab)</summary>
-<p>This is the fully coded path that Sections 3 and 4 document: a hand-written <strong>REST Message</strong> and an <strong>async business rule</strong> in JavaScript that PATCHes the Case. It is the recommended path here because it works on a free PDI without extra licensing (the spoke is not available on a PDI).</p>
-<ul>
-<li><strong>Use this path:</strong> follow Sections 3 and 4, then Section 5, Prove it.</li>
-</ul>
+<p>This is the fully coded path: a hand-written <strong>REST Message</strong> and an <strong>async business rule</strong> in JavaScript that PATCHes the Case. It is the recommended path here because it works on a free PDI without extra licensing (the spoke is not available on a PDI).</p>
+<p><strong>Order of work — it spans both systems:</strong></p>
+<ol>
+<li><strong>Section 2 — External Client App</strong> (do this first, <strong>in Salesforce</strong>): create the OAuth client-credentials app.</li>
+<li><strong>Section 3 — REST Message</strong> (<strong>in ServiceNow</strong>): configure the outbound REST message and its PATCH method.</li>
+<li><strong>Section 4 — Async business rule</strong> (<strong>in ServiceNow</strong>): add the JavaScript rule to call it.</li>
+<li><strong>Section 5 — Prove it.</strong></li>
+</ol>
 </details>
 
 ## 2. External Client App <span class="req">[R]</span> {#eca}
