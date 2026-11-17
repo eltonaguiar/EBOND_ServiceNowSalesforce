@@ -65,8 +65,8 @@ permalink: /labs/03-snow-to-salesforce/
 
 <p>Three ways exist to make ServiceNow update Salesforce. They all need the same OAuth setup in Section 2, but they differ in how much code you write. Pick <strong>one</strong>, then follow only that subsection below (1.1A, 1.1B, or 1.1C).</p>
 
-<div class="note">
-<span class="label">Which one to pick — realistic guidance</span>
+<details class="note">
+<summary><strong>Which one to pick — realistic guidance</strong> <em>(tap to open)</em></summary>
 
 <h4>What this lab was originally for</h4>
 <p>This lab is a <strong>teaching integration</strong>: one field-mapping direction (Incident → Case), one trigger (Incident created/updated), one sync rule, and a small fixed set of fields. It is deliberately simple so you can see the mechanics of an OAuth client-credentials call, a REST message, and a business-rule guard — not because a production fleet should be built this way.</p>
@@ -99,7 +99,7 @@ permalink: /labs/03-snow-to-salesforce/
 <li>Try <strong>1.1A</strong> (Flow + spoke) if you want to see how the same result is achieved declaratively — and how a Flow replaces the JavaScript, making the logic visible to admins instead of locked in a script.</li>
 <li>Try <strong>1.1B</strong> (iPaaS) if you want to see a third-party connector hide all the auth and REST details, and learn how field mapping moves out of code into a UI.</li>
 </ul>
-</div>
+</details>
 
 <details id="optA">
 <summary><strong>1.1A — ServiceNow Flow Designer + Salesforce spoke</strong> (low-code, recommended)</summary>
