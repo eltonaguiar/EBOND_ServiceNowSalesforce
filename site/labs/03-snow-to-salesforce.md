@@ -13,6 +13,7 @@ permalink: /labs/03-snow-to-salesforce/
     <p class="toc-title">On this page</p>
     <ol class="toc-list">
       <li><a href="#objective">Objective</a></li>
+      <li><a href="#unlinked">What if an Incident has no <code>u_ebond_sf_case_id</code></a></li>
       <li><a href="#eca">External Client App</a></li>
       <li><a href="#rest">REST Message</a></li>
       <li><a href="#rule">Async business rule</a></li>
@@ -34,7 +35,7 @@ Changing an Incident that already has `u_ebond_sf_case_id` updates the matching 
 <div class="note">
 <span class="label">Unlinked Incidents</span>
 
-### What if an Incident has no `u_ebond_sf_case_id`
+### What if an Incident has no `u_ebond_sf_case_id` {#unlinked}
 
 `u_ebond_sf_case_id` is the link between an Incident and a Salesforce Case. It holds the Salesforce record Id (the 18-character `500…` value) of the Case that created the Incident.
 
