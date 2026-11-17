@@ -25,6 +25,7 @@ permalink: /labs/03-snow-to-salesforce/
       <li><a href="#rule">4. Async business rule <span class="req">[R · C]</span></a></li>
       <li><a href="#prove">5. Prove it <span class="req">[R]</span></a></li>
       <li><a href="#bulk">6. Linking existing tickets (bulk) <span class="req">[O]</span></a></li>
+      <li><a href="#notes">7. Post-lab notes <span class="req">[O]</span></a></li>
     </ol>
   </div>
 </nav>
@@ -235,3 +236,24 @@ An un-scoped link of <em>all</em> Incidents is usually wrong: many are unrelated
 </ol>
 <p>Reminder: creating a link does not create a duplicate Case. It only connects the two existing records. Keep the loop guard (<code>u_sync_source</code>) in mind so a bulk link does not trigger a write-back loop.</p>
 </details>
+
+## 7. Post-lab notes {#notes} <span class="req">[O]</span>
+
+<p>Practical notes for going beyond the lab. These apply whichever path you chose in Section 1. The recurring theme: the integration only acts on Incidents that are <em>meant</em> to be linked, and you keep that "who is eligible" decision explicit so it is easy to audit and change.</p>
+
+<h4>Keeping certain tickets out of the integration (e.g. confidential)</h4>
+<p>Say some Incidents are highly confidential or, for a business reason, will never be associated to a Case. You do not want them ebonded at all — no link written, no call to Salesforce. The clean way is to stop them <strong>before</strong> anything negotiates, not to delete a link afterward. Pick one of these depending on your path:</p>
+<ul>
+<li><strong>1.1C (coded):</strong> add an exclusion to the business-rule <em>filter</em> (the query on the rule), not just to the script body. For example a filter like <code>u_ebond_sf_case_id ISNOTEMPTY AND category != 'confidential'</code> — or add a first check in the script that returns early for the excluded set. Filtering at the rule level means the script never even runs for excluded rows.</li>
+<li><strong>1.1A (Flow + spoke):</strong> add the same condition to the Flow's <em>trigger</em> or an entry condition, e.g. <code>category != 'confidential'</code> (and, as in the lab, <code>u_ebond_sf_case_id</code> is not empty). Excluded Incidents never start the Flow.</li>
+<li><strong>1.1B (iPaaS):</strong> set an exclusion filter on the connector's trigger/recipe (e.g. "only when category is not confidential"), so the platform never fetches or forwards those records.</li>
+</ul>
+<p>Common exclusion keys: a <code>category</code> or <code>assignment_group</code> value, a confidentiality/security flag field, records created by a specific source, or a specific list of <code>sys_id</code>s. Whatever you use, the important thing is that <strong>the rule lives in one obvious place</strong> and is versioned — so a reviewer can see exactly which tickets are exempt and why.</p>
+
+<h4>Auditing and safeguarding</h4>
+<ul>
+<li>Log every decision: record when a link is written or skipped, with the reason (e.g. "excluded: category=confidential"). A simple <code>gs.log</code> or flow log line makes incidents reviewable.</li>
+<li>Never overwrite an existing <code>u_ebond_sf_case_id</code> blindly. If a ticket is already linked, decide whether a re-link is intended before writing over it.</li>
+<li>Keep credentials out of repos and screenshots. The External Client App consumer secret and the ServiceNow basic-auth password never belong in code or in a committed image.</li>
+<li>Test exclusions explicitly: create a confidential Incident, confirm the integration leaves it untouched (no link, no call, no log of a write).</li>
+</ul>
