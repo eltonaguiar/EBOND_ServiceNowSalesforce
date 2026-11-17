@@ -176,9 +176,20 @@ Open the permission set. In the settings list, click **External Credential Princ
    Save.
 6. You do not also need a Remote Site Setting for that host.
 
+## Pick one path {#pick}
+
+Do not do both. Two paths would both create an Incident for the same Case.
+
+| Path | Do this if | Skip |
+|------|------------|------|
+| Flow | You do not want to install code. Click-only. | The Apex section. |
+| Apex | You want the repo code, or the Flow HTTP action is missing. | The Flow section. |
+
+The Named Credential above is required for either path. After you finish one path, create a new Case and check ServiceNow. That is the proof. The other path is optional reading, not a second setup.
+
 ## Flow path (no Apex) {#flow}
 
-Use this if you do not want to deploy code.
+Use this only if you picked Flow above.
 
 1. Setup → **Flows** → New → **Record-Triggered Flow**. Object **Case**. Trigger **A record is created**. Optimize for **Actions and Related Records**.
 2. On the flow, open **Add Asynchronous Path** (or the path that runs after the save commits). Do not put the HTTP call on the immediate after-save path. That path still has uncommitted work and the callout fails.
