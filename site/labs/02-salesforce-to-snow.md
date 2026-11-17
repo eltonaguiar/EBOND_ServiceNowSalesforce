@@ -218,7 +218,11 @@ Use this only if you picked Flow above.
    - Set Query Parameter Keys: do not click Add Key.
    - Click Next.
 
+   ![Filled method and path]({{ '/assets/img/02-http-callout-path-filled.png' | relative_url }})
+
    Third screen, Sample JSON Request. Paste the block below, click **Review**, then **Next**. These are sample values so Salesforce learns the field names. They are not the live Case.
+
+   ![Sample JSON Request screen]({{ '/assets/img/02-http-callout-json.png' | relative_url }})
 
    ```json
    {
