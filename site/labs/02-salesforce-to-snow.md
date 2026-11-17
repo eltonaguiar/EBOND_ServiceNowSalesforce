@@ -200,7 +200,7 @@ The Named Credential above is required for either path. After you finish one pat
 
 Use this only if you picked Flow above.
 
-1. Setup → **Flows** → New → **Record-Triggered Flow**. Object **Case**. Trigger **A record is created**. Optimize for **Actions and Related Records**.
+1. Setup → Quick Find `flows`. Open **Flows** under Process Automation. Click **New Flow** at the top right. Do not click Flow Trigger Explorer, and do not open an existing row such as Add Case Comment. Choose **Record-Triggered Flow**. Object **Case**. Trigger **A record is created**. Optimize for **Actions and Related Records**.
 2. On the flow, open **Add Asynchronous Path** (or the path that runs after the save commits). Do not put the HTTP call on the immediate after-save path. That path still has uncommitted work and the callout fails.
 3. Action → **Create HTTP Callout**. Named Credential `EBOND_ServiceNow`. Method POST. URL path `/api/now/table/incident`.
 4. Body maps `Subject` → `short_description`, `Description` → `description`, and a formula or the Case Id → `u_ebond_sf_case_id`. Also send `u_sync_source` = `salesforce`.
