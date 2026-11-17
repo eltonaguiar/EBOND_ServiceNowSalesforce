@@ -121,36 +121,65 @@ permalink: /labs/03-snow-to-salesforce/
 
 ## 2. External Client App <span class="req">[R]</span> {#eca}
 
-<p><strong>System:</strong> this step is done <strong>in Salesforce</strong>. Do not create a Connected App. This step is required for every path in Section 1.</p>
+<p><strong>System:</strong> this step is done <strong>in Salesforce</strong>. It is required for every path in Section 1.</p>
+
+<h4>What is an External Client App, and why do we need it?</h4>
+<p>In Salesforce, an <strong>External Client App</strong> is a registration that says <em>"this outside system is allowed to talk to my Salesforce org"</em>. It is the mechanism that gives ServiceNow a <strong>client id + client secret</strong> and an allowed way to authenticate (here, OAuth client credentials). Think of it as issuing a badge to ServiceNow so it can use Salesforce's API.</p>
+<ul>
+<li>It is <strong>not</strong> a piece of data or a record — it is a permission,identity registration,li>
+<li>It is used for <strong>both directions of data exchange</strong>: it authenticates API calls that <strong>read from</strong> Salesforce, <strong>write to</strong> Salesforce, or both. In this lab it lets ServiceNow <strong>update (write to)</strong> existing Cases.</li>
+<li>Every path in Section 1 uses this same app for its Salesforce connection.</li>
+</ul>
+<p><strong>When to use this kind of setup:</strong> whenever a server-side system (not a human) needs to call Salesforce's API automatically — e.g. ServiceNow updating Cases, a batch job syncing records, or an external portal reading data. If instead a <em>human</em> signs in through a browser, you would use a different flow (Authorization Code / PKCE), not client credentials.</p>
 
 <p><strong>How to get there:</strong> in Salesforce, click the <strong>gear icon (Setup)</strong> at the top-right, type <strong>App Manager</strong> in the Quick Find box, then open <strong>External Client App Manager</strong> and click <strong>New</strong>.</p>
 
+<h4>Steps (Salesforce)</h4>
 <ol>
-<li><strong>Distribution:</strong> choose <strong>Local</strong>. Enable <strong>OAuth</strong>.</li>
-<li>For a server-to-server lab, enable <strong>Client Credentials</strong>.</li>
-<li><strong>Assign an integration user</strong> — a Salesforce user who has API access and edit rights on Case. This is the identity ServiceNow will act as. Callback URL can be a placeholder for this flow.</li>
-<li><strong>Policies → Permitted Users:</strong> choose <strong>Admin approved users are pre-authorized</strong>, then assign a permission set to that integration user (so they can actually use the app).</li>
-<li><strong>Open Consumer Key and Secret.</strong> Those are the client id and client secret. They stay in ServiceNow's credential record (Section 3/4), not in a file.</li>
+<li><strong>Salesforce — Distribution:</strong> choose <strong>Local</strong>. Enable <strong>OAuth</strong>.</li>
+<li><strong>Salesforce — Client Credentials:</strong> for a server-to-server lab, enable <strong>Client Credentials</strong>. This is the machine-to-machine login we use here.</li>
+<li><strong>Salesforce — Assign an integration user:</strong> pick a Salesforce user who has API access and edit rights on Case. This is the identity ServiceNow will act as. Callback URL can be a placeholder for this flow (not used with client credentials).</li>
+<li><strong>Salesforce — Policies → Permitted Users:</strong> choose <strong>Admin approved users are pre-authorized</strong>, then assign a permission set to that integration user (so they can actually use the app).</li>
+<li><strong>Salesforce — Consumer Key and Secret:</strong> open and write these down. They are the client id and client secret that ServiceNow will use to authenticate. They belong in ServiceNow's credential record (Sections 3/4), not in a file or repo.</li>
 </ol>
 
-Token URL (My Domain only):
+<p><strong>Token URL (My Domain only):</strong></p>
 
 ```text
 https://YOUR_DOMAIN.my.salesforce.com/services/oauth2/token
 ```
 
-`login.salesforce.com` does not work for client credentials.
+<p><code>login.salesforce.com</code> does not work for client credentials.</p>
 
 <ul class="check">
 <li><strong>Check:</strong> you wrote down the <code>Consumer Key</code> and <code>Consumer Secret</code> (or know where they are) — you will need them in ServiceNow.</li>
 <li><strong>Check:</strong> the integration user is set as an Admin-approved pre-authorized user, and that user has API access and edit rights on Case.</li>
 </ul>
 
+<details>
+<summary><strong>Other things you can do here (and when to use them)</strong> <em>(tap to open)</em></summary>
+<ul>
+<li><strong>Connected App instead of External Client App</strong> — use if you need interactive user login (a human signing in via browser). For machine-to-machine (our case), the External Client App with client credentials is the right choice.</li>
+<li><strong>Different OAuth flows</strong> — client credentials (server-to-server, no user) vs Authorization Code / PKCE (user-driven). Use client credentials when no human is involved.</li>
+<li><strong>Scopes / OAuth scopes</strong> — you can limit exactly what the app may do (e.g. only <code>api</code>, only <code>refresh_token</code>). Use the narrowest scope that works.</li>
+<li><strong>IP restrictions / allowed origins</strong> — for production, restrict which IPs may use this app. For a lab, leave unrestricted.</li>
+<li><strong>Multiple integration users</strong> — you can assign more than one user; each becomes a separate identity. Use one for this lab.</li>
+</ul>
+</details>
+
 ## 3. REST Message <span class="req">[R · C]</span> {#rest}
 
 <p><strong>System:</strong> this step is done <strong>in ServiceNow</strong> (the PDI). Only for the coded path (1.1). If you are not using the coded path, skip to Section 5.</p>
 
+<h4>What is a REST Message, and why do we need it?</h4>
+<p>A <strong>REST Message</strong> in ServiceNow is a saved definition of an outbound HTTP call to another system. It stores the <strong>endpoint (URL)</strong>, the <strong>authentication method</strong>, and one or more <strong>HTTP methods</strong> (GET/POST/PATCH/etc.) you want to call. It is how "No code" service-now sends a request to Salesforce's API.</p>
+<p><strong>When to use it:</strong> whenever ServiceNow must call an external REST API and you want that request defined and reusable — especially for <strong>update</strong> (PATCH/PUT), <strong>create</strong> (POST), or <strong>read</strong> (GET). For this lab we need it to <strong>PATCH (update) an existing Case</strong> in Salesforce.</p>
+<p><strong>Why PATCH and not POST or PUT?</strong> PATCH updates <em>only the fields you send</em> on an existing record; POST creates a new record; PUT usually replaces the whole record. We want to change a few fields on an existing Case, so <strong>PATCH</strong> is correct.</p>
+
 <p><strong>How to get there:</strong> in your ServiceNow instance, open the left navigation menu (the "All" menu, top-left) and go to <strong>System Web Services → Outbound → REST Message</strong>, then click <strong>New</strong>.</p>
+
+<h4>Step 1 — define the REST Message (ServiceNow)</h4>
+<p><strong>ServiceNow —</strong> create the REST Message record:</p>
 
 | Field | Value |
 |-------|-------|
@@ -158,7 +187,8 @@ https://YOUR_DOMAIN.my.salesforce.com/services/oauth2/token
 | Endpoint | `https://YOUR_DOMAIN.my.salesforce.com/services/data/v68.0` |
 | Authentication | OAuth 2.0, profile pointed at the token URL above |
 
-<p>On the REST Message record, open the <strong>HTTP Methods</strong> tab and click <strong>New</strong> to create the method:</p>
+<h4>Step 2 — define the HTTP method (ServiceNow)</h4>
+<p><strong>ServiceNow —</strong> on the REST Message record, open the <strong>HTTP Methods</strong> tab and click <strong>New</strong>:</p>
 
 | Field | Value |
 |-------|-------|
@@ -166,7 +196,10 @@ https://YOUR_DOMAIN.my.salesforce.com/services/oauth2/token
 | HTTP method | PATCH |
 | Endpoint | `https://YOUR_DOMAIN.my.salesforce.com/services/data/v68.0/sobjects/Case/Snow_Sys_Id__c/${snow_sys_id}` |
 
-Body. Do not put `Snow_Sys_Id__c` in the JSON. It is already in the URL.
+<p><strong>Why this endpoint works:</strong> the URL uses Salesforce's <strong>external-ID update</strong> form (<code>/sobjects/Case/{fieldName}/{fieldValue}</code>). This works <em>only</em> because <code>Snow_Sys_Id__c</code> was marked <strong>External ID</strong> (and Unique) on the Case in Lab 2. If it were a normal field, this URL would not resolve — you would instead have to use the Case's Salesforce record Id (<code>/sobjects/Case/{id}</code>).</p>
+
+<h4>Step 3 — set the request body (ServiceNow)</h4>
+<p><strong>ServiceNow —</strong> set the body. Do not put <code>Snow_Sys_Id__c</code> in the JSON — it is already in the URL as the external-ID lookup key.</p>
 
 ```json
 {
@@ -177,20 +210,48 @@ Body. Do not put `Snow_Sys_Id__c` in the JSON. It is already in the URL.
 }
 ```
 
-<p><strong>Validate the method works before automating it.</strong> Use the <strong>Test</strong> button on the HTTP method with a real <code>sys_id</code> from Lab 2 (the Incident's unique ID) and a real <code>Snow_Sys_Id__c</code> Case link.</p>
+<h4>Step 4 — validate the method (ServiceNow + Salesforce)</h4>
+<p><strong>ServiceNow —</strong> use the <strong>Test</strong> button on the HTTP method with a real <code>sys_id</code> from Lab 2 (the Incident's unique ID) and a real <code>Snow_Sys_Id__c</code> Case link.</p>
 
 <ul class="check">
 <li><strong>Expect HTTP 200.</strong> If you get <strong>404</strong>, the <code>Snow_Sys_Id__c</code> value in the URL doesn't match a Case — double-check the Case link. If you get <strong>401</strong>, the OAuth profile/credential is wrong.</li>
-<li><strong>Check the Case actually changed:</strong> open that Case in Salesforce and confirm its Subject/Description reflected the test values you sent.</li>
+<li><strong>Salesforce — Check the Case actually changed:</strong> open that Case in Salesforce and confirm its Subject/Description reflected the test values you sent.</li>
 </ul>
+
+<details>
+<summary><strong>Other HTTP methods and when to use them</strong> <em>(tap to open)</em></summary>
+<ul>
+<li><strong>GET</strong> — read data from Salesforce. Use to look up a Case or record before updating.</li>
+<li><strong>POST</strong> — create a new record (e.g. a new Case or Incident). Used in Lab 2's direction.</li>
+<li><strong>PATCH</strong> — update some fields on an existing record (what this lab uses).</li>
+<li><strong>PUT</strong> — replace a whole record. Use only when you are sending every field; risky for partial updates.</li>
+<li><strong>DELETE</strong> — remove a record. Use sparingly; often better to change a status field instead of deleting.</li>
+<li><strong>Query / search</strong> — use GET on a SOQL query to find records by criteria.</li>
+</ul>
+</details>
 
 ## 4. Async business rule <span class="req">[R · C]</span> {#rule}
 
 <p><strong>System:</strong> this step is done <strong>in ServiceNow</strong> (the PDI). Only for the coded path (1.1). If you are not using the coded path, skip to Section 5.</p>
 
+<h4>What is a business rule, and why do we need it?</h4>
+<p>A <strong>business rule</strong> in ServiceNow is a script that runs automatically when a record is inserted, updated, deleted, or queried. Here we use one to say: <em>"whenever an Incident changes, call the REST Message from Section 3 to update its linked Salesforce Case."</em> It is the "trigger" that makes the integration automatic.</p>
+<p><strong>When to use a business rule (vs a Flow):</strong> business rules are best for server-side logic that must run reliably on every record change, especially when you need to call a REST message or manipulate data directly. They are JavaScript-based, so they are part of the coded path. (If you wanted a no-code trigger, a Flow would be the alternative — but the Flow spoke isn't available on the free PDI.)</p>
+<p><strong>Why "async":</strong> running the rule asynchronously means it does <em>not</em> block the Incident save — ServiceNow records the change and runs the script in the background. This avoids slowing down the user and is safer for outbound calls. The filter ensures the rule only runs for Incidents that are linked to a Case.</p>
+
 <p><strong>How to get there:</strong> in your ServiceNow instance, open the left navigation menu (the "All" menu, top-left) and go to <strong>System Definition → Business Rules</strong>, then click <strong>New</strong>.</p>
 
-<p>Configure the rule: <strong>Table:</strong> <code>incident</code>. <strong>When to run:</strong> <code>async</code>. <strong>Insert and Update</strong>. <strong>Filter (condition):</strong> <code>u_ebond_sf_case_id</code> is not empty.</p>
+<h4>Step 1 — configure the rule (ServiceNow)</h4>
+<p><strong>ServiceNow —</strong> set the rule's basics:</p>
+<ul>
+<li><strong>Table:</strong> <code>incident</code></li>
+<li><strong>When to run:</strong> <code>async</code></li>
+<li><strong>Advanced:</strong> check <strong>Insert</strong> and <strong>Update</strong></li>
+<li><strong>Filter (condition):</strong> <code>u_ebond_sf_case_id</code> is not empty — so the rule only runs for linked Incidents.</li>
+</ul>
+
+<h4>Step 2 — add the script (ServiceNow)</h4>
+<p><strong>ServiceNow —</strong> paste this into the rule's <strong>Script</strong> field:</p>
 
 ```javascript
 (function executeRule(current, previous) {
@@ -213,12 +274,25 @@ Body. Do not put `Snow_Sys_Id__c` in the JSON. It is already in the URL.
 })(current, previous);
 ```
 
-<p>The first line is the loop guard. Lab 2 set <code>u_sync_source</code> to <code>salesforce</code>, so the echo of that create does not call Salesforce again.</p>
+<p><strong>What the script does:</strong> the first two lines are <strong>guards</strong> — they stop the rule if the Incident came from Salesforce (<code>u_sync_source = salesforce</code>, i.e. our Lab 2 echo, so we don't call back) or has no Case link. Then it calls the <code>patch_case</code> REST message, passing the Incident's <code>sys_id</code> (to find the Case) and the values to write. A non-2xx response logs <code>EBOND patch failed</code>.</p>
 
+<h4>Step 3 — validate the rule fires (ServiceNow + Salesforce)</h4>
 <ul class="check">
-<li><strong>Check you saved the rule in the right place:</strong> Table = <code>incident</code>, When = <code>async</code>, checked = Insert and Update, Filter set to <code>u_ebond_sf_case_id</code> is not empty.</li>
-<li><strong>Validate it fires:</strong> edit a linked Incident's short description by hand (with <code>u_sync_source</code> blank or <code>servicenow</code>) and confirm the matching Case updates. If nothing happens, open <strong>System Logs → Application Logs</strong> and look for an <code>EBOND patch failed</code> entry — that tells you the rule ran but the call errored.</li>
+<li><strong>ServiceNow — Check the rule config:</strong> Table = <code>incident</code>, When = <code>async</code>, checked = Insert and Update, Filter set to <code>u_ebond_sf_case_id</code> is not empty.</li>
+<li><strong>ServiceNow — Test it fires:</strong> edit a linked Incident's short description by hand (with <code>u_sync_source</code> blank or <code>servicenow</code>) and save. If nothing happens, open <strong>System Logs → Application Logs</strong> and look for an <code>EBOND patch failed</code> entry — that tells you the rule ran but the call errored.</li>
+<li><strong>Salesforce — Confirm the Case updated:</strong> open the linked Case and check its Subject/Description changed.</li>
 </ul>
+
+<details>
+<summary><strong>When to use a business rule vs a Flow, and other trigger options</strong> <em>(tap to open)</em></summary>
+<ul>
+<li><strong>Business rule (async)</strong> — best for server-side, must-run logic on record change; part of the coded path. Use when you need to call a REST message or manipulate data directly.</li>
+<li><strong>Trigger (synchronous)</strong> — runs in the same transaction as the save; good for validation, but slower and can block the save. Avoid for outbound HTTP calls.</li>
+<li><strong>Flow (no-code)</strong> — a visual alternative to a business rule. Use when you want a click-config trigger and you have the license for the spoke/IntegrationHub (not on free PDI).</li>
+<li><strong>Scheduled job</strong> — runs on a timer, not per record. Use for bulk/reconciliation work (see Section 6) rather than per-record updates.</li>
+<li><strong>REST Message call directly</strong> — you can also call the REST message from a Flow or script anywhere; the business rule is just our chosen trigger for "on Incident change".</li>
+</ul>
+</details>
 
 <div class="note">
 <span class="label">Screenshot</span>
