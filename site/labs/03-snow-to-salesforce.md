@@ -31,6 +31,9 @@ permalink: /labs/03-snow-to-salesforce/
 
 Changing an Incident that already has `u_ebond_sf_case_id` updates the matching Case. The match key is `Snow_Sys_Id__c`.
 
+<div class="note">
+<span class="label">Unlinked Incidents</span>
+
 ### What if an Incident has no `u_ebond_sf_case_id`
 
 `u_ebond_sf_case_id` is the link between an Incident and a Salesforce Case. It holds the Salesforce record Id (the 18-character `500…` value) of the Case that created the Incident.
@@ -40,6 +43,7 @@ Changing an Incident that already has `u_ebond_sf_case_id` updates the matching 
 - The async rule guards on this (filter `u_ebond_sf_case_id` is not empty, plus the `if (!current.u_ebond_sf_case_id) return;` check). It only acts on Incidents that have a link. Unlinked Incidents are simply skipped.
 
 So the presence of `u_ebond_sf_case_id` is the definitive signal of "this Incident belongs to a Salesforce Case." If it is missing, the Incident is independent of Salesforce and will never be written back.
+</div>
 
 ## External Client App {#eca}
 
