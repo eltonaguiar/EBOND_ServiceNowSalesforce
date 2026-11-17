@@ -49,6 +49,14 @@ HTTP 201 from `POST /api/now/table/incident`, and a new row on the Incident list
 
 5. Send. Status should be **201**. Copy `result.number` and `result.sys_id`.
 
+<details class="glossary">
+<summary>Send creates a real Incident. The confirm dialog is not a practice mode.</summary>
+<div class="warn">
+<span class="label">Warning</span>
+<p>REST API Explorer <strong>Send</strong> on POST, PUT, PATCH, or DELETE changes the instance. A dialog says <strong>Modifying data, confirm to continue</strong>. OK creates the record. An empty body still creates one. This run made <code>INC0010011</code> and <code>INC0010012</code> with a blank short description. Do this on a personal developer instance, not production.</p>
+</div>
+</details>
+
 <details class="glossary" id="namespace">
 <summary>What the namespace "now" means — and what it is not</summary>
 
