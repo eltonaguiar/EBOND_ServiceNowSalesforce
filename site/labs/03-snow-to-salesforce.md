@@ -167,7 +167,7 @@ https://YOUR_DOMAIN.my.salesforce.com/services/oauth2/token
 </ul>
 </details>
 
-## 3. REST Message <span class="req">[R · C]</span> {#rest}
+<h2 id="rest">3. REST Message <span class="req">[R · C]</span></h2>
 
 <p><strong>System:</strong> this step is done <strong>in ServiceNow</strong> (the PDI). Only for the coded path (1.1). If you are not using the coded path, skip to Section 5.</p>
 
@@ -230,7 +230,7 @@ https://YOUR_DOMAIN.my.salesforce.com/services/oauth2/token
 </ul>
 </details>
 
-## 4. Async business rule <span class="req">[R · C]</span> {#rule}
+<h2 id="rule">4. Async business rule <span class="req">[R · C]</span></h2>
 
 <p><strong>System:</strong> this step is done <strong>in ServiceNow</strong> (the PDI). Only for the coded path (1.1). If you are not using the coded path, skip to Section 5.</p>
 
@@ -299,7 +299,7 @@ https://YOUR_DOMAIN.my.salesforce.com/services/oauth2/token
 <p>Save <code>03-external-client-app.png</code>, <code>03-rest-message-200.png</code>, and <code>03-case-after-update.png</code> into <a href="https://github.com/eltonaguiar/EBOND_ServiceNowSalesforce_RUN/blob/main/README.MD">the run repo</a>. Cover the consumer secret.</p>
 </div>
 
-## 5. Prove it <span class="req">[R]</span> {#prove}
+<h2 id="prove">5. Prove it <span class="req">[R]</span></h2>
 
 <p>These checks apply no matter which path you chose. Do them to confirm your integration actually works end-to-end:</p>
 
@@ -313,7 +313,7 @@ https://YOUR_DOMAIN.my.salesforce.com/services/oauth2/token
 
 <p>If you took the <strong>coded path (1.1)</strong>, additionally confirm the REST Message test returned <strong>200</strong> (Section 3) and the business rule ran (Section 4). If you used the spoke or an iPaaS (Appendix A), verify the same end result (Case updates, no duplicate) through that system's run history.</p>
 
-## 6. Linking existing tickets (bulk) <span class="req">[O]</span> {#bulk}
+<h2 id="bulk">6. Linking existing tickets (bulk) <span class="req">[O]</span></h2>
 
 <details>
 <summary>Rough steps to link existing Salesforce Cases to existing Incidents</summary>
@@ -336,7 +336,7 @@ An un-scoped link of <em>all</em> Incidents is usually wrong: many are unrelated
 <p>Reminder: creating a link does not create a duplicate Case. It only connects the two existing records. Keep the loop guard (<code>u_sync_source</code>) in mind so a bulk link does not trigger a write-back loop.</p>
 </details>
 
-## 7. Post-lab notes <span class="req">[O]</span> {#notes}
+<h2 id="notes">7. Post-lab notes <span class="req">[O]</span></h2>
 
 <details>
 <summary><strong>So it runs — now what? What to keep out, and how to trust it</strong> <em>(tap to open)</em></summary>
@@ -361,7 +361,7 @@ An un-scoped link of <em>all</em> Incidents is usually wrong: many are unrelated
 </ul>
 </details>
 
-## 8. Integration complexity research <span class="req">[O]</span> {#research}
+<h2 id="research">8. Integration complexity research <span class="req">[O]</span></h2>
 
 <details>
 <summary><strong>Integration complexity — OOTB options, the true cost of insert/update/delete, and field authority</strong> <em>(tap to open)</em></summary>
@@ -427,7 +427,7 @@ An un-scoped link of <em>all</em> Incidents is usually wrong: many are unrelated
 </ul>
 </details>
 
-## Appendix A — Alternative integration options {#appendix}
+<h2 id="appendix">Appendix A — Alternative integration options</h2>
 
 <p>Two other ways exist to make ServiceNow update Salesforce. They are not used in this lab — the <strong>Salesforce spoke</strong> is <span class="unavailable">not available on the free PDI</span>, and the <strong>iPaaS</strong> needs a separate third-party platform. They are kept here for reference and for environments where they are available.</p>
 
