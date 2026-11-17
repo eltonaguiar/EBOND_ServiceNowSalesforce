@@ -81,13 +81,17 @@ In Setup, open **Object Manager**. Search `case`. Open the row whose API name is
 
 Do not type `__c` in Field Name. Salesforce adds that suffix. `Snow_Sys_Id__c` fails because the name you typed already contains two underscores in a row. Type `Snow_Sys_Id`. The API name becomes `Snow_Sys_Id__c`.
 
-| Field Label (what you see) | Field Name (what you type) | API name Salesforce creates | Type | Extra |
-|----------------------------|----------------------------|-----------------------------|------|-------|
-| ServiceNow Sys Id | `Snow_Sys_Id` | `Snow_Sys_Id__c` | Text(32) | External Id, Unique |
-| ServiceNow Number | `Snow_Number` | `Snow_Number__c` | Text(40) | |
-| Sync Source | `Snow_Sync_Source` | `Snow_Sync_Source__c` | Text(20) | |
+The wizard is four steps. The checkboxes below are on **Step 2 of 4, Enter the details**. They are not on a later security page.
 
-Put the three fields on the Case page layout so you can see them.
+| Field Label (what you see) | Field Name (what you type) | API name Salesforce creates | Type | Extra Details, on Step 2 |
+|----------------------------|----------------------------|-----------------------------|------|--------------------------|
+| ServiceNow Sys Id | `Snow_Sys_Id` | `Snow_Sys_Id__c` | Text(32) | Length 32. Unique, case insensitive. External ID checked. |
+| ServiceNow Number | `Snow_Number` | `Snow_Number__c` | Text(40) | Length 40. Leave Unique and External ID unchecked. |
+| Sync Source | `Snow_Sync_Source` | `Snow_Sync_Source__c` | Text(20) | Length 20. Leave Unique and External ID unchecked. |
+
+**Step 3 of 4, field-level security.** Use the defaults. Do not build a permission set for this. You are the System Administrator who creates the Case and reads the field, and the default visible box for that profile is enough. A different integration user would need Visible, and Editable if that user writes the field. This lab does not use one.
+
+**Step 4 of 4, page layouts.** Add the three fields to the Case page layout so you can see them. That step is required. Field-level security is not.
 
 ## Named Credential {#cred}
 
