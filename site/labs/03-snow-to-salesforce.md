@@ -110,7 +110,7 @@ permalink: /labs/03-snow-to-salesforce/
 
 <p><strong>System:</strong> you work <strong>inside ServiceNow</strong> (the PDI), not in Salesforce. You build a <strong>Flow</strong> there that calls Salesforce on your behalf using the External Client App credentials from Section 2.</p>
 
-<p><strong>How to get there:</strong> in your ServiceNow instance, open the left navigation menu (the "All" menu, top-left) and choose <strong>Process Automation → Flow Designer</strong>. From the Flow Designer landing page, click <strong>New Flow</strong> and pick <strong>Flow for Record</strong>.</p>
+<p><strong>How to get there:</strong> in your ServiceNow instance, open the left navigation menu (the "All" menu, top-left) and choose <strong>Process Automation → Flow Designer</strong>. From the Flow Designer landing page, click <strong>New Flow</strong>. A dialog asks for a <strong>Flow name</strong> (and optionally Application/Description) — give it a name like <code>EBOND Update Case</code> and click <strong>Create</strong>. Then choose <strong>Flow for Record</strong> as the flow type.</p>
 
 <ol>
 <li><strong>Trigger.</strong> In the Flow's trigger step, set the table to <strong>Incident [incident]</strong>, the trigger to <strong>Record created or updated</strong>, and the condition (filter) to <strong><code>u_ebond_sf_case_id</code> is not empty</strong>. This means the Flow only runs for Incidents that are already linked to a Salesforce Case; unlinked ones are ignored (this is the same guard the coded rule uses).</li>
