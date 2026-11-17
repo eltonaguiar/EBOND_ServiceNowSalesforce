@@ -64,6 +64,30 @@ permalink: /labs/03-snow-to-salesforce/
 
 <p>Three ways exist to make ServiceNow update Salesforce. They all need the same OAuth setup in Section 2, but they differ in how much code you write. Pick <strong>one</strong>, then follow only that subsection below (1.1A, 1.1B, or 1.1C).</p>
 
+<div class="note">
+<span class="label">Which one to pick — realistic guidance</span>
+
+<h4>What this lab was originally for</h4>
+<p>This lab is a <strong>teaching integration</strong>: one field-mapping direction (Incident → Case), one trigger (Incident created/updated), one sync rule, and a small fixed set of fields. It is deliberately simple so you can see the mechanics of an OAuth client-credentials call, a REST message, and a business-rule guard — not because a production fleet should be built this way.</p>
+
+<h4>The best pick for maintainability, by situation</h4>
+<ul>
+<li><strong>Small team, no advanced developers, few fields, one direction → choose 1.1B</strong> (iPaaS). The vendor maintains the connector; a business analyst can map fields in a UI; upgrades and auth are handled for you. Best long-term maintainability with the least specialized skill. Cost is the factor to weigh.</li>
+<li><strong>You have ServiceNow admins (not developers) and want the integration to live inside ServiceNow → choose 1.1A</strong> (Flow + Salesforce spoke). No custom code to review, deploy, or version; the Flow is the artifact. Great when you want the logic close to the source of the trigger and you already pay for IntegrationHub spokes.</li>
+<li><strong>You need very specific, complex, or unusual behavior — custom fields per source, conditional logic, retries, transformations, multiple directions, audit hooks → choose 1.1C</strong> (coded). Code is the most flexible and the only option that fully controls bytes on the wire. It demands real developers to maintain, and it is the hardest to hand off. This is the right choice only when the other two cannot express the requirement.</li>
+</ul>
+
+<h4>Realistic best practice</h4>
+<p>For a <strong>simple, one-direction, few-field</strong> integration like this lab, the maintainable production answer is usually <strong>1.1A</strong> (inside ServiceNow, no third system) or <strong>1.1B</strong> (iPaaS) — not the coded path. Choose the coded path only when business logic exceeds what a declarative tool can express, or when no extra platform/license is acceptable. In real projects a common pattern is also to run a small number of coded or spoke flows for the few high-complexity integrations and let an iPaaS handle the long tail of simple ones.</p>
+
+<h4>What you learn by trying each other type</h4>
+<ul>
+<li>Try <strong>1.1C</strong> (coded) if you want to understand exactly what every option does under the hood: the OAuth token exchange, the REST/HTTP mechanics, the PATCH, and the loop guard. It is the best for debugging when a spoke or iPaaS misbehaves.</li>
+<li>Try <strong>1.1A</strong> (Flow + spoke) if you want to see how the same result is achieved declaratively — and how a Flow replaces the JavaScript, making the logic visible to admins instead of locked in a script.</li>
+<li>Try <strong>1.1B</strong> (iPaaS) if you want to see a third-party connector hide all the auth and REST details, and learn how field mapping moves out of code into a UI.</li>
+</ul>
+</div>
+
 <details id="optA">
 <summary><strong>1.1A — ServiceNow Flow Designer + Salesforce spoke</strong> (low-code, recommended)</summary>
 <p>Replace the REST Message and the JavaScript business rule with a <strong>Flow</strong> built visually in Flow Designer, using IntegrationHub's official <strong>Salesforce spoke</strong> action ("Update Case").</p>
