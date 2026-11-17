@@ -117,7 +117,7 @@ permalink: /labs/03-snow-to-salesforce/
 <li><strong>Description</strong> (optional)</li>
 <li>Additional properties (<strong>Protection</strong>, <strong>Run as</strong>, <strong>Run with roles</strong>, <strong>Flow priority default</strong>) — leave at their defaults for this lab.</li>
 </ul>
-<p>Click <strong>Create</strong>. There is <strong>no "Flow for Record" choice at create time</strong> — you make it a record-triggered flow by configuring the trigger <em>after</em> you enter the flow canvas (step 1 below).</p>
+<p>Click <strong>Build flow</strong>. There is <strong>no "Flow for Record" choice at create time</strong> — you make it a record-triggered flow by configuring the trigger <em>after</em> you enter the flow canvas (step 1 below).</p>
 <p><strong>Where to find it later:</strong> the navigator also has a <strong>Flow Administration</strong> section (under Process Automation) where you can manage the flow once it exists — <strong>Active Flows</strong> lists running flows and <strong>Today's Executions</strong> shows run history. You will use those in Section 5 to confirm the flow ran.</p>
 <p><strong>Licensing caveat:</strong> this path uses the Salesforce spoke, which ships with <strong>Integration Hub</strong>. Integration Hub is a paid subscription and is not reliably included on a free Personal Developer Instance (PDI). If your PDI cannot activate the spoke, use <strong>1.1C</strong> (coded), which needs no extra license. Verify the spoke is available in your instance before committing to this path.</p>
 
