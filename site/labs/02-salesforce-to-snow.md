@@ -257,7 +257,25 @@ Use this only if you picked Flow above.
    - Label: `Create Incident`.
    - API Name: click the box. If it stays empty, type `Create_Incident`. No spaces. This is the Flow element name, not `EBONDCreateIncident`.
    - Description: leave blank.
-   - Set Request Body is one key, `body`, not six boxes. Click the Value search box and choose **New Resource**. Salesforce sets the data type and Apex class. Name the resource `IncidentBody`. Then set its fields: `short_description` = `{!$Record.Subject}`, `description` = `{!$Record.Description}`, `urgency` = `2`, `impact` = `2`, `u_ebond_sf_case_id` = `{!$Record.Id}`, `u_sync_source` = `salesforce`.
+   - Set Request Body is the JSON Salesforce will send to ServiceNow when a Case is created. It is one key, `body`, not six boxes. Click the Value box. The menu opens. Click **+ New Resource** at the top. Do not pick `$Flow`, `$User`, or another global variable. Those are not the request.
+
+   <div class="eli5">
+   <span class="label">ELI5</span>
+   <p>A resource is a named value the Flow can hold. New Resource makes a box shaped like the sample request. You fill that box from the Case, then hand the whole box to ServiceNow as the request body. The sample JSON only taught Salesforce the shape. The live request should look like that shape, with this Case's values:</p>
+   </div>
+
+   ```json
+   {
+     "short_description": "the Case Subject",
+     "description": "the Case Description",
+     "urgency": "2",
+     "impact": "2",
+     "u_ebond_sf_case_id": "the Case Id",
+     "u_sync_source": "salesforce"
+   }
+   ```
+
+   Name the resource `IncidentBody`. Salesforce sets the data type and Apex class. Set `short_description` = `{!$Record.Subject}`, `description` = `{!$Record.Description}`, `urgency` = `2`, `impact` = `2`, `u_ebond_sf_case_id` = `{!$Record.Id}`, `u_sync_source` = `salesforce`.
    - Leave **Manually assign variables** unchecked.
    - Under Show advanced options, leave Transaction Control on **Let the flow decide**. Do not pick Always continue in current transaction. That can fail the call.
    - Click Done.
