@@ -330,8 +330,11 @@ Use this only if you picked Flow above.
     <p>Assignment here is not homework. It is the earlier Flow element named <strong>Set Incident Body</strong>. That element already sent lowercase <code>salesforce</code> to ServiceNow in the field <code>u_sync_source</code>. This third row writes the same word onto the Case, so both records say Salesforce started this sync. Lab 3's ServiceNow rule skips the echo only when that field is exactly <code>salesforce</code>. A capital S does not match, and the echo can loop.</p>
     </div>
 
-    Click **Done**. Click **Save**. Do not click **Activate** yet.
- 7. Activate. In Salesforce, open the app launcher (the nine dots at the left), search `cases`, and open **Cases** under Items. Click New. Subject is required. Do not create an Incident yourself. The new Case lands in Recently Viewed. If you do not see it, click the down arrow next to the list name and pick **All Cases** or **All Open Cases**.
+     This panel has no **Done**. Click the **X** at the top right of the panel. Then click **Save**. **Activate** stays gray until the panel is closed and the flow is saved.
+  7. Activate. In Salesforce, open the app launcher (the nine dots at the left), search `cases`, and open **Cases** under Items. Click New. Subject is required. Case Origin is required on this org. Pick **Web**. Leave the three ServiceNow fields empty. Do not create an Incident yourself. Save. The call runs a few seconds later because it is on **Run Asynchronously**. Open the new Case. **ServiceNow Sys Id** and **ServiceNow Number** should fill in. **Sync Source** should say `salesforce`.
+  8. In ServiceNow, search that Incident number. The short description should match the Case Subject. The custom fields are not on the default Incident form. In REST API Explorer, GET table `incident`, query `number=INC0010010` on your own number, fields `number,sys_id,u_ebond_sf_case_id,u_sync_source,urgency,impact`. `u_ebond_sf_case_id` must be the Case Id, which starts with `500`, not the Case number. `u_sync_source` must be `salesforce`.
+
+    This run: Case `00001027` wrote Incident `INC0010010`, sys_id `6b9981eec3205394310abf0d0501318a`. The Case fields came back filled. Impact and Urgency on the Incident form showed `3 - Low`, not the `2` the Flow sent. The id link is the proof. The choice values are a follow-up, not a failed create.
 
 ## Apex path {#apex}
 
