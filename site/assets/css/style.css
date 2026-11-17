@@ -87,3 +87,5 @@ details.glossary[open] summary { margin-bottom:.4rem; }
 
 details.note summary { cursor:pointer; font-weight:600; margin-bottom:.35rem; }
 details.note summary em { font-weight:400; color:var(--muted); font-size:.85rem; }
+
+.unavailable { color:#c0392b; font-weight:600; }

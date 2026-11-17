@@ -19,9 +19,7 @@ permalink: /labs/03-snow-to-salesforce/
       </li>
       <li><a href="#path">1. Choose your integration path <span class="req">[R]</span></a>
         <ol class="toc-list">
-          <li><a href="#optC">1.1C Coded REST Message + business rule (recommended)</a></li>
-          <li><a href="#optB">1.1B iPaaS connector (no-code)</a></li>
-          <li><a href="#optA">1.1A Flow Designer + Salesforce spoke (Appendix A — not on PDI)</a></li>
+          <li><a href="#optC">1.1 Coded REST Message + business rule (recommended)</a></li>
         </ol>
       </li>
       <li><a href="#eca">2. External Client App <span class="req">[R]</span></a></li>
@@ -31,7 +29,7 @@ permalink: /labs/03-snow-to-salesforce/
       <li><a href="#bulk">6. Linking existing tickets (bulk) <span class="req">[O]</span></a></li>
       <li><a href="#notes">7. Post-lab notes <span class="req">[O]</span></a></li>
       <li><a href="#research">8. Integration complexity research <span class="req">[O]</span></a></li>
-      <li><a href="#appendix">Appendix A — Salesforce spoke (requires IntegrationHub)</a></li>
+      <li><a href="#appendix">Appendix A — Alternative integration options</a></li>
     </ol>
   </div>
 </nav>
@@ -46,7 +44,7 @@ permalink: /labs/03-snow-to-salesforce/
 <p>Each section is marked with a tag. Do the sections marked <code>[R]</code>; skip the rest if they do not apply.</p>
 <ul>
 <li><code>[R]</code> — <strong>Required</strong> for everyone doing this lab.</li>
-<li><code>[R · C]</code> — Required <strong>only if you chose path 1.1C</strong> (coded REST Message + business rule). Skip it if you picked 1.1A or 1.1B.</li>
+<li><code>[R · C]</code> — Required <strong>only if you chose the coded path (1.1)</strong> (REST Message + business rule).</li>
 <li><code>[O]</code> — <strong>Optional</strong>. Only do it if your situation needs it.</li>
 </ul>
 </div>
@@ -68,7 +66,7 @@ permalink: /labs/03-snow-to-salesforce/
 
 ## 1. Choose your integration path <span class="req">[R]</span> {#path}
 
-<p>Several ways exist to make ServiceNow update Salesforce. They all need the same OAuth setup in Section 2, but they differ in how much code you write. <strong>For this lab on a free Personal Developer Instance (PDI), use path 1.1C (coded)</strong> — it is the only one that works on a free PDI without extra licensing. The alternatives (1.1B iPaaS, and the Salesforce spoke) are documented for reference; the spoke requires an IntegrationHub license and is not available on the free PDI (see Appendix A).</p>
+<p>Several ways exist to make ServiceNow update Salesforce. They all need the same OAuth setup in Section 2, but they differ in how much code you write. <strong>For this lab on a free Personal Developer Instance (PDI), use path 1.1 (coded)</strong> — it is the only one that works on a free PDI without extra licensing. The other options (Salesforce spoke, iPaaS) are in <strong>Appendix A</strong> for reference.</p>
 
 <details class="note">
 <summary><strong>Which one to pick — realistic guidance</strong> <em>(tap to open)</em></summary>
@@ -78,16 +76,17 @@ permalink: /labs/03-snow-to-salesforce/
 
 <h4>The best pick for maintainability, by situation</h4>
 <ul>
-<li><strong>Small team, no advanced developers, few fields, one direction → choose 1.1B</strong> (iPaaS). The vendor maintains the connector; a business analyst can map fields in a UI; upgrades and auth are handled for you. Best long-term maintainability with the least specialized skill. Cost is the factor to weigh.</li>
-<li><strong>You have ServiceNow admins (not developers) and want the integration to live inside ServiceNow → choose 1.1A</strong> (Flow + Salesforce spoke, Appendix A). No custom code to review, deploy, or version; the Flow is the artifact. But this requires an <strong>IntegrationHub</strong> license and is not available on a free PDI — so for a free instance, use the coded path (1.1C).</li>
-<li><strong>You need very specific, complex, or unusual behavior — custom fields per source, conditional logic, retries, transformations, multiple directions, audit hooks → choose 1.1C</strong> (coded). Code is the most flexible and the only option that fully controls bytes on the wire. It is also the only path that works on a free PDI. It demands real developers to maintain, and it is the hardest to hand off.</li>
+<li><strong>On a free PDI → use 1.1 (coded).</strong> It is the only option that works there without extra licensing, and it is the one this lab documents end-to-end.</li>
+<li><strong>In a licensed ServiceNow environment, with admins (not developers) → the spoke (Appendix A)</strong> is a good low-code choice, but it needs IntegrationHub and is not available on a free PDI.</li>
+<li><strong>Small team, no advanced developers, few fields, one direction → iPaaS (Appendix A)</strong> has the lowest specialized-skill cost, but adds a third-party platform and license.</li>
+<li><strong>Very specific, complex, or unusual behavior — custom fields per source, conditional logic, retries, transformations, multiple directions, audit hooks → code</strong> is the most flexible and fully controls bytes on the wire, but demands real developers to maintain.</li>
 </ul>
 
 <h4>Realistic best practice</h4>
-<p>For a <strong>simple, one-direction, few-field</strong> integration like this lab, the maintainable production answer is usually <strong>1.1A</strong> (inside ServiceNow, no third system) or <strong>1.1B</strong> (iPaaS) — not the coded path. Choose the coded path only when business logic exceeds what a declarative tool can express, or when no extra platform/license is acceptable. In real projects a common pattern is also to run a small number of coded or spoke flows for the few high-complexity integrations and let an iPaaS handle the long tail of simple ones.</p>
+<p>For a <strong>simple, one-direction, few-field</strong> integration like this lab, a maintainable production answer is often the <strong>spoke</strong> (in a licensed instance) or an <strong>iPaaS</strong> — but on a <strong>free PDI</strong> the coded path (1.1) is the only working choice. In real projects a common pattern is to run a small number of coded or spoke flows for the few high-complexity integrations and let an iPaaS handle the long tail of simple ones.</p>
 
 <h4>When code is effectively required</h4>
-<p>ServiceNow flows and spokes are declarative: they are great at "one record triggers one call, with fixed field mapping." They become impractical, or effectively impossible, when the requirement is not that shape. Concrete situations that push you to 1.1C (coded):</p>
+<p>ServiceNow flows and spokes are declarative: they are great at "one record triggers one call, with fixed field mapping." They become impractical, or effectively impossible, when the requirement is not that shape. Concrete situations that push you to code:</p>
 <ul>
 <li><strong>Request signing / custom authentication headers.</strong> The spoke sets its own OAuth header. If the target expects a header you must <em>calculate</em> at runtime — an HMAC signature, a per-request token, a digest of the payload — the spoke cannot compute it. You need code to build that header. (e.g. calling a partner API that signs every request with <code>HMAC-SHA256</code> over the body.)</li>
 <li><strong>Non-deterministic or dynamic payloads.</strong> The spoke maps a fixed set of fields. If which fields go in the request depends on the record — e.g. include <code>invoice_lines</code> only when a subtype flag is set, or build a nested array of line items from several related records — you are hand-assembling JSON the spoke cannot express. Code lets you construct exactly the document the API wants.</li>
@@ -100,32 +99,15 @@ permalink: /labs/03-snow-to-salesforce/
 
 <h4>What you learn by trying each other type</h4>
 <ul>
-<li>Try <strong>1.1C</strong> (coded) if you want to understand exactly what every option does under the hood: the OAuth token exchange, the REST/HTTP mechanics, the PATCH, and the loop guard. It is the best for debugging when a spoke or iPaaS misbehaves.</li>
-<li>Try <strong>1.1A</strong> (Flow + spoke) if you want to see how the same result is achieved declaratively — and how a Flow replaces the JavaScript, making the logic visible to admins instead of locked in a script.</li>
-<li>Try <strong>1.1B</strong> (iPaaS) if you want to see a third-party connector hide all the auth and REST details, and learn how field mapping moves out of code into a UI.</li>
-</ul>
-</details>
-
-<details id="optA">
-<summary><strong>1.1A — ServiceNow Flow Designer + Salesforce spoke</strong> (low-code, requires IntegrationHub)</summary>
-<p><strong>Not available on the free PDI.</strong> This path uses the Salesforce spoke, which requires an <strong>Integration Hub</strong> subscription. It is not available on a free Personal Developer Instance. Its full steps are preserved in <strong>Appendix A</strong>. For this lab, use <strong>1.1C</strong> (coded) instead.</p>
-</details>
-
-<details id="optB">
-<summary><strong>1.1B — Integration platform / iPaaS connector</strong> (no-code)</summary>
-<p><strong>System:</strong> this option runs on a <strong>third-party integration platform</strong> (not in ServiceNow or Salesforce). It hosts the connector that talks to both systems, so you do not build REST Messages or business rules in ServiceNow at all.</p>
-<p><strong>How to get there:</strong> sign in to your chosen platform (e.g. Workato, Tray.io, Zapier, Automate.io, Dell Boomi) and create a new recipe/integration that connects your ServiceNow instance and your Salesforce org.</p>
-<ul>
-<li>You configure a trigger (<strong>Incident updated</strong>, filtered to where <code>u_ebond_sf_case_id</code> is not empty) and a field mapping in a UI; the platform handles auth and the call.</li>
-<li>You connect the platform to both systems using their credentials — ServiceNow's <code>u_ebond_sf_case_id</code> user and the Salesforce External Client App from Section 2.</li>
-<li>Trade-offs: adds a third system and a license, and you still register credentials on both ends (including the External Client App in Section 2).</li>
-<li><strong>Then:</strong> skip Sections 3 and 4 and go to Section 5, Prove it.</li>
+<li>Try the <strong>coded path</strong> to understand exactly what every option does under the hood: the OAuth token exchange, the REST/HTTP mechanics, the PATCH, and the loop guard. It is the best for debugging when a spoke or iPaaS misbehaves.</li>
+<li>Try the <strong>spoke</strong> (Appendix A) to see how the same result is achieved declaratively — and how a Flow replaces the JavaScript, making the logic visible to admins instead of locked in a script.</li>
+<li>Try an <strong>iPaaS</strong> (Appendix A) to see a third-party connector hide all the auth and REST details, and learn how field mapping moves out of code into a UI.</li>
 </ul>
 </details>
 
 <details id="optC">
-<summary><strong>1.1C — Coded REST Message + business rule</strong> (recommended for this lab)</summary>
-<p>This is the fully coded path: a hand-written <strong>REST Message</strong> and an <strong>async business rule</strong> in JavaScript that PATCHes the Case. It is the recommended path here because it works on a free PDI without extra licensing (the spoke is not available on a PDI).</p>
+<summary><strong>1.1 — Coded REST Message + business rule</strong> (recommended for this lab)</summary>
+<p>This is the recommended path: a hand-written <strong>REST Message</strong> and an <strong>async business rule</strong> in JavaScript that PATCHes the Case. It is the only path that works on a free PDI without extra licensing. The other two options (Salesforce spoke, iPaaS) are documented in <strong>Appendix A</strong> for reference.</p>
 <p><strong>Order of work — it spans both systems:</strong></p>
 <ol>
 <li><strong>Section 2 — External Client App</strong> (do this first, <strong>in Salesforce</strong>): create the OAuth client-credentials app.</li>
@@ -134,6 +116,8 @@ permalink: /labs/03-snow-to-salesforce/
 <li><strong>Section 5 — Prove it.</strong></li>
 </ol>
 </details>
+
+<p><strong>Other ways to do the same thing</strong> (in the appendix, for context): the <strong>Salesforce spoke</strong> (Flow + IntegrationHub) and a <strong>third-party iPaaS</strong>. The spoke is <span class="unavailable">not available on the free PDI</span>; the iPaaS needs a separate paid platform. Neither is used in this lab.</p>
 
 ## 2. External Client App <span class="req">[R]</span> {#eca}
 
@@ -164,7 +148,7 @@ https://YOUR_DOMAIN.my.salesforce.com/services/oauth2/token
 
 ## 3. REST Message <span class="req">[R · C]</span> {#rest}
 
-<p><strong>System:</strong> this step is done <strong>in ServiceNow</strong> (the PDI). Only for path <strong>1.1C</strong> (coded). If you chose 1.1A or 1.1B, skip to Section 5.</p>
+<p><strong>System:</strong> this step is done <strong>in ServiceNow</strong> (the PDI). Only for the coded path (1.1). If you are not using the coded path, skip to Section 5.</p>
 
 <p><strong>How to get there:</strong> in your ServiceNow instance, open the left navigation menu (the "All" menu, top-left) and go to <strong>System Web Services → Outbound → REST Message</strong>, then click <strong>New</strong>.</p>
 
@@ -202,7 +186,7 @@ Body. Do not put `Snow_Sys_Id__c` in the JSON. It is already in the URL.
 
 ## 4. Async business rule <span class="req">[R · C]</span> {#rule}
 
-<p><strong>System:</strong> this step is done <strong>in ServiceNow</strong> (the PDI). Only for path <strong>1.1C</strong> (coded). If you chose 1.1A or 1.1B, skip to Section 5.</p>
+<p><strong>System:</strong> this step is done <strong>in ServiceNow</strong> (the PDI). Only for the coded path (1.1). If you are not using the coded path, skip to Section 5.</p>
 
 <p><strong>How to get there:</strong> in your ServiceNow instance, open the left navigation menu (the "All" menu, top-left) and go to <strong>System Definition → Business Rules</strong>, then click <strong>New</strong>.</p>
 
@@ -253,7 +237,7 @@ Body. Do not put `Snow_Sys_Id__c` in the JSON. It is already in the URL.
 <li><strong>An unlinked Incident is left alone.</strong> Create/edit an Incident with an empty <code>u_ebond_sf_case_id</code>; the integration must ignore it (no call, no change).</li>
 </ul>
 
-<p>If you took the <strong>coded path (1.1C)</strong>, additionally confirm the REST Message test returned <strong>200</strong> (Section 3) and the business rule ran (Section 4). If you took <strong>1.1A</strong> or <strong>1.1B</strong>, verify the same end result (Case updates, no duplicate) through your Flow/spoke or iPaaS run history.</p>
+<p>If you took the <strong>coded path (1.1)</strong>, additionally confirm the REST Message test returned <strong>200</strong> (Section 3) and the business rule ran (Section 4). If you used the spoke or an iPaaS (Appendix A), verify the same end result (Case updates, no duplicate) through that system's run history.</p>
 
 ## 6. Linking existing tickets (bulk) <span class="req">[O]</span> {#bulk}
 
@@ -288,9 +272,9 @@ An un-scoped link of <em>all</em> Incidents is usually wrong: many are unrelated
 <h4>Keeping certain tickets out of the integration (e.g. confidential)</h4>
 <p>Say some Incidents are highly confidential or, for a business reason, will never be associated to a Case. You do not want them ebonded at all — no link written, no call to Salesforce. The clean way is to stop them <strong>before</strong> anything negotiates, not to delete a link afterward. Pick one of these depending on your path:</p>
 <ul>
-<li><strong>1.1C (coded):</strong> add an exclusion to the business-rule <em>filter</em> (the query on the rule), not just to the script body. For example a filter like <code>u_ebond_sf_case_id ISNOTEMPTY AND category != 'confidential'</code> — or add a first check in the script that returns early for the excluded set. Filtering at the rule level means the script never even runs for excluded rows.</li>
-<li><strong>1.1A (Flow + spoke):</strong> add the same condition to the Flow's <em>trigger</em> or an entry condition, e.g. <code>category != 'confidential'</code> (and, as in the lab, <code>u_ebond_sf_case_id</code> is not empty). Excluded Incidents never start the Flow.</li>
-<li><strong>1.1B (iPaaS):</strong> set an exclusion filter on the connector's trigger/recipe (e.g. "only when category is not confidential"), so the platform never fetches or forwards those records.</li>
+<li><strong>Coded path (1.1):</strong> add an exclusion to the business-rule <em>filter</em> (the query on the rule), not just to the script body. For example a filter like <code>u_ebond_sf_case_id ISNOTEMPTY AND category != 'confidential'</code> — or add a first check in the script that returns early for the excluded set. Filtering at the rule level means the script never even runs for excluded rows.</li>
+<li><strong>Spoke (Appendix A):</strong> add the same condition to the Flow's <em>trigger</em> or an entry condition, e.g. <code>category != 'confidential'</code> (and, as in the lab, <code>u_ebond_sf_case_id</code> is not empty). Excluded Incidents never start the Flow.</li>
+<li><strong>iPaaS (Appendix A):</strong> set an exclusion filter on the connector's trigger/recipe (e.g. "only when category is not confidential"), so the platform never fetches or forwards those records.</li>
 </ul>
 <p>Common exclusion keys: a <code>category</code> or <code>assignment_group</code> value, a confidentiality/security flag field, records created by a specific source, or a specific list of <code>sys_id</code>s. Whatever you use, the important thing is that <strong>the rule lives in one obvious place</strong> and is versioned — so a reviewer can see exactly which tickets are exempt and why.</p>
 
@@ -335,7 +319,7 @@ An un-scoped link of <em>all</em> Incidents is usually wrong: many are unrelated
 
 <h4>Is there a simpler way than hand-wiring every REST method?</h4>
 <ul>
-<li><strong>Use the spoke and iPaaS for the standard verbs.</strong> If your integration is the usual "this record → create/update that record", a spoke (1.1A) or an iPaaS recipe (1.1B) gives you insert and update with almost no REST plumbing. This is the simpler path for the common case.</li>
+<li><strong>Use the spoke and iPaaS for the standard verbs.</strong> If your integration is the usual "this record → create/update that record", a spoke or an iPaaS recipe (Appendix A) gives you insert and update with almost no REST plumbing. This is the simpler path for the common case where those are licensed.</li>
 <li><strong>Use a single integration tool for a direction.</strong> Don't mix a hand-built REST message for insert and a spoke for update for the same flow — pick one mechanism per integration so there is one place to look and debug.</li>
 <li><strong>Push complexity into the source of the trigger, not the sink.</strong> The trigger/guard logic lives comfortably on the side where the record changes (ServiceNow for Incident changes, Salesforce for Case changes). Keep the "what happens" decision close to the change, and keep the "how to call the other side" as the thinnest possible adapter.</li>
 <li><strong>Consider event/state synchronization instead of raw CRUD mirroring.</strong> Very often you don't need a literal delete; you need "when Case is closed, mark the Incident resolved". That is an update, which the existing mechanisms already handle. Prefer mapping state transitions over trying to mirror every REST verb.</li>
@@ -369,12 +353,13 @@ An un-scoped link of <em>all</em> Incidents is usually wrong: many are unrelated
 </ul>
 </details>
 
-## Appendix A — Salesforce spoke (requires IntegrationHub) {#appendix}
+## Appendix A — Alternative integration options {#appendix}
 
-<p><strong>Why this is an appendix:</strong> the Salesforce spoke ships with <strong>Integration Hub</strong>, a paid subscription. On a free Personal Developer Instance (PDI) the spoke install reports <em>"This application is unavailable on developer instances."</em> So this path cannot be completed on the free PDI. It is kept here for completeness and for instances that do have IntegrationHub.</p>
+<p>Two other ways exist to make ServiceNow update Salesforce. They are not used in this lab — the <strong>Salesforce spoke</strong> is <span class="unavailable">not available on the free PDI</span>, and the <strong>iPaaS</strong> needs a separate third-party platform. They are kept here for reference and for environments where they are available.</p>
 
 <details>
-<summary><strong>Full steps — ServiceNow Flow Designer + Salesforce spoke</strong> <em>(tap to open)</em></summary>
+<summary><strong>Option A — ServiceNow Flow Designer + Salesforce spoke</strong> <span class="unavailable">(not available on the free PDI)</span></summary>
+<p>The Salesforce spoke ships with <strong>Integration Hub</strong>, a paid subscription. On a free Personal Developer Instance (PDI) the spoke install reports <em>"This application is unavailable on developer instances."</em> So this path cannot be completed on the free PDI. It applies only to instances where IntegrationHub is licensed.</p>
 
 <p><strong>System:</strong> you work <strong>inside ServiceNow</strong> (an instance with IntegrationHub licensed). You build a <strong>Flow</strong> there that calls Salesforce on your behalf using the External Client App credentials from Section 2.</p>
 
@@ -403,4 +388,16 @@ An un-scoped link of <em>all</em> Incidents is usually wrong: many are unrelated
 </ol>
 
 <p><strong>Then:</strong> skip Sections 3 and 4 (they are the coded path) and go to Section 5, Prove it. You can confirm the flow ran under <strong>Process Automation → Flow Administration → Today's Executions</strong>.</p>
+</details>
+
+<details>
+<summary><strong>Option B — Integration platform / iPaaS connector</strong> (no-code)</summary>
+<p><strong>System:</strong> this option runs on a <strong>third-party integration platform</strong> (not in ServiceNow or Salesforce). It hosts the connector that talks to both systems, so you do not build REST Messages or business rules in ServiceNow at all.</p>
+<p><strong>How to get there:</strong> sign in to your chosen platform (e.g. Workato, Tray.io, Zapier, Automate.io, Dell Boomi) and create a new recipe/integration that connects your ServiceNow instance and your Salesforce org.</p>
+<ul>
+<li>You configure a trigger (<strong>Incident updated</strong>, filtered to where <code>u_ebond_sf_case_id</code> is not empty) and a field mapping in a UI; the platform handles auth and the call.</li>
+<li>You connect the platform to both systems using their credentials — ServiceNow's <code>u_ebond_sf_case_id</code> user and the Salesforce External Client App from Section 2.</li>
+<li>Trade-offs: adds a third system and a license, and you still register credentials on both ends (including the External Client App in Section 2).</li>
+<li><strong>Then:</strong> skip Sections 3 and 4 and go to Section 5, Prove it.</li>
+</ul>
 </details>
