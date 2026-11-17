@@ -19,13 +19,15 @@ permalink: /labs/02-salesforce-to-snow/
       <li><a href="#flow">Flow path (no Apex)</a></li>
       <li><a href="#apex">Apex path</a></li>
       <li><a href="#prove">Prove it</a></li>
+      <li><a href="#learned">What we learned</a></li>
+      <li><a href="#setup">What is set up</a></li>
     </ol>
   </div>
 </nav>
 
 <div class="eli5">
 <span class="label">ELI5</span>
-<p>You create the record in Salesforce. It is a Salesforce Case. You do not create a Case in ServiceNow. After that save, Salesforce calls ServiceNow, and ServiceNow creates an Incident. The Incident is stamped with the Salesforce Case Id, so a second save updates that same Incident instead of making another one.</p>
+<p>You create the record in Salesforce. It is a Salesforce Case. You do not create a Case in ServiceNow. After that save, Salesforce calls ServiceNow, and ServiceNow creates an Incident. This Flow only creates. A later edit or a delete on one side does not change the other side yet.</p>
 </div>
 
 | You create this | In this system | It is not |
@@ -361,5 +363,73 @@ The callout endpoint is `callout:EBOND_ServiceNow/api/now/table/incident`. The N
 <li>Within a minute, the ServiceNow Incident list shows that subject. ServiceNow created this one.</li>
 <li>ServiceNow Incident <code>u_ebond_sf_case_id</code> equals the Salesforce Case Id (15 or 18 characters).</li>
 <li>Salesforce Case <code>Snow_Number__c</code> shows the INC number.</li>
-<li>Save that same Salesforce Case again only if you are testing update. A second push must not create a second ServiceNow Incident.</li>
+<li>Save that same Salesforce Case again only if you are testing update. This Flow will not update the Incident. The trigger is create only.</li>
 </ul>
+
+This run: Case `00001027`, subject `EBOND lab 2`, wrote Incident `INC0010010`, sys_id `6b9981eec3205394310abf0d0501318a`. The Case fields came back filled. Impact and Urgency on the Incident form showed `3 - Low`, not the `2` the Flow sent. The id link is the proof.
+
+## What we learned {#learned}
+
+A new Salesforce Case is enough. You do not type an Incident.
+
+1. **Set Incident Body** fills an empty envelope from the Case that just triggered the Flow. That Case is the triggering Case. It is the one you just created.
+
+| Envelope field | Where the value comes from |
+|----------------|----------------------------|
+| `short_description` | Triggering Case Subject |
+| `description` | Triggering Case Description |
+| `urgency` | the text `2` |
+| `impact` | the text `2` |
+| `u_ebond_sf_case_id` | Triggering Case Id. It starts with `500`. It is not the Case number `00001027`. |
+| `u_sync_source` | the text `salesforce` |
+
+2. **EBONDCreateIncident: Create Incident** is a Flow Action. The action type is HTTP Callout. It is not a Case field.
+
+The External Service is a Salesforce record the HTTP Callout wizard created earlier in this lab. Setup stores it as `EBONDCreateIncident`. The Flow action calls that saved service. It was not a field you typed on the Case, and it was not already in the org before this lab.
+
+The call is POST. The Named Credential supplies the host. The path is `/api/now/table/incident`. The full URL on this run is `https://dev296154.service-now.com/api/now/table/incident`. One slash after `.com`. Do not copy a `v1` URL from the explorer into the Flow.
+
+ServiceNow's own start page for that explorer is [Get started with the REST API Explorer](https://www.servicenow.com/docs/r/api-reference/rest-api-explorer/t_GetStartedCreateInt.html).
+
+`latest` in the explorer shows `/api/now/table/{tableName}`. `v1` shows `/api/now/v1/table/{tableName}`. That dropdown is the explorer's API version. The Table API this Flow posts to is the path without `v1`. Use `v1` only if you mean that versioned path. Do not mix them.
+
+![Table API methods. POST creates a record.]({{ '/assets/img/02-table-api-methods.png' | relative_url }})
+
+| Method | What it does | This lab |
+|--------|----------------|----------|
+| GET | Read a record or a list | Not wired. Used only to check the result. |
+| POST | Create a record | This is the call. A Case creates an Incident. |
+| PUT | Replace a whole record | Not set up. |
+| PATCH | Change some fields | Not set up. Lab 3 is the return path. |
+| DELETE | Delete a record | Not set up. |
+
+<div class="eli5">
+<span class="label">ELI5</span>
+<p>POST means "make a new row." That is why a new Case makes a new Incident. GET would only look. PATCH would change an existing row. DELETE would remove one. None of those run from this Flow.</p>
+</div>
+
+<details class="glossary">
+<summary>REST API Explorer Send creates a real Incident, even with an empty body</summary>
+<div class="warn">
+<span class="label">Warning</span>
+<p>Send on POST, PUT, PATCH, or DELETE changes the instance. The browser asks <strong>Modifying data, confirm to continue</strong>. OK is not a preview. Do this on a personal developer instance, not production.</p>
+</div>
+![Confirm dialog before a real write]({{ '/assets/img/02-explorer-confirm.png' | relative_url }})
+<p>An empty POST still returns 201 and a new Incident. This run made <code>INC0010011</code> and <code>INC0010012</code> that way. Caller and Short description are mandatory on the form. They are not mandatory on the API. The empty reply had <code>caller_id</code> blank, <code>short_description</code> blank, <code>impact</code> <code>3</code>, <code>urgency</code> <code>3</code>, <code>priority</code> <code>4</code>, and <code>category</code> <code>inquiry</code>. Those are platform defaults. <code>u_ebond_sf_case_id</code> and <code>u_sync_source</code> were empty because the body did not send them.</p>
+<p>Those two Incidents are explorer noise. They are not the Case proof. The Case proof is <code>INC0010010</code>.</p>
+</details>
+
+## What is set up {#setup}
+
+Creation is bonded. Nothing else is.
+
+Deleting the Case does not delete the Incident. Deleting the Incident does not delete the Case. Editing one side does not edit the other. This Flow has no GET, PUT, PATCH, or DELETE.
+
+| Lab | What it does now |
+|-----|------------------|
+| Lab 0 | The free instances exist. No sync. |
+| Lab 1 | You can POST an Incident by hand. Salesforce is not involved. |
+| Lab 2 | A new Case POSTs one Incident and writes the Incident id and number back onto the Case. |
+| Lab 3 | Not built. An Incident change should patch the Case. |
+| Lab 4 | The flag `salesforce` is written. The ServiceNow rule that reads it is not installed. |
+| Lab 5 | A failure list. Not a sync. |
