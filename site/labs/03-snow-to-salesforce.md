@@ -19,9 +19,9 @@ permalink: /labs/03-snow-to-salesforce/
       </li>
       <li><a href="#path">1. Choose your integration path <span class="req">[R]</span></a>
         <ol class="toc-list">
-          <li><a href="#optA">1.1A Flow Designer + Salesforce spoke (low-code)</a></li>
+          <li><a href="#optC">1.1C Coded REST Message + business rule (recommended)</a></li>
           <li><a href="#optB">1.1B iPaaS connector (no-code)</a></li>
-          <li><a href="#optC">1.1C Coded REST Message + business rule</a></li>
+          <li><a href="#optA">1.1A Flow Designer + Salesforce spoke (Appendix A — not on PDI)</a></li>
         </ol>
       </li>
       <li><a href="#eca">2. External Client App <span class="req">[R]</span></a></li>
@@ -31,6 +31,7 @@ permalink: /labs/03-snow-to-salesforce/
       <li><a href="#bulk">6. Linking existing tickets (bulk) <span class="req">[O]</span></a></li>
       <li><a href="#notes">7. Post-lab notes <span class="req">[O]</span></a></li>
       <li><a href="#research">8. Integration complexity research <span class="req">[O]</span></a></li>
+      <li><a href="#appendix">Appendix A — Salesforce spoke (requires IntegrationHub)</a></li>
     </ol>
   </div>
 </nav>
@@ -67,7 +68,7 @@ permalink: /labs/03-snow-to-salesforce/
 
 ## 1. Choose your integration path <span class="req">[R]</span> {#path}
 
-<p>Three ways exist to make ServiceNow update Salesforce. They all need the same OAuth setup in Section 2, but they differ in how much code you write. Pick <strong>one</strong>, then follow only that subsection below (1.1A, 1.1B, or 1.1C).</p>
+<p>Several ways exist to make ServiceNow update Salesforce. They all need the same OAuth setup in Section 2, but they differ in how much code you write. <strong>For this lab on a free Personal Developer Instance (PDI), use path 1.1C (coded)</strong> — it is the only one that works on a free PDI without extra licensing. The alternatives (1.1B iPaaS, and the Salesforce spoke) are documented for reference; the spoke requires an IntegrationHub license and is not available on the free PDI (see Appendix A).</p>
 
 <details class="note">
 <summary><strong>Which one to pick — realistic guidance</strong> <em>(tap to open)</em></summary>
@@ -78,8 +79,8 @@ permalink: /labs/03-snow-to-salesforce/
 <h4>The best pick for maintainability, by situation</h4>
 <ul>
 <li><strong>Small team, no advanced developers, few fields, one direction → choose 1.1B</strong> (iPaaS). The vendor maintains the connector; a business analyst can map fields in a UI; upgrades and auth are handled for you. Best long-term maintainability with the least specialized skill. Cost is the factor to weigh.</li>
-<li><strong>You have ServiceNow admins (not developers) and want the integration to live inside ServiceNow → choose 1.1A</strong> (Flow + Salesforce spoke). No custom code to review, deploy, or version; the Flow is the artifact. Great when you want the logic close to the source of the trigger and you already pay for IntegrationHub — but note IntegrationHub is a paid subscription and may not be on a free PDI, so on a free instance the coded path (1.1C) is the reliable choice.</li>
-<li><strong>You need very specific, complex, or unusual behavior — custom fields per source, conditional logic, retries, transformations, multiple directions, audit hooks → choose 1.1C</strong> (coded). Code is the most flexible and the only option that fully controls bytes on the wire. It demands real developers to maintain, and it is the hardest to hand off. This is the right choice only when the other two cannot express the requirement.</li>
+<li><strong>You have ServiceNow admins (not developers) and want the integration to live inside ServiceNow → choose 1.1A</strong> (Flow + Salesforce spoke, Appendix A). No custom code to review, deploy, or version; the Flow is the artifact. But this requires an <strong>IntegrationHub</strong> license and is not available on a free PDI — so for a free instance, use the coded path (1.1C).</li>
+<li><strong>You need very specific, complex, or unusual behavior — custom fields per source, conditional logic, retries, transformations, multiple directions, audit hooks → choose 1.1C</strong> (coded). Code is the most flexible and the only option that fully controls bytes on the wire. It is also the only path that works on a free PDI. It demands real developers to maintain, and it is the hardest to hand off.</li>
 </ul>
 
 <h4>Realistic best practice</h4>
@@ -106,37 +107,8 @@ permalink: /labs/03-snow-to-salesforce/
 </details>
 
 <details id="optA">
-<summary><strong>1.1A — ServiceNow Flow Designer + Salesforce spoke</strong> (low-code, recommended)</summary>
-
-<p><strong>System:</strong> you work <strong>inside ServiceNow</strong> (the PDI), not in Salesforce. You build a <strong>Flow</strong> there that calls Salesforce on your behalf using the External Client App credentials from Section 2.</p>
-
-<p><strong>How to get there:</strong> in your ServiceNow instance, open the left navigation menu (the "All" menu, top-left) and choose <strong>Process Automation → Flow Designer</strong>. From the Flow Designer landing page, click <strong>New Flow</strong>. The create dialog asks for:</p>
-<ul>
-<li><strong>Flow name</strong> (required) — e.g. <code>EBOND Update Case</code></li>
-<li><strong>Application</strong> (required dropdown) — pick a sensible application for your work, or <strong>Global</strong>, rather than whatever is currently selected (e.g. "Service Graph Connector for Microsoft SCCM").</li>
-<li><strong>Description</strong> (optional)</li>
-<li>Additional properties (<strong>Protection</strong>, <strong>Run as</strong>, <strong>Run with roles</strong>, <strong>Flow priority default</strong>) — leave at their defaults for this lab.</li>
-</ul>
-<p>Click <strong>Build flow</strong>. There is <strong>no "Flow for Record" choice at create time</strong> — you make it a record-triggered flow by configuring the trigger <em>after</em> you enter the flow canvas (step 1 below).</p>
-<p><strong>Where to find it later:</strong> the navigator also has a <strong>Flow Administration</strong> section (under Process Automation) where you can manage the flow once it exists — <strong>Active Flows</strong> lists running flows and <strong>Today's Executions</strong> shows run history. You will use those in Section 5 to confirm the flow ran.</p>
-<p><strong>Licensing caveat:</strong> this path uses the Salesforce spoke, which ships with <strong>Integration Hub</strong>. Integration Hub is a paid subscription and is not reliably included on a free Personal Developer Instance (PDI). If your PDI cannot activate the spoke, use <strong>1.1C</strong> (coded), which needs no extra license. Verify the spoke is available in your instance before committing to this path.</p>
-
-<ol>
-<li><strong>Trigger.</strong> In the Flow's trigger step, set the table to <strong>Incident [incident]</strong>, the trigger to <strong>Record created or updated</strong>, and the condition (filter) to <strong><code>u_ebond_sf_case_id</code> is not empty</strong>. This means the Flow only runs for Incidents that are already linked to a Salesforce Case; unlinked ones are ignored (this is the same guard the coded rule uses).</li>
-<li><strong>Loop guard condition.</strong> Add a condition that the Flow also skips when <strong><code>u_sync_source</code> = <code>salesforce</code></strong>. Lab 2 set that value when it created the Incident from Salesforce, so this stops the Flow from "echoing" its own update back to Salesforce forever.</li>
-<li><strong>Action — call Salesforce.</strong> Add an action of type <strong>Salesforce → Update Record</strong> (the standard spoke update action; the Case-specific "Update Case" action works the same way). In this action, choose the External Client App connection (from Section 2) as the credential.</li>
-<li><strong>Set the Record ID — this is the key step.</strong> The update action updates one specific Salesforce record, and you must tell it <em>which</em> Case. In the action's <strong>Record ID</strong> input, add the data pill for <strong><code>u_ebond_sf_case_id</code></strong> (the Salesforce Case Id stored on the Incident). The spoke does not guess or auto-match on <code>Snow_Sys_Id__c</code> — you supply the record Id here.</li>
-<li><strong>Map the fields.</strong> Tell the action which Incident value goes into which Case field:
-<ul>
-<li>Case <strong>Subject</strong> ← Incident <strong>short_description</strong></li>
-<li>Case <strong>Description</strong> ← Incident <strong>description</strong></li>
-<li>Case <strong>Snow_Number__c</strong> ← Incident <strong>number</strong></li>
-<li>Case <strong>Snow_Sync_Source__c</strong> ← the fixed text <strong>servicenow</strong></li>
-</ul></li>
-<li><strong>Save, activate, and test.</strong> Save and activate the Flow, then edit an Incident's short description by hand (with <code>u_sync_source</code> blank or <code>servicenow</code>) and confirm the matching Case updates.</li>
-</ol>
-
-<p><strong>Then:</strong> you are done — skip Sections 3 and 4 (they are the coded path) and go to Section 5, Prove it.</p>
+<summary><strong>1.1A — ServiceNow Flow Designer + Salesforce spoke</strong> (low-code, requires IntegrationHub)</summary>
+<p><strong>Not available on the free PDI.</strong> This path uses the Salesforce spoke, which requires an <strong>Integration Hub</strong> subscription. It is not available on a free Personal Developer Instance. Its full steps are preserved in <strong>Appendix A</strong>. For this lab, use <strong>1.1C</strong> (coded) instead.</p>
 </details>
 
 <details id="optB">
@@ -152,10 +124,10 @@ permalink: /labs/03-snow-to-salesforce/
 </details>
 
 <details id="optC">
-<summary><strong>1.1C — Coded REST Message + business rule</strong> (documented below)</summary>
-<p>This is the fully coded path that the rest of this page (Sections 3 and 4) documents: a hand-written <strong>REST Message</strong> and an <strong>async business rule</strong> in JavaScript that PATCHes the Case. It is the most code-heavy option; use it if you want to see exactly what the Flow/spoke or iPaaS does under the hood.</p>
+<summary><strong>1.1C — Coded REST Message + business rule</strong> (recommended for this lab)</summary>
+<p>This is the fully coded path that Sections 3 and 4 document: a hand-written <strong>REST Message</strong> and an <strong>async business rule</strong> in JavaScript that PATCHes the Case. It is the recommended path here because it works on a free PDI without extra licensing (the spoke is not available on a PDI).</p>
 <ul>
-<li><strong>Then:</strong> follow Sections 3 and 4, then Section 5, Prove it.</li>
+<li><strong>Use this path:</strong> follow Sections 3 and 4, then Section 5, Prove it.</li>
 </ul>
 </details>
 
@@ -391,4 +363,40 @@ An un-scoped link of <em>all</em> Incidents is usually wrong: many are unrelated
 <li><strong>Salesforce — Connect (external objects, linked live data):</strong> <a href="https://help.salesforce.com/s/articleView?id=sf.platform_connect_about.htm&type=5">help.salesforce.com — Salesforce Connect</a></li>
 <li><strong>Salesforce — REST API (for coded path):</strong> <a href="https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/intro_what_is_rest_api.htm">developer.salesforce.com — REST API</a></li>
 </ul>
+</details>
+
+## Appendix A — Salesforce spoke (requires IntegrationHub) {#appendix}
+
+<p><strong>Why this is an appendix:</strong> the Salesforce spoke ships with <strong>Integration Hub</strong>, a paid subscription. On a free Personal Developer Instance (PDI) the spoke install reports <em>"This application is unavailable on developer instances."</em> So this path cannot be completed on the free PDI. It is kept here for completeness and for instances that do have IntegrationHub.</p>
+
+<details>
+<summary><strong>Full steps — ServiceNow Flow Designer + Salesforce spoke</strong> <em>(tap to open)</em></summary>
+
+<p><strong>System:</strong> you work <strong>inside ServiceNow</strong> (an instance with IntegrationHub licensed). You build a <strong>Flow</strong> there that calls Salesforce on your behalf using the External Client App credentials from Section 2.</p>
+
+<p><strong>How to get there:</strong> in your ServiceNow instance, open the left navigation menu (the "All" menu, top-left) and choose <strong>Process Automation → Flow Designer</strong>. From the Flow Designer landing page, click <strong>New Flow</strong>. The create dialog asks for:</p>
+<ul>
+<li><strong>Flow name</strong> (required) — e.g. <code>EBOND Update Case</code></li>
+<li><strong>Application</strong> (required dropdown) — pick a sensible application for your work, or <strong>Global</strong>, rather than whatever is currently selected (e.g. "Service Graph Connector for Microsoft SCCM").</li>
+<li><strong>Description</strong> (optional)</li>
+<li>Additional properties (<strong>Protection</strong>, <strong>Run as</strong>, <strong>Run with roles</strong>, <strong>Flow priority default</strong>) — leave at their defaults for this lab.</li>
+</ul>
+<p>Click <strong>Build flow</strong>. There is <strong>no "Flow for Record" choice at create time</strong> — you make it a record-triggered flow by configuring the trigger <em>after</em> you enter the flow canvas (step 1 below).</p>
+
+<ol>
+<li><strong>Trigger.</strong> In the Flow's trigger step, set the table to <strong>Incident [incident]</strong>, the trigger to <strong>Record created or updated</strong>, and the condition (filter) to <strong><code>u_ebond_sf_case_id</code> is not empty</strong>.</li>
+<li><strong>Loop guard condition.</strong> Add a condition that the Flow also skips when <strong><code>u_sync_source</code> = <code>salesforce</code></strong>.</li>
+<li><strong>Action — call Salesforce.</strong> Add an action of type <strong>Salesforce → Update Record</strong> (the standard spoke update action; the Case-specific "Update Case" action works the same way). Choose the External Client App connection (from Section 2) as the credential.</li>
+<li><strong>Set the Record ID — this is the key step.</strong> In the action's <strong>Record ID</strong> input, add the data pill for <strong><code>u_ebond_sf_case_id</code></strong> (the Salesforce Case Id stored on the Incident). The spoke does not guess or auto-match on <code>Snow_Sys_Id__c</code> — you supply the record Id here.</li>
+<li><strong>Map the fields.</strong> Tell the action which Incident value goes into which Case field:
+<ul>
+<li>Case <strong>Subject</strong> ← Incident <strong>short_description</strong></li>
+<li>Case <strong>Description</strong> ← Incident <strong>description</strong></li>
+<li>Case <strong>Snow_Number__c</strong> ← Incident <strong>number</strong></li>
+<li>Case <strong>Snow_Sync_Source__c</strong> ← the fixed text <strong>servicenow</strong></li>
+</ul></li>
+<li><strong>Save, activate, and test.</strong> Save and activate the Flow, then edit an Incident's short description by hand (with <code>u_sync_source</code> blank or <code>servicenow</code>) and confirm the matching Case updates.</li>
+</ol>
+
+<p><strong>Then:</strong> skip Sections 3 and 4 (they are the coded path) and go to Section 5, Prove it. You can confirm the flow ran under <strong>Process Automation → Flow Administration → Today's Executions</strong>.</p>
 </details>
