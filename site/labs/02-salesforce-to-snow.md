@@ -147,7 +147,7 @@ QA follows the layout you checked. If you only check Close Case Layout, the fiel
 
 ## Named Credential {#cred}
 
-Setup → Quick Find **Named Credentials**.
+Setup → Quick Find `named credentials`. Open **Named Credentials** under Security. An empty list, "You don't have any named credentials," is expected. Click **New** at the right. The page has three tabs: Named Credentials, External Credentials, and External Auth Identity Providers. Start on External Credentials if you are creating the login first, then come back to Named Credentials → New.
 
 1. **External Credentials** → New. Label `EBOND ServiceNow`. Protocol **Custom** if you are using Basic auth for the lab. Add a principal. Store the PDI username and password on that principal. Grant the principal to your user with a permission set (**External Credential Principal Access**).
 2. **Named Credential** → New. Label and name `EBOND_ServiceNow`. URL `https://devNNNNN.service-now.com` (no path). Link the External Credential. Enable **Generate Authorization Header**.
