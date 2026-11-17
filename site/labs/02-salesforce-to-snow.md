@@ -230,7 +230,7 @@ Use this only if you picked Flow above.
 
    Fourth screen, Select Sample Response Method. Pick **Use Example Response**. Do not pick Connect for Schema. That one calls ServiceNow now and creates a real Incident from the sample. Click **Next**.
 
-   Fifth screen, Sample JSON Response. Leave Description blank. Paste the block below into Sample JSON Response. Click **Review**. Wait until Data Structure shows `result` with `sys_id` and `number`. Then click **Save**. This screen ends with Save, not Next.
+   Fifth screen, Sample JSON Response. This is not the same JSON as the request. The request told Salesforce what it will send. This screen tells Salesforce what ServiceNow sends back. If you paste the request here, the Flow cannot read `sys_id` or `number` from the reply. Leave Description blank. Paste the response block below into Sample JSON Response. Click **Review**. Wait until Data Structure shows `result` with `sys_id` and `number`. Then click **Save**. This screen ends with Save, not Next.
 
    ```json
    {
