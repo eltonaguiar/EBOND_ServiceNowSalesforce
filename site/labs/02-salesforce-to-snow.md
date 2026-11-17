@@ -323,7 +323,12 @@ Use this only if you picked Flow above.
     | ServiceNow Number | `{!Create_Incident.2XX.result.number}` |
     | Sync Source | `salesforce` |
 
-    Type `salesforce` with no quotes and no capital S. Quotes would be stored as part of the value.
+    Type `salesforce` with no quotes and no capital S. Quotes would be stored as part of the value. It is case sensitive. `Salesforce` is not the same word.
+
+    <div class="eli5">
+    <span class="label">ELI5</span>
+    <p>Assignment here is not homework. It is the earlier Flow element named <strong>Set Incident Body</strong>. That element already sent lowercase <code>salesforce</code> to ServiceNow in the field <code>u_sync_source</code>. This third row writes the same word onto the Case, so both records say Salesforce started this sync. Lab 3's ServiceNow rule skips the echo only when that field is exactly <code>salesforce</code>. A capital S does not match, and the echo can loop.</p>
+    </div>
 
     Click **Done**. Click **Save**. Do not click **Activate** yet.
  7. Activate. In Salesforce, open the app launcher (the nine dots at the left), search `cases`, and open **Cases** under Items. Click New. Subject is required. Do not create an Incident yourself. The new Case lands in Recently Viewed. If you do not see it, click the down arrow next to the list name and pick **All Cases** or **All Open Cases**.
