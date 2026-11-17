@@ -228,6 +228,17 @@ Use this only if you picked Flow above.
    4. Wait until Data Structure on the right lists the six fields, each as String. If it still says No sample JSON, Review did not run. Do not change the String dropdowns.
    5. Click **Next** at the bottom right. Review does not move you forward.
 
+   Fourth screen, Select Sample Response Method. Pick **Use Example Response**. Do not pick Connect for Schema. That one calls ServiceNow now and creates a real Incident from the sample. Click **Next**. Paste this sample response, click **Review**, then click **Next** again.
+
+   ```json
+   {
+     "result": {
+       "sys_id": "5dba2bdac3e8df54310abf0d050131a5",
+       "number": "INC0010002"
+     }
+   }
+   ```
+
    ![Sample JSON Request screen]({{ '/assets/img/02-http-callout-json.png' | relative_url }})
 
    ```json
