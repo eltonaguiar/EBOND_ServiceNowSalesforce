@@ -253,13 +253,14 @@ Use this only if you picked Flow above.
      "u_sync_source": "salesforce"
    }
    ```
-4. The canvas now shows the action on **Run Asynchronously**. The banner says the external service was created. On the action panel, wait until the spinner stops.
+4. The canvas now shows the action on **Run Asynchronously**. The banner says the external service was created. The Label box is red because it is empty. Fill it before anything else.
    - Label: `Create Incident`.
-   - API Name: `Create_Incident`. No spaces. This is the Flow element name, not the external service name.
+   - API Name: click the box. If it stays empty, type `Create_Incident`. No spaces. This is the Flow element name, not `EBONDCreateIncident`.
    - Description: leave blank.
-   - Body fields, once they appear: `short_description` = Case Subject. `description` = Case Description. `urgency` = `2`. `impact` = `2`. `u_ebond_sf_case_id` = Case Id. `u_sync_source` = `salesforce`.
+   - Set Request Body is one key, `body`, not six boxes. Click the Value search box and choose **New Resource**. Salesforce sets the data type and Apex class. Name the resource `IncidentBody`. Then set its fields: `short_description` = `{!$Record.Subject}`, `description` = `{!$Record.Description}`, `urgency` = `2`, `impact` = `2`, `u_ebond_sf_case_id` = `{!$Record.Id}`, `u_sync_source` = `salesforce`.
    - Leave **Manually assign variables** unchecked.
-   - Click Done, or the X after the values are set.
+   - Under Show advanced options, leave Transaction Control on **Let the flow decide**. Do not pick Always continue in current transaction. That can fail the call.
+   - Click Done.
 5. Save the returned `sys_id` into `Snow_Sys_Id__c` and `number` into `Snow_Number__c` with an Update Records element. Set `Snow_Sync_Source__c` to `salesforce`.
 6. Activate. In Salesforce, open the app launcher (the nine dots at the left), search `cases`, and open **Cases** under Items. Click New. Subject is required. Do not create an Incident yourself. The new Case lands in Recently Viewed. If you do not see it, click the down arrow next to the list name and pick **All Cases** or **All Open Cases**.
 
