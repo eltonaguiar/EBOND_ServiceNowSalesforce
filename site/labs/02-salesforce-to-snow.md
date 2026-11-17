@@ -225,8 +225,8 @@ Use this only if you picked Flow above.
    1. Leave Description blank.
    2. Paste the JSON into Sample JSON Request.
    3. Click **Review**. The text may be red before this. That is normal.
-   4. Wait until Data Structure on the right lists the six fields. If it still says No sample JSON, Review did not run.
-   5. Click **Next**.
+   4. Wait until Data Structure on the right lists the six fields, each as String. If it still says No sample JSON, Review did not run. Do not change the String dropdowns.
+   5. Click **Next** at the bottom right. Review does not move you forward.
 
    ![Sample JSON Request screen]({{ '/assets/img/02-http-callout-json.png' | relative_url }})
 
