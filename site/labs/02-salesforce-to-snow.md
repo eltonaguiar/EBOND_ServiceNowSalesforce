@@ -300,11 +300,28 @@ Use this only if you picked Flow above.
    | `{!IncidentBody.u_ebond_sf_case_id}` | `{!$Record.Id}` |
    | `{!IncidentBody.u_sync_source}` | `salesforce` |
 
-   In the Variable box, search `IncidentBody`. Do not select the whole resource. Click the arrow beside it and pick one field for that row. Selecting the whole `IncidentBody` replaces the box instead of filling a field.    Search `$Record` in the Value box for Subject, Description, and Id. Type `2` and `salesforce` as text. Click Done. Then click **Save** on the flow. Flow Label `EBOND Create Incident`. Flow API Name `EBOND_Create_Incident`. Description blank. Do not click **Activate** yet.
+    In the Variable box, search `IncidentBody`. Do not select the whole resource. Click the arrow beside it and pick one field for that row. Selecting the whole `IncidentBody` replaces the box instead of filling a field.    Search `$Record` in the Value box for Subject, Description, and Id. Type `2` and `salesforce` as text. Click Done. Then click **Save** on the flow. Flow Label `EBOND Create Incident`. Flow API Name `EBOND_Create_Incident`. Description blank. Do not click **Activate** yet. The saved flow stays **Inactive**.
 
-   ![The plus above Create Incident]({{ '/assets/img/02-assignment-plus-circled.png' | relative_url }})
-5. Save the returned `sys_id` into `Snow_Sys_Id__c` and `number` into `Snow_Number__c` with an Update Records element. Set `Snow_Sync_Source__c` to `salesforce`.
-6. Activate. In Salesforce, open the app launcher (the nine dots at the left), search `cases`, and open **Cases** under Items. Click New. Subject is required. Do not create an Incident yourself. The new Case lands in Recently Viewed. If you do not see it, click the down arrow next to the list name and pick **All Cases** or **All Open Cases**.
+    ![The plus above Create Incident]({{ '/assets/img/02-assignment-plus-circled.png' | relative_url }})
+ 5. Close the Create Incident panel with X. Do not change that panel. Body is already `IncidentBody`. Leave **Manually assign variables** unchecked.
+ 6. Click the **+** under **Create Incident**, above the pink end. Add **Update Records**.
+    - Label: `Save Incident Ids`. API Name: `Save_Incident_Ids`. Description blank.
+    - How to Find Records: **Use the Case record that triggered the flow**.
+    - Set Field Values. Do not select the whole `2XX` or the whole `result`. Open **Create Incident**, then `2XX`, then `result`, and pick one field.
+
+    <div class="eli5">
+    <span class="label">ELI5</span>
+    <p><code>2XX</code> is not a ServiceNow field. It is Salesforce's name for the success reply. ServiceNow answers the call with a status number. <code>200</code> through <code>299</code> means it worked. A new Incident usually comes back as <code>201</code>. Salesforce drops every success answer into one box named <code>2XX</code>. The Incident id and number are inside that box, under <code>result</code>. A <code>400</code> or <code>500</code> does not go there. Those land in <strong>Default Exception</strong>. <strong>Response Code</strong> is the raw number, such as <code>201</code>. Open <code>2XX</code>, open <code>result</code>, and pick <code>sys_id</code> or <code>number</code>. Do not pick the whole box.</p>
+    </div>
+
+    | Field | Value |
+    |-------|--------|
+    | ServiceNow Sys Id | `{!Create_Incident.2XX.result.sys_id}` |
+    | ServiceNow Number | `{!Create_Incident.2XX.result.number}` |
+    | Sync Source | `salesforce` |
+
+    Click **Done**. Click **Save**. Do not click **Activate** yet.
+ 7. Activate. In Salesforce, open the app launcher (the nine dots at the left), search `cases`, and open **Cases** under Items. Click New. Subject is required. Do not create an Incident yourself. The new Case lands in Recently Viewed. If you do not see it, click the down arrow next to the list name and pick **All Cases** or **All Open Cases**.
 
 ## Apex path {#apex}
 
