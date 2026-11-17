@@ -187,6 +187,15 @@ Do not do both. Two paths would both create an Incident for the same Case.
 
 The Named Credential above is required for either path. After you finish one path, create a new Case and check ServiceNow. That is the proof. The other path is optional reading, not a second setup.
 
+| | Flow | Apex |
+|--|------|------|
+| Who can change it later | An admin who can open Flow. No deploy. | Someone who can edit and deploy Apex. |
+| What you see | The field mapping is on the screen. | The mapping is in a class. You read code to see it. |
+| Risk | Easy to put the call on the wrong path. The save then fails with uncommitted work. | Easy to forget the test, or to deploy to the wrong org. |
+| Bulk | Fine for one Case at a time. Awkward if 200 Cases save at once. | The repo code batches the calls. That is why it exists. |
+| If the HTTP action is missing | You cannot finish this path. | You still can. |
+| This lab | Pick this if you want the click path. | Pick this if you want the same result with code you can rerun. |
+
 ## Flow path (no Apex) {#flow}
 
 Use this only if you picked Flow above.
