@@ -79,11 +79,13 @@ The gear icon is at the top right of Salesforce, next to the bell. Click it, the
 
 In Setup, open **Object Manager**. Search `case`. Open the row whose API name is **Case**, not Case Related Issue. Then **Fields & Relationships** → New.
 
-| Label | API name | Type | Extra |
-|-------|----------|------|-------|
-| ServiceNow Sys Id | `Snow_Sys_Id__c` | Text(32) | External Id, Unique |
-| ServiceNow Number | `Snow_Number__c` | Text(40) | |
-| Sync Source | `Snow_Sync_Source__c` | Text(20) | |
+Do not type `__c` in Field Name. Salesforce adds that suffix. `Snow_Sys_Id__c` fails because the name you typed already contains two underscores in a row. Type `Snow_Sys_Id`. The API name becomes `Snow_Sys_Id__c`.
+
+| Field Label (what you see) | Field Name (what you type) | API name Salesforce creates | Type | Extra |
+|----------------------------|----------------------------|-----------------------------|------|-------|
+| ServiceNow Sys Id | `Snow_Sys_Id` | `Snow_Sys_Id__c` | Text(32) | External Id, Unique |
+| ServiceNow Number | `Snow_Number` | `Snow_Number__c` | Text(40) | |
+| Sync Source | `Snow_Sync_Source` | `Snow_Sync_Source__c` | Text(20) | |
 
 Put the three fields on the Case page layout so you can see them.
 
