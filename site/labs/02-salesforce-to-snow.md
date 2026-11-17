@@ -149,9 +149,12 @@ QA follows the layout you checked. If you only check Close Case Layout, the fiel
 
 Setup → Quick Find `named credentials`. Open **Named Credentials** under Security. An empty list, "You don't have any named credentials," is expected. Click **New** at the right. The page has three tabs: Named Credentials, External Credentials, and External Auth Identity Providers. Start on External Credentials if you are creating the login first, then come back to Named Credentials → New.
 
-1. **External Credentials** → New. Label `EBOND ServiceNow`. Protocol **Custom** if you are using Basic auth for the lab. Add a principal. Store the PDI username and password on that principal. Grant the principal to your user with a permission set (**External Credential Principal Access**).
-2. **Named Credential** → New. Label and name `EBOND_ServiceNow`. URL `https://devNNNNN.service-now.com` (no path). Link the External Credential. Enable **Generate Authorization Header**.
-3. You do not also need a Remote Site Setting for that host.
+1. Open the **External Credentials** tab. Click **New**. Label `EBOND ServiceNow`. Name fills in as `EBOND_ServiceNow`.
+2. Authentication Protocol: pick **Basic Authentication**. Not Custom. The list also has AWS Signature Version 4, JWT, No Authentication, and OAuth 2.0. Those are for other kinds of login. This lab sends the PDI username and password, which is Basic Authentication. Custom means you build the header yourself. Do not start there.
+3. Save. The Principals list appears only after the save. A principal is the login this credential will use. It is not a user you create. Click **New** on Principals. Name it `PDI admin`. Enter the PDI username and password in the parameter boxes Salesforce shows. Save. The password stays on this screen. Do not put it in a screenshot.
+4. Setup → Quick Find **Permission Sets** → New, or open one you already have. Related list **External Credential Principal Access** → Edit. Enable the `PDI admin` principal. Save. Manage Assignments → add your user. Without this, the call fails even though the credential exists. Salesforce will not tell you the password was wrong. It will say you are not allowed to use the principal.
+5. Back on **Named Credentials** → **New**. Label and name `EBOND_ServiceNow`. URL `https://dev296154.service-now.com` with no path. Link the External Credential you just saved. Enable **Generate Authorization Header**. Save.
+6. You do not also need a Remote Site Setting for that host.
 
 ## Flow path (no Apex) {#flow}
 
