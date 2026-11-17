@@ -91,7 +91,7 @@ The wizard is four steps. The checkboxes below are on **Step 2 of 4, Enter the d
 
 **Step 3 of 4, field-level security.** Use the defaults. Do not build a permission set for this. You are the System Administrator who creates the Case and reads the field, and the default visible box for that profile is enough. A different integration user would need Visible, and Editable if that user writes the field. This lab does not use one.
 
-**Step 4 of 4, page layouts.** Add the three fields to the Case page layout so you can see them. That step is required. Field-level security is not.
+**Step 4 of 4, Add to page layouts.** Check every Case layout. On this org that is Case (Marketing) Layout, Case (Sales) Layout, Case (Support) Layout, Case Layout, and Close Case Layout. The field is added as the last field in the first two-column section. If you leave them all unchecked, the field exists and still does not show on the Case. Then click Save, or Save & New for the next field.
 
 ## Named Credential {#cred}
 
