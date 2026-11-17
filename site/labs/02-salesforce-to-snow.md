@@ -155,7 +155,7 @@ Setup → Quick Find `named credentials`. Open **Named Credentials** under Secur
    - Parameter Name: `PDI_admin`. No space. A space here can fail the same way Name did.
    - Sequence Number: `1`. This is the first and only principal. Salesforce uses the number to decide order if you add more later.
    - Identity Type: **Named Principal**. That means one shared PDI login for every Salesforce user who is allowed to use this credential. **Per User Principal** means each Salesforce user types their own ServiceNow password. Do not pick that for this lab.
-   Save. Then open the principal and fill the username and password parameters Salesforce adds for Basic Authentication. The password stays on that screen. Do not put it in a screenshot.
+   After you pick Named Principal, Username and Password appear on this same form. They are not a second screen. Username is the PDI user, `admin`. Password is the PDI password. Save. Do not put the password in a screenshot.
 4. Setup → Quick Find **Permission Sets** → New, or open one you already have. Related list **External Credential Principal Access** → Edit. Enable the `PDI admin` principal. Save. Manage Assignments → add your user. Without this, the call fails even though the credential exists. Salesforce will not tell you the password was wrong. It will say you are not allowed to use the principal.
 5. Back on **Named Credentials** → **New**. Label and name `EBOND_ServiceNow`. URL `https://dev296154.service-now.com` with no path. Link the External Credential you just saved. Enable **Generate Authorization Header**. Save.
 6. You do not also need a Remote Site Setting for that host.
