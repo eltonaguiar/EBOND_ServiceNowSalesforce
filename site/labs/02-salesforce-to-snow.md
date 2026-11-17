@@ -323,6 +323,8 @@ Use this only if you picked Flow above.
     | ServiceNow Number | `{!Create_Incident.2XX.result.number}` |
     | Sync Source | `salesforce` |
 
+    Type `salesforce` with no quotes and no capital S. Quotes would be stored as part of the value.
+
     Click **Done**. Click **Save**. Do not click **Activate** yet.
  7. Activate. In Salesforce, open the app launcher (the nine dots at the left), search `cases`, and open **Cases** under Items. Click New. Subject is required. Do not create an Incident yourself. The new Case lands in Recently Viewed. If you do not see it, click the down arrow next to the list name and pick **All Cases** or **All Open Cases**.
 
