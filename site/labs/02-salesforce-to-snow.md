@@ -280,6 +280,11 @@ Use this only if you picked Flow above.
    - Under Show advanced options, leave Transaction Control on **Let the flow decide**. Do not pick Always continue in current transaction. That can fail the call.
 5. Assignment is not inside the action panel. Close that panel. On the canvas, click the **+** between **Run Asynchronously** and **Create Incident**, then choose **Assignment**. That plus is the one directly above the Create Incident box.
 
+   <div class="eli5">
+   <span class="label">ELI5</span>
+   <p><code>IncidentBody</code> is an empty envelope shaped like the request ServiceNow expects. It is not a Case, and it is not an Incident yet. This Assignment copies values from the Salesforce Case that just triggered the Flow into that envelope. Subject becomes <code>short_description</code>. Description becomes <code>description</code>. The Case Id becomes <code>u_ebond_sf_case_id</code>. <code>urgency</code>, <code>impact</code>, and <code>u_sync_source</code> are fixed text. The next element sends the filled envelope to ServiceNow, which creates the Incident.</p>
+   </div>
+
    On the Assignment panel:
    - Label: `Set Incident Body`. The red box is only because this is empty.
    - API Name: `Set_Incident_Body` if it does not fill itself.
