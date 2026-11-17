@@ -14,6 +14,7 @@ permalink: /labs/03-snow-to-salesforce/
     <ol class="toc-list">
       <li><a href="#objective">Objective</a></li>
       <li><a href="#unlinked">What if an Incident has no <code>u_ebond_sf_case_id</code></a></li>
+      <li><a href="#alt">No-code / low-code alternatives</a></li>
       <li><a href="#eca">External Client App</a></li>
       <li><a href="#rest">REST Message</a></li>
       <li><a href="#rule">Async business rule</a></li>
@@ -43,6 +44,36 @@ Changing an Incident that already has `u_ebond_sf_case_id` updates the matching 
 </ul>
 <p>So the presence of <code>u_ebond_sf_case_id</code> is the definitive signal of "this Incident belongs to a Salesforce Case." If it is missing, the Incident is independent of Salesforce and will never be written back.</p>
 </div>
+
+## No-code / low-code alternatives {#alt}
+
+<p>The coded path below (REST Message + async business rule) is one way to make ServiceNow update Salesforce. It is not the only one. The <strong>External Client App</strong> step (OAuth client credentials) is required for every option here, so do that part regardless. Choose one of the following instead of the REST Message + JavaScript.</p>
+
+<details>
+<summary><strong>Option A — ServiceNow Flow Designer + Salesforce spoke (low-code, recommended)</strong></summary>
+<p>Replace the REST Message and the JavaScript business rule with a <strong>Flow</strong> built visually in Flow Designer, using IntegrationHub's official <strong>Salesforce spoke</strong> action ("Update Case").</p>
+<ul>
+<li>Trigger: <code>incident</code> record, async, when <code>u_ebond_sf_case_id</code> is not empty (same filter as the coded rule).</li>
+<li>Action: Salesforce spoke → <strong>Update Case</strong>, then map <code>Subject</code>, <code>Description</code>, <code>Snow_Number__c</code>, and <code>Snow_Sync_Source__c</code>.</li>
+<li>The loop guard is a Flow condition (skip when <code>u_sync_source = salesforce</code>) instead of the <code>if</code> in code.</li>
+<li>No hand-written REST Message, no JavaScript. The credentials still come from the same External Client App (OAuth) you set up for the coded path.</li>
+</ul>
+</details>
+
+<details>
+<summary><strong>Option B — Integration platform / iPaaS connector (no-code)</strong></summary>
+<p>Use a visual integration platform that ships prebuilt ServiceNow ⇄ Salesforce connectors, so no scripting or custom endpoint code is involved. Examples: Workato, Tray.io, Zapier, Automate.io, or Dell Boomi.</p>
+<ul>
+<li>You configure a trigger (Incident updated) and a field mapping in a UI; the platform handles auth and the call.</li>
+<li>No REST Message and no business rule in ServiceNow.</li>
+<li>Trade-offs: adds a third system and a license, and you still register credentials on both ends (including the External Client App).</li>
+</ul>
+</details>
+
+<details>
+<summary><strong>Option C — This lab's coded path (REST Message + business rule)</strong></summary>
+<p>The rest of this page documents the fully coded approach: a hand-written <strong>REST Message</strong> and an <strong>async business rule</strong> in JavaScript that PATCHes the Case. It works and is good for understanding the mechanics, but it is the most code-heavy option. Use it if you want to see exactly what the Flow/spoke or iPaaS does under the hood.</p>
+</details>
 
 ## External Client App {#eca}
 
@@ -138,20 +169,21 @@ The first line is the loop guard. Lab 2 set `u_sync_source` to `salesforce`, so 
 
 <details>
 <summary>Rough steps to link existing Salesforce Cases to existing Incidents</summary>
-
-This lab links one Incident at a time as it is created. If you already have Case in both systems and want to link them retroactively, here is the rough shape. Scope it to your need — do not blindly link everything.
-
-1. **Decide the scope of what should be linked.** Examples:
-   - Only **active** Incidents (state 1–3) with a matching Case.
-   - Only Incidents of a certain **type / category / assignment group** (e.g. `category = inquiry`, or a specific `assignment_group`).
-   - Only Incidents **created in the last N days**.
-   - Only Incidents that arrive from a specific source (e.g. the Salesforce flow).
-   An un-scoped link of *all* Incidents is usually wrong: many are unrelated to Salesforce.
-2. **Define the match key.** Decide which field links a Case to an Incident. In this lab the field is `u_ebond_sf_case_id` = Salesforce Case Id, and the reverse is `Snow_Sys_Id__c` on the Case. Match on one real identifier (Case Id, or Case Number).
-3. **Build the relation in ServiceNow.** For each Incident in scope, set `u_ebond_sf_case_id` to the matching Case's Id. Do this with a scripted business rule / scheduled job, a bulk Scripted REST call, or the REST API Explorer in bulk — not by hand for hundreds of rows.
-4. **Backfill the SF field.** For each linked Incident, set the Case's `Snow_Number__c` and `Snow_Sys_Id__c` (and `Snow_Sync_Source__c`) so the link is visible from the Salesforce side too. This is the reverse of step 3.
-5. **Sync matching status.** Once links exist, run a reconciliation so open Incidents update their Cases (and vice versa) — reuse the PATCH business rule logic from this lab for one-way, or a scheduled sync for two-way.
-6. **Test on a sample first.** Link a handful, verify the Case updates, then widen the scope. Always keep a rollback (a saved copy of the original `u_ebond_sf_case_id` / Case fields before you overwrite them).
-
-> Reminder: creating a link does not create a duplicate Case. It only connects the two existing records. Keep the loop guard (`u_sync_source`) in mind so a bulk link does not trigger a write-back loop.
+<p>This lab links one Incident at a time as it is created. If you already have Cases in both systems and want to link them retroactively, here is the rough shape. Scope it to your need — do not blindly link everything.</p>
+<ol>
+<li><strong>Decide the scope of what should be linked.</strong> Examples:
+<ul>
+<li>Only <strong>active</strong> Incidents (state 1–3) with a matching Case.</li>
+<li>Only Incidents of a certain <strong>type / category / assignment group</strong> (e.g. <code>category = inquiry</code>, or a specific <code>assignment_group</code>).</li>
+<li>Only Incidents <strong>created in the last N days</strong>.</li>
+<li>Only Incidents that arrive from a specific source (e.g. the Salesforce flow).</li>
+</ul>
+An un-scoped link of <em>all</em> Incidents is usually wrong: many are unrelated to Salesforce.</li>
+<li><strong>Define the match key.</strong> Decide which field links a Case to an Incident. In this lab the field is <code>u_ebond_sf_case_id</code> = Salesforce Case Id, and the reverse is <code>Snow_Sys_Id__c</code> on the Case. Match on one real identifier (Case Id, or Case Number).</li>
+<li><strong>Build the relation in ServiceNow.</strong> For each Incident in scope, set <code>u_ebond_sf_case_id</code> to the matching Case's Id. Do this with a scripted business rule / scheduled job, a bulk Scripted REST call, or the REST API Explorer in bulk — not by hand for hundreds of rows.</li>
+<li><strong>Backfill the SF field.</strong> For each linked Incident, set the Case's <code>Snow_Number__c</code> and <code>Snow_Sys_Id__c</code> (and <code>Snow_Sync_Source__c</code>) so the link is visible from the Salesforce side too. This is the reverse of step 3.</li>
+<li><strong>Sync matching status.</strong> Once links exist, run a reconciliation so open Incidents update their Cases (and vice versa) — reuse the PATCH business rule logic from this lab for one-way, or a scheduled sync for two-way.</li>
+<li><strong>Test on a sample first.</strong> Link a handful, verify the Case updates, then widen the scope. Always keep a rollback (a saved copy of the original <code>u_ebond_sf_case_id</code> / Case fields before you overwrite them).</li>
+</ol>
+<p>Reminder: creating a link does not create a duplicate Case. It only connects the two existing records. Keep the loop guard (<code>u_sync_source</code>) in mind so a bulk link does not trigger a write-back loop.</p>
 </details>
