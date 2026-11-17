@@ -91,7 +91,23 @@ The wizard is four steps. The checkboxes below are on **Step 2 of 4, Enter the d
 
 **Step 3 of 4, field-level security.** Use the defaults. Do not build a permission set for this. You are the System Administrator who creates the Case and reads the field, and the default visible box for that profile is enough. A different integration user would need Visible, and Editable if that user writes the field. This lab does not use one.
 
-**Step 4 of 4, Add to page layouts.** Check every Case layout. On this org that is Case (Marketing) Layout, Case (Sales) Layout, Case (Support) Layout, Case Layout, and Close Case Layout. The field is added as the last field in the first two-column section. If you leave them all unchecked, the field exists and still does not show on the Case. Then click Save, or Save & New for the next field.
+**Step 4 of 4, Add to page layouts.** Check every Case layout. On this org that is Case (Marketing) Layout, Case (Sales) Layout, Case (Support) Layout, Case Layout, and Close Case Layout. The field is added as the last field in the first two-column section. Then click Save, or Save & New for the next field.
+
+### What each layout box does
+
+These boxes do not create the field. Step 2 already did that. They only choose which Case screens show it.
+
+| Box | Purpose |
+|-----|---------|
+| Case Layout | The default Case page. This is the one you will open for most of this lab. |
+| Case (Support) Layout | The Case page the Support app uses. |
+| Case (Sales) Layout | The Case page the Sales app uses. |
+| Case (Marketing) Layout | The Case page the Marketing app uses. |
+| Close Case Layout | The page shown while closing a Case. Not the page for a new or open Case. |
+
+If you do not check a box, that screen does not show the field. The field is still on the Case. The API, Flow, and Apex can still read and write it. A report can still show it, if the report includes that field and your user can see the field. An unchecked layout does not remove it from reports.
+
+QA follows the layout you checked. If you only check Close Case Layout, the field appears when you close a Case, and it does not appear on an open Case. You can still check the value without that screen: run a report that includes `Snow_Sys_Id__c`, or call the API, or add the field to Case Layout and open an open Case. Checking every box avoids that hunt.
 
 ## Named Credential {#cred}
 
