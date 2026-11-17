@@ -312,6 +312,7 @@ Use this only if you picked Flow above.
     <div class="eli5">
     <span class="label">ELI5</span>
     <p><code>2XX</code> is not a ServiceNow field. It is Salesforce's name for the success reply. ServiceNow answers the call with a status number. <code>200</code> through <code>299</code> means it worked. A new Incident usually comes back as <code>201</code>. Salesforce drops every success answer into one box named <code>2XX</code>. The Incident id and number are inside that box, under <code>result</code>. A <code>400</code> or <code>500</code> does not go there. Those land in <strong>Default Exception</strong>. <strong>Response Code</strong> is the raw number, such as <code>201</code>. Open <code>2XX</code>, open <code>result</code>, and pick <code>sys_id</code> or <code>number</code>. Do not pick the whole box.</p>
+    <p>The first row copies that id onto the Case. Left side is the Case field <strong>ServiceNow Sys Id</strong> (<code>Snow_Sys_Id__c</code>). Right side is <code>{!EBONDCreateIncident_Create_Incident.2XX.result.sys_id}</code>. That name is the Create Incident action, then the success box, then <code>result</code>, then <code>sys_id</code>. Do not type it. Typing <code>cre</code> turns the box red because the Value box wants a picked output, not text. If Salesforce shows <code>sys_x5f_id</code>, that is still <code>sys_id</code>. <code>_x5f_</code> is how it writes an underscore. Do not type <code>sysx5fid</code>.</p>
     </div>
 
     | Field | Value |
