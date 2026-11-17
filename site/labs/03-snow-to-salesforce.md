@@ -34,16 +34,14 @@ Changing an Incident that already has `u_ebond_sf_case_id` updates the matching 
 
 <div class="note">
 <span class="label">Unlinked Incidents</span>
-
-### What if an Incident has no `u_ebond_sf_case_id` {#unlinked}
-
-`u_ebond_sf_case_id` is the link between an Incident and a Salesforce Case. It holds the Salesforce record Id (the 18-character `500…` value) of the Case that created the Incident.
-
-- If the field is **empty**, the Incident is **not linked to Salesforce**. This lab's business rule and the REST call both depend on that field being set, so an empty value means **nothing happens**: ServiceNow will not call Salesforce, and Salesforce has no way to find the owning Case.
-- This is expected for any Incident that was created manually in ServiceNow, by email, or by another integration — those Incidents never came from a Salesforce Case, so there is no Case to update. The field is intentionally left blank for them.
-- The async rule guards on this (filter `u_ebond_sf_case_id` is not empty, plus the `if (!current.u_ebond_sf_case_id) return;` check). It only acts on Incidents that have a link. Unlinked Incidents are simply skipped.
-
-So the presence of `u_ebond_sf_case_id` is the definitive signal of "this Incident belongs to a Salesforce Case." If it is missing, the Incident is independent of Salesforce and will never be written back.
+<h3 id="unlinked">What if an Incident has no <code>u_ebond_sf_case_id</code></h3>
+<p><code>u_ebond_sf_case_id</code> is the link between an Incident and a Salesforce Case. It holds the Salesforce record Id (the 18-character <code>500…</code> value) of the Case that created the Incident.</p>
+<ul>
+<li>If the field is <strong>empty</strong>, the Incident is <strong>not linked to Salesforce</strong>. This lab's business rule and the REST call both depend on that field being set, so an empty value means <strong>nothing happens</strong>: ServiceNow will not call Salesforce, and Salesforce has no way to find the owning Case.</li>
+<li>This is expected for any Incident that was created manually in ServiceNow, by email, or by another integration — those Incidents never came from a Salesforce Case, so there is no Case to update. The field is intentionally left blank for them.</li>
+<li>The async rule guards on this (filter <code>u_ebond_sf_case_id</code> is not empty, plus the <code>if (!current.u_ebond_sf_case_id) return;</code> check). It only acts on Incidents that have a link. Unlinked Incidents are simply skipped.</li>
+</ul>
+<p>So the presence of <code>u_ebond_sf_case_id</code> is the definitive signal of "this Incident belongs to a Salesforce Case." If it is missing, the Incident is independent of Salesforce and will never be written back.</p>
 </div>
 
 ## External Client App {#eca}
