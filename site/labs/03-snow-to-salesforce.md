@@ -239,6 +239,9 @@ An un-scoped link of <em>all</em> Incidents is usually wrong: many are unrelated
 
 ## 7. Post-lab notes {#notes} <span class="req">[O]</span>
 
+<details>
+<summary><strong>So it runs — now what? What to keep out, and how to trust it</strong> <em>(tap to open)</em></summary>
+
 <p>Practical notes for going beyond the lab. These apply whichever path you chose in Section 1. The recurring theme: the integration only acts on Incidents that are <em>meant</em> to be linked, and you keep that "who is eligible" decision explicit so it is easy to audit and change.</p>
 
 <h4>Keeping certain tickets out of the integration (e.g. confidential)</h4>
@@ -257,3 +260,4 @@ An un-scoped link of <em>all</em> Incidents is usually wrong: many are unrelated
 <li>Keep credentials out of repos and screenshots. The External Client App consumer secret and the ServiceNow basic-auth password never belong in code or in a committed image.</li>
 <li>Test exclusions explicitly: create a confidential Incident, confirm the integration leaves it untouched (no link, no call, no log of a write).</li>
 </ul>
+</details>
