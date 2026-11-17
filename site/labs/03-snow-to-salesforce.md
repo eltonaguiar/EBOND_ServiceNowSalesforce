@@ -45,7 +45,7 @@ permalink: /labs/03-snow-to-salesforce/
 </ul>
 </div>
 
-## Background {#bg} <span class="req">[R]</span>
+## Background <span class="req">[R]</span> {#bg}
 
 <p>This lab is the return path to Lab 2. In Lab 2 a Salesforce Case created an Incident and stored the Case link on the Incident in <code>u_ebond_sf_case_id</code>. This lab makes a change on the Incident flow back and update that Case. The match key is <code>Snow_Sys_Id__c</code> on the Case.</p>
 
@@ -61,7 +61,7 @@ permalink: /labs/03-snow-to-salesforce/
 <p>So the presence of <code>u_ebond_sf_case_id</code> is the definitive signal of "this Incident belongs to a Salesforce Case." If it is missing, the Incident is independent of Salesforce and will never be written back.</p>
 </div>
 
-## 1. Choose your integration path {#path} <span class="req">[R]</span>
+## 1. Choose your integration path <span class="req">[R]</span> {#path}
 
 <p>Three ways exist to make ServiceNow update Salesforce. They all need the same OAuth setup in Section 2, but they differ in how much code you write. Pick <strong>one</strong>, then follow only that subsection below (1.1A, 1.1B, or 1.1C).</p>
 
@@ -120,7 +120,7 @@ permalink: /labs/03-snow-to-salesforce/
 </ul>
 </details>
 
-## 2. External Client App {#eca} <span class="req">[R]</span>
+## 2. External Client App <span class="req">[R]</span> {#eca}
 
 <p>Do this in Salesforce. Do not create a Connected App. This step is required for every path in Section 1.</p>
 
@@ -138,7 +138,7 @@ https://YOUR_DOMAIN.my.salesforce.com/services/oauth2/token
 
 `login.salesforce.com` does not work for client credentials.
 
-## 3. REST Message {#rest} <span class="req">[R · C]</span>
+## 3. REST Message <span class="req">[R · C]</span> {#rest}
 
 <p>Only for path <strong>1.1C</strong> (coded). If you chose 1.1A or 1.1B, skip to Section 5.</p>
 
@@ -171,7 +171,7 @@ Body. Do not put `Snow_Sys_Id__c` in the JSON. It is already in the URL.
 
 Use **Test** on the method with a real `sys_id` from Lab 2 before you automate it. Expect 200.
 
-## 4. Async business rule {#rule} <span class="req">[R · C]</span>
+## 4. Async business rule <span class="req">[R · C]</span> {#rule}
 
 <p>Only for path <strong>1.1C</strong> (coded). If you chose 1.1A or 1.1B, skip to Section 5.</p>
 
@@ -205,7 +205,7 @@ The first line is the loop guard. Lab 2 set `u_sync_source` to `salesforce`, so 
 <p>Save <code>03-external-client-app.png</code>, <code>03-rest-message-200.png</code>, and <code>03-case-after-update.png</code> into <a href="https://github.com/eltonaguiar/EBOND_ServiceNowSalesforce_RUN/blob/main/README.MD">the run repo</a>. Cover the consumer secret.</p>
 </div>
 
-## 5. Prove it {#prove} <span class="req">[R]</span>
+## 5. Prove it <span class="req">[R]</span> {#prove}
 
 <ul class="check">
 <li>REST Message test against a known <code>Snow_Sys_Id__c</code> returns 200, not 404.</li>
@@ -214,7 +214,7 @@ The first line is the loop guard. Lab 2 set `u_sync_source` to `salesforce`, so 
 <li>No second Case was created.</li>
 </ul>
 
-## 6. Linking existing tickets (bulk) {#bulk} <span class="req">[O]</span>
+## 6. Linking existing tickets (bulk) <span class="req">[O]</span> {#bulk}
 
 <details>
 <summary>Rough steps to link existing Salesforce Cases to existing Incidents</summary>
@@ -237,7 +237,7 @@ An un-scoped link of <em>all</em> Incidents is usually wrong: many are unrelated
 <p>Reminder: creating a link does not create a duplicate Case. It only connects the two existing records. Keep the loop guard (<code>u_sync_source</code>) in mind so a bulk link does not trigger a write-back loop.</p>
 </details>
 
-## 7. Post-lab notes {#notes} <span class="req">[O]</span>
+## 7. Post-lab notes <span class="req">[O]</span> {#notes}
 
 <details>
 <summary><strong>So it runs — now what? What to keep out, and how to trust it</strong> <em>(tap to open)</em></summary>
