@@ -82,3 +82,5 @@ details.glossary[open] summary { margin-bottom:.4rem; }
 @media (min-width:34rem) { .toc-labs { columns:2; } }
 @media (min-width:52rem) { .toc-labs { columns:3; } }
 .toc-labs b { display:inline-block; min-width:1.5rem; color:var(--muted); font-weight:600; font-variant-numeric:tabular-nums; }
+
+.req { display:inline-block; margin-left:.4rem; padding:.08rem .45rem; border:1px solid var(--line); border-radius:999px; background:var(--code); color:var(--muted); font-size:.72rem; font-weight:600; letter-spacing:.03em; vertical-align:middle; white-space:nowrap; }
