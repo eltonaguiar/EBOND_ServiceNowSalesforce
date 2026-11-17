@@ -217,6 +217,19 @@ Use this only if you picked Flow above.
    - URL Path: `/api/now/table/incident`. The host is already filled from the Named Credential. Do not type the host again.
    - Set Query Parameter Keys: do not click Add Key.
    - Click Next.
+
+   Third screen, Sample JSON Request. Paste the block below, click **Review**, then **Next**. These are sample values so Salesforce learns the field names. They are not the live Case.
+
+   ```json
+   {
+     "short_description": "Lab 2 from Flow",
+     "description": "Created from a Salesforce Case",
+     "urgency": "2",
+     "impact": "2",
+     "u_ebond_sf_case_id": "500000000000000AAA",
+     "u_sync_source": "salesforce"
+   }
+   ```
 4. Body maps `Subject` → `short_description`, `Description` → `description`, and a formula or the Case Id → `u_ebond_sf_case_id`. Also send `u_sync_source` = `salesforce`.
 5. Save the returned `sys_id` into `Snow_Sys_Id__c` and `number` into `Snow_Number__c` with an Update Records element. Set `Snow_Sync_Source__c` to `salesforce`.
 6. Activate. In Salesforce, open the app launcher (the nine dots at the left), search `cases`, and open **Cases** under Items. Click New. Subject is required. Do not create an Incident yourself. The new Case lands in Recently Viewed. If you do not see it, click the down arrow next to the list name and pick **All Cases** or **All Open Cases**.
