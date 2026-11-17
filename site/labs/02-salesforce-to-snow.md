@@ -275,7 +275,7 @@ Use this only if you picked Flow above.
    }
    ```
 
-   Name the resource `IncidentBody`. Salesforce sets the data type and Apex class. Set `short_description` = `{!$Record.Subject}`, `description` = `{!$Record.Description}`, `urgency` = `2`, `impact` = `2`, `u_ebond_sf_case_id` = `{!$Record.Id}`, `u_sync_source` = `salesforce`.
+   On New Resource, API Name `IncidentBody`. Leave Description blank. Data Type stays Apex-Defined. Apex Class stays the generated body class. Leave Allow multiple values unchecked. Leave both Availability boxes unchecked. This dialog does not contain the six fields. Click **Done**. The Value box should then show `IncidentBody`. The six fields are set in the next step, on an Assignment before this action.
    - Leave **Manually assign variables** unchecked.
    - Under Show advanced options, leave Transaction Control on **Let the flow decide**. Do not pick Always continue in current transaction. That can fail the call.
    - Click Done.
