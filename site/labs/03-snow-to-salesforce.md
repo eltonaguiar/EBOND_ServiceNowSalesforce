@@ -78,7 +78,7 @@ permalink: /labs/03-snow-to-salesforce/
 <h4>The best pick for maintainability, by situation</h4>
 <ul>
 <li><strong>Small team, no advanced developers, few fields, one direction → choose 1.1B</strong> (iPaaS). The vendor maintains the connector; a business analyst can map fields in a UI; upgrades and auth are handled for you. Best long-term maintainability with the least specialized skill. Cost is the factor to weigh.</li>
-<li><strong>You have ServiceNow admins (not developers) and want the integration to live inside ServiceNow → choose 1.1A</strong> (Flow + Salesforce spoke). No custom code to review, deploy, or version; the Flow is the artifact. Great when you want the logic close to the source of the trigger and you already pay for IntegrationHub spokes.</li>
+<li><strong>You have ServiceNow admins (not developers) and want the integration to live inside ServiceNow → choose 1.1A</strong> (Flow + Salesforce spoke). No custom code to review, deploy, or version; the Flow is the artifact. Great when you want the logic close to the source of the trigger and you already pay for IntegrationHub — but note IntegrationHub is a paid subscription and may not be on a free PDI, so on a free instance the coded path (1.1C) is the reliable choice.</li>
 <li><strong>You need very specific, complex, or unusual behavior — custom fields per source, conditional logic, retries, transformations, multiple directions, audit hooks → choose 1.1C</strong> (coded). Code is the most flexible and the only option that fully controls bytes on the wire. It demands real developers to maintain, and it is the hardest to hand off. This is the right choice only when the other two cannot express the requirement.</li>
 </ul>
 
@@ -112,6 +112,7 @@ permalink: /labs/03-snow-to-salesforce/
 
 <p><strong>How to get there:</strong> in your ServiceNow instance, open the left navigation menu (the "All" menu, top-left) and choose <strong>Process Automation → Flow Designer</strong>. From the Flow Designer landing page, click <strong>New Flow</strong>. A dialog asks for a <strong>Flow name</strong> (and optionally Application/Description) — give it a name like <code>EBOND Update Case</code> and click <strong>Create</strong>. Then choose <strong>Flow for Record</strong> as the flow type.</p>
 <p><strong>Where to find it later:</strong> the navigator also has a <strong>Flow Administration</strong> section (under Process Automation) where you can manage the flow once it exists — <strong>Active Flows</strong> lists running flows and <strong>Today's Executions</strong> shows run history. You will use those in Section 5 to confirm the flow ran.</p>
+<p><strong>Licensing caveat:</strong> this path uses the Salesforce spoke, which ships with <strong>Integration Hub</strong>. Integration Hub is a paid subscription and is not reliably included on a free Personal Developer Instance (PDI). If your PDI cannot activate the spoke, use <strong>1.1C</strong> (coded), which needs no extra license. Verify the spoke is available in your instance before committing to this path.</p>
 
 <ol>
 <li><strong>Trigger.</strong> In the Flow's trigger step, set the table to <strong>Incident [incident]</strong>, the trigger to <strong>Record created or updated</strong>, and the condition (filter) to <strong><code>u_ebond_sf_case_id</code> is not empty</strong>. This means the Flow only runs for Incidents that are already linked to a Salesforce Case; unlinked ones are ignored (this is the same guard the coded rule uses).</li>
@@ -124,7 +125,7 @@ permalink: /labs/03-snow-to-salesforce/
 <li>Case <strong>Snow_Number__c</strong> ← Incident <strong>number</strong></li>
 <li>Case <strong>Snow_Sync_Source__c</strong> ← the fixed text <strong>servicenow</strong></li>
 </ul>
-The spoke matches the Case by <strong><code>Snow_Sys_Id__c</code> = Incident <code>u_ebond_sf_case_id</code></strong> — the reverse of the match key.</li>
+The spoke updates the Case that this Incident is linked to. Identify that Case by the Incident's <strong><code>u_ebond_sf_case_id</code></strong> — the Salesforce Case Id stored on the Incident. (If your spoke exposes an external-ID lookup instead, the equivalent is <code>Snow_Sys_Id__c</code> = the Incident's <code>sys_id</code>, which is what the coded path in Section 3 uses.) Do not match <code>Snow_Sys_Id__c</code> to <code>u_ebond_sf_case_id</code> — those are different identifiers.</li>
 <li><strong>Save, activate, and test.</strong> Save and activate the Flow, then edit an Incident's short description by hand (with <code>u_sync_source</code> blank or <code>servicenow</code>) and confirm the matching Case updates.</li>
 </ol>
 
