@@ -110,7 +110,14 @@ permalink: /labs/03-snow-to-salesforce/
 
 <p><strong>System:</strong> you work <strong>inside ServiceNow</strong> (the PDI), not in Salesforce. You build a <strong>Flow</strong> there that calls Salesforce on your behalf using the External Client App credentials from Section 2.</p>
 
-<p><strong>How to get there:</strong> in your ServiceNow instance, open the left navigation menu (the "All" menu, top-left) and choose <strong>Process Automation → Flow Designer</strong>. From the Flow Designer landing page, click <strong>New Flow</strong>. A dialog asks for a <strong>Flow name</strong> (and optionally Application/Description) — give it a name like <code>EBOND Update Case</code> and click <strong>Create</strong>. Then choose <strong>Flow for Record</strong> as the flow type.</p>
+<p><strong>How to get there:</strong> in your ServiceNow instance, open the left navigation menu (the "All" menu, top-left) and choose <strong>Process Automation → Flow Designer</strong>. From the Flow Designer landing page, click <strong>New Flow</strong>. The create dialog asks for:</p>
+<ul>
+<li><strong>Flow name</strong> (required) — e.g. <code>EBOND Update Case</code></li>
+<li><strong>Application</strong> (required dropdown) — pick a sensible application for your work, or <strong>Global</strong>, rather than whatever is currently selected (e.g. "Service Graph Connector for Microsoft SCCM").</li>
+<li><strong>Description</strong> (optional)</li>
+<li>Additional properties (<strong>Protection</strong>, <strong>Run as</strong>, <strong>Run with roles</strong>, <strong>Flow priority default</strong>) — leave at their defaults for this lab.</li>
+</ul>
+<p>Click <strong>Create</strong>. There is <strong>no "Flow for Record" choice at create time</strong> — you make it a record-triggered flow by configuring the trigger <em>after</em> you enter the flow canvas (step 1 below).</p>
 <p><strong>Where to find it later:</strong> the navigator also has a <strong>Flow Administration</strong> section (under Process Automation) where you can manage the flow once it exists — <strong>Active Flows</strong> lists running flows and <strong>Today's Executions</strong> shows run history. You will use those in Section 5 to confirm the flow ran.</p>
 <p><strong>Licensing caveat:</strong> this path uses the Salesforce spoke, which ships with <strong>Integration Hub</strong>. Integration Hub is a paid subscription and is not reliably included on a free Personal Developer Instance (PDI). If your PDI cannot activate the spoke, use <strong>1.1C</strong> (coded), which needs no extra license. Verify the spoke is available in your instance before committing to this path.</p>
 
