@@ -21,6 +21,7 @@ permalink: /labs/02-salesforce-to-snow/
       <li><a href="#prove">Prove it</a></li>
       <li><a href="#learned">What we learned</a></li>
       <li><a href="#setup">What is set up</a></li>
+      <li><a href="#cheatsheet">Cheat sheet</a></li>
     </ol>
   </div>
 </nav>
@@ -151,7 +152,7 @@ QA follows the layout you checked. If you only check Close Case Layout, the fiel
 
 Setup → Quick Find `named credentials`. Open **Named Credentials** under Security. An empty list, "You don't have any named credentials," is expected. Click **New** at the right. The page has three tabs: Named Credentials, External Credentials, and External Auth Identity Providers. Start on External Credentials if you are creating the login first, then come back to Named Credentials → New.
 
-1. Open the **External Credentials** tab. Click **New**. Label is the display name. Type `EBOND ServiceNow`. A space is fine there. Name is the API name. Change it to `EBOND_ServiceNow`. No spaces. Salesforce may copy the label, space included, into Name. If you save that, you get a red unexpected-error banner, not a clear "no spaces" message. Fix Name, then Save.
+1. Open the **External Credentials** tab. Click **New**. Label is the display name. Type `EBOND ServiceNow`. A space is fine there. Name is the API name. This run saved `EBONDServiceNow`. No spaces and no underscore. Salesforce may copy the label, space included, into Name. If you save that, you get a red unexpected-error banner, not a clear "no spaces" message. Fix Name, then Save. The underscore name `EBOND_ServiceNow` is the Named Credential, not this one.
 2. Authentication Protocol: pick **Basic Authentication**. Not Custom. The list also has AWS Signature Version 4, JWT, No Authentication, and OAuth 2.0. Those are for other kinds of login. This lab sends the PDI username and password, which is Basic Authentication. Custom means you build the header yourself. Do not start there.
 3. Save. The Principals list appears only after the save. A principal is the login this credential will use. It is not a user you create. Click **New** on Principals. The form is three boxes, not a username form yet.
    - Parameter Name: `PDI_admin`. No space. A space here can fail the same way Name did.
@@ -414,7 +415,7 @@ ServiceNow's own start page for that explorer is [Get started with the REST API 
 <span class="label">Warning</span>
 <p>Send on POST, PUT, PATCH, or DELETE changes the instance. The browser asks <strong>Modifying data, confirm to continue</strong>. OK is not a preview. Do this on a personal developer instance, not production.</p>
 </div>
-![Confirm dialog before a real write]({{ '/assets/img/02-explorer-confirm.png' | relative_url }})
+<img src="{{ '/assets/img/02-explorer-confirm.png' | relative_url }}" alt="Confirm dialog before a real write">
 <p>An empty POST still returns 201 and a new Incident. This run made <code>INC0010011</code> and <code>INC0010012</code> that way. Caller and Short description are mandatory on the form. They are not mandatory on the API. The empty reply had <code>caller_id</code> blank, <code>short_description</code> blank, <code>impact</code> <code>3</code>, <code>urgency</code> <code>3</code>, <code>priority</code> <code>4</code>, and <code>category</code> <code>inquiry</code>. Those are platform defaults. <code>u_ebond_sf_case_id</code> and <code>u_sync_source</code> were empty because the body did not send them.</p>
 <p>Those two Incidents are explorer noise. They are not the Case proof. The Case proof is <code>INC0010010</code>.</p>
 </details>
@@ -433,3 +434,44 @@ Deleting the Case does not delete the Incident. Deleting the Incident does not d
 | Lab 3 | Not built. An Incident change should patch the Case. |
 | Lab 4 | The flag `salesforce` is written. The ServiceNow rule that reads it is not installed. |
 | Lab 5 | A failure list. Not a sync. |
+
+<details class="glossary" id="cheatsheet">
+<summary>Cheat sheet — breadcrumbs and the end-to-end clicks</summary>
+<p>Best effort. This condenses the key sections above and the saved screens from this run. It is not a second copy of every warning. If a name here disagrees with a screen, trust the saved screen.</p>
+
+<div class="eli5">
+<span class="label">ELI5</span>
+<p>An External Credential is the login. A Named Credential is the address that uses that login. The permission set is the badge that lets your Salesforce user use the login. The Flow calls the address, not the login and not the badge.</p>
+</div>
+
+<p>The permission set links to the External Credential principal, <code>EBONDServiceNow - PDI_admin</code>. It does not link to the Named Credential. The Named Credential points at the External Credential. The Flow points at the Named Credential.</p>
+<p>External Credential was created first. The Named Credential was created after it. The link on the Named Credential page does not mean the Named Credential came first. You cannot pick an External Credential that does not exist yet. After the principal was saved, Related Named Credentials was still empty. It filled in only when the Named Credential was saved.</p>
+
+<table>
+<thead><tr><th>Thing</th><th>What it is</th><th>This run</th><th>Where it is used</th></tr></thead>
+<tbody>
+<tr><td>External Credential</td><td>The ServiceNow login. Protocol plus principal.</td><td>Label <code>EBOND ServiceNow</code>. Name <code>EBONDServiceNow</code>. Basic Authentication.</td><td>Stores the PDI username and password. The permission set grants this principal.</td></tr>
+<tr><td>Principal</td><td>One login on that External Credential.</td><td>Sequence <code>1</code>. Parameter Name <code>PDI_admin</code>. Named Principal. Username <code>admin</code>.</td><td>The secret the call sends. Not a Salesforce user.</td></tr>
+<tr><td>Permission set</td><td>A badge on a Salesforce user.</td><td>This run's screen is labeled <code>PDI admin</code>. License <code>--None--</code>. External Credential Principal Access enabled <code>EBONDServiceNow - PDI_admin</code>. Assigned to the System Administrator user.</td><td>Without it, the call fails even though the password is right. It is not linked to the Named Credential.</td></tr>
+<tr><td>Named Credential</td><td>The callout address, plus which login to use.</td><td>Label and Name <code>EBOND_ServiceNow</code>. URL <code>https://dev296154.service-now.com/</code>. External Credential <code>EBOND ServiceNow</code>. Generate Authorization Header on.</td><td>The Flow HTTP Callout picks this by name. It supplies the host.</td></tr>
+<tr><td>External Service</td><td>The saved POST operation and its JSON shape.</td><td><code>EBONDCreateIncident</code>, created by the HTTP Callout wizard.</td><td>The Flow action <code>EBONDCreateIncident: Create Incident</code>.</td></tr>
+</tbody>
+</table>
+
+<ol>
+<li>ServiceNow. Open an Incident. Form menu, three lines, <strong>Configure &gt; Table</strong>. Global application, extends Task. New column <code>u_ebond_sf_case_id</code>, String, length 18. New column <code>u_sync_source</code>, String, length 20. Do not use <code>x_snc_</code>. Leave <code>correlation_id</code> and <code>correlation_display</code> alone.</li>
+<li>Salesforce. Gear, top right. <strong>Setup</strong>, not Setup for current app.</li>
+<li>Setup → Object Manager → search <code>case</code> → API name <strong>Case</strong> → Fields &amp; Relationships → New. Three Text fields: <code>Snow_Sys_Id</code> length 32, Unique and External ID. <code>Snow_Number</code> length 40. <code>Snow_Sync_Source</code> length 20. Step 3 defaults. Step 4, check every Case layout.</li>
+<li>Setup → Quick Find <code>named credentials</code> → <strong>Named Credentials</strong>. External Credentials tab → New. Label <code>EBOND ServiceNow</code>. Name <code>EBONDServiceNow</code>. Protocol <strong>Basic Authentication</strong>. Save.</li>
+<li>On that External Credential, Principals → New. Parameter Name <code>PDI_admin</code>. Sequence <code>1</code>. Identity Type <strong>Named Principal</strong>. Username <code>admin</code>. Password is the PDI password. Save. Do not screenshot the password.</li>
+<li>Setup → Quick Find <code>permission sets</code> → New, or open the set this run used, <code>PDI admin</code>. License <code>--None--</code>. Open the set. <strong>External Credential Principal Access</strong> → Edit. Move <code>EBONDServiceNow - PDI_admin</code> to Enabled with the Add arrow. Save. <strong>Manage Assignments</strong> → Add Assignment → your user → Next → Assign.</li>
+<li>Named Credentials tab → New. Name <code>EBOND_ServiceNow</code>. URL <code>https://dev296154.service-now.com/</code>. Enabled for Callouts on. External Credential <code>EBOND ServiceNow</code>. Generate Authorization Header checked. No client certificate. No custom headers. No Remote Site Setting.</li>
+<li>Setup → Quick Find <code>flows</code> → <strong>Flows</strong> → New Flow. Record-Triggered Flow. Object Case. A record is created. Optimize for Actions and Related Records. Add Asynchronous Path on. Leave Run Immediately empty.</li>
+<li>On Run Asynchronously, plus → Action → <strong>Create HTTP Callout</strong>. Name <code>EBONDCreateIncident</code>. Named Credential <code>EBOND_ServiceNow</code>. Label <code>Create Incident</code>. Method POST. Path <code>/api/now/table/incident</code>. No query key. Sample request is the six fields. Sample response is <code>result.sys_id</code> and <code>result.number</code>. Use Example Response, not Connect for Schema. Save that wizard with Save, not Next.</li>
+<li>Body value is a new resource, API Name <code>IncidentBody</code>. Leave Manually assign variables unchecked. Transaction Control: Let the flow decide. Close the panel with X.</li>
+<li>Plus above Create Incident → Assignment. Label <code>Set Incident Body</code>. Six Equals rows from the triggering Case: Subject, Description, <code>2</code>, <code>2</code>, Case Id, <code>salesforce</code>. Do not pick the whole <code>IncidentBody</code>.</li>
+<li>Plus under Create Incident → Update Records. Label <code>Save Incident Ids</code>. Use the Case record that triggered the flow. ServiceNow Sys Id from Create Incident → 2XX → result → <code>sys_id</code>. ServiceNow Number from <code>number</code> (stored as <code>z0number</code>). Sync Source typed <code>salesforce</code>, no quotes. Close the panel with X. There is no Done.</li>
+<li>Save the flow. Label <code>EBOND Create Incident</code>. API Name <code>EBOND_Create_Incident</code>. Then Activate.</li>
+<li>App launcher → Cases → New. Subject <code>EBOND lab 2</code>. Case Origin <strong>Web</strong>. Leave the ServiceNow fields empty. Save. Wait, then open the Case. This run: Case <code>00001027</code> wrote Incident <code>INC0010010</code>.</li>
+</ol>
+</details>
