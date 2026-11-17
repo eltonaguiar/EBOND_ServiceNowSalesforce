@@ -81,7 +81,43 @@ In Setup, open **Object Manager**. Search `case`. Open the row whose API name is
 
 Do not type `__c` in Field Name. Salesforce adds that suffix. `Snow_Sys_Id__c` fails because the name you typed already contains two underscores in a row. Type `Snow_Sys_Id`. The API name becomes `Snow_Sys_Id__c`.
 
-The wizard is four steps. The checkboxes below are on **Step 2 of 4, Enter the details**. They are not on a later security page.
+The wizard is four steps. The checkboxes in the table are on **Step 2 of 4, Enter the details**. They are not on a later security page.
+
+<details class="glossary">
+<summary>The four steps, the defaults, and what changes if you do not take them</summary>
+
+<p>Using the defaults is the right call for this lab, except the two Step 2 boxes on <code>Snow_Sys_Id</code> and the Step 4 layout boxes. Those are called out below. Everything else can stay as Salesforce pre-fills it.</p>
+
+<h3>Step 1 — Choose the field type</h3>
+<p>Purpose: pick how the value is stored. This lab uses <strong>Text</strong> for all three fields. A Text field stores the Case Id, the INC number, and the sync flag as characters.</p>
+<p>Default: nothing is selected until you click Text. If you pick Number, Formula, or Lookup instead, the later steps change and the lab fields will not match the code. Do not.</p>
+
+<h3>Step 2 — Enter the details</h3>
+<table>
+<thead><tr><th>Setting</th><th>Purpose</th><th>Default</th><th>If you change it</th></tr></thead>
+<tbody>
+<tr><td>Field Label</td><td>The name on the screen.</td><td>Blank.</td><td>Users see a different label. The API name does not have to match the label.</td></tr>
+<tr><td>Length</td><td>How many characters the text field holds.</td><td>Often 255 if you do not type one. This lab uses 32, 40, and 20.</td><td>Too short and a Case Id or INC number will not save. Too long only wastes a little room. It does not hide the field.</td></tr>
+<tr><td>Field Name</td><td>The stem of the API name. Do not type <code>__c</code>.</td><td>Copied from the label, with spaces turned into underscores.</td><td>Typing <code>Snow_Sys_Id__c</code> fails. Two underscores in a row are not allowed in the name you type.</td></tr>
+<tr><td>Required</td><td>A Case cannot be saved without this value.</td><td>Unchecked. Leave it.</td><td>If you check it, you cannot create a Case until the integration has already written the value. The first save would fail. That blocks the lab.</td></tr>
+<tr><td>Unique</td><td>Two Cases cannot store the same value.</td><td>Unchecked. Check it only on <code>Snow_Sys_Id</code>, case insensitive.</td><td>Without it, two Cases can point at one Incident and you will not notice. Checking it on the other two fields is harmless but not needed.</td></tr>
+<tr><td>External ID</td><td>Marks the field as the id from another system, so an upsert can find the Case by that value.</td><td>Unchecked. Check it only on <code>Snow_Sys_Id</code>.</td><td>Without it, ServiceNow cannot patch the Case by sys_id in Lab 3. The field can still be displayed. It just cannot be the match key.</td></tr>
+<tr><td>Auto add to custom report type</td><td>Adds the new field to custom report types that already include Case.</td><td>Checked. Leave it.</td><td>Unchecking it does not delete the field. A custom report type created earlier may not offer the column until you add it by hand. Standard reports can still use the field.</td></tr>
+<tr><td>Default value</td><td>A value written when a new Case is created and nobody sets the field.</td><td>Blank. Leave it.</td><td>A default would stamp every new Case with a fake sys_id or sync flag. Leave it empty so only the integration writes those.</td></tr>
+</tbody>
+</table>
+
+<h3>Step 3 — Establish field-level security</h3>
+<p>Purpose: which profiles can see the field, and which can edit it. This is not the page layout. A user can have the field on the layout and still not see it if Visible is unchecked for their profile.</p>
+<p>Default: Visible is checked for the profiles Salesforce pre-selects, including System Administrator. Read-only is unchecked. Use that. You are the admin creating and reading the Case. Do not build a permission set for this lab.</p>
+<p>If you clear Visible for your profile, the field is still stored. You will not see it on the layout, and a report will hide the column for you. The API, running as a user who is allowed to see it, can still read it. This lab does not need that split.</p>
+
+<h3>Step 4 — Add to page layouts</h3>
+<p>Purpose: which Case screens show the field. The field already exists before you reach this step.</p>
+<p>Default: the boxes may all be checked. Leave them checked. If you uncheck one, that screen does not show the field. Close Case Layout is only the close screen. Case Layout is the page you open for a new or open Case.</p>
+<p>An unchecked box does not remove the field from the database, the API, Flow, Apex, or a report that includes the field. If you only check Close Case Layout, the UI shows the value when you close a Case, not when you open one. QA then means a report with that column, an API read, or adding the field to Case Layout.</p>
+
+</details>
 
 | Field Label (what you see) | Field Name (what you type) | API name Salesforce creates | Type | Extra Details, on Step 2 |
 |----------------------------|----------------------------|-----------------------------|------|--------------------------|
