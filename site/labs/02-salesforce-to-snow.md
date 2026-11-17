@@ -157,7 +157,7 @@ Setup → Quick Find `named credentials`. Open **Named Credentials** under Secur
    - Identity Type: **Named Principal**. That means one shared PDI login for every Salesforce user who is allowed to use this credential. **Per User Principal** means each Salesforce user types their own ServiceNow password. Do not pick that for this lab.
    After you pick Named Principal, Username and Password appear on this same form. They are not a second screen. Username is the PDI user, `admin`. Password is the PDI password. Save. Do not put the password in a screenshot.
 4. Setup → Quick Find **Permission Sets** → New, or open one you already have. Related list **External Credential Principal Access** → Edit. Enable the `PDI admin` principal. Save. Manage Assignments → add your user. Without this, the call fails even though the credential exists. Salesforce will not tell you the password was wrong. It will say you are not allowed to use the principal.
-5. Back on **Named Credentials** → **New**. Label and name `EBOND_ServiceNow`. URL `https://dev296154.service-now.com` with no path. Link the External Credential you just saved. Enable **Generate Authorization Header**. Save.
+5. The Related Named Credentials list is empty until you do this step. Back on the **Named Credentials** tab → **New**. Label `EBOND ServiceNow`. Name `EBOND_ServiceNow`. No space in Name. URL `https://dev296154.service-now.com` with no path. External Credential: pick the one you just saved. On this run its name is `EBONDServiceNow`. Enable **Generate Authorization Header**. Save. The callout uses the Named Credential name, `EBOND_ServiceNow`, not the External Credential name.
 6. You do not also need a Remote Site Setting for that host.
 
 ## Flow path (no Apex) {#flow}
