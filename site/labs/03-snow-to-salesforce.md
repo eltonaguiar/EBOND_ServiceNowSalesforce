@@ -116,16 +116,16 @@ permalink: /labs/03-snow-to-salesforce/
 
 <ol>
 <li><strong>Trigger.</strong> In the Flow's trigger step, set the table to <strong>Incident [incident]</strong>, the trigger to <strong>Record created or updated</strong>, and the condition (filter) to <strong><code>u_ebond_sf_case_id</code> is not empty</strong>. This means the Flow only runs for Incidents that are already linked to a Salesforce Case; unlinked ones are ignored (this is the same guard the coded rule uses).</li>
-<li><strong>(Optional but recommended) Loop guard condition.</strong> Add a condition that the Flow also skips when <strong><code>u_sync_source</code> = <code>salesforce</code></strong>. Lab 2 set that value when it created the Incident from Salesforce, so this stop the Flow from "echoing" its own update back to Salesforce forever.</li>
-<li><strong>Action — call Salesforce.</strong> Add an action of type <strong>Salesforce → Update Case</strong> (provided by the Salesforce spoke / IntegrationHub). In this action, choose the External Client App connection (from Section 2) as the credential.</li>
+<li><strong>Loop guard condition.</strong> Add a condition that the Flow also skips when <strong><code>u_sync_source</code> = <code>salesforce</code></strong>. Lab 2 set that value when it created the Incident from Salesforce, so this stops the Flow from "echoing" its own update back to Salesforce forever.</li>
+<li><strong>Action — call Salesforce.</strong> Add an action of type <strong>Salesforce → Update Record</strong> (the standard spoke update action; the Case-specific "Update Case" action works the same way). In this action, choose the External Client App connection (from Section 2) as the credential.</li>
+<li><strong>Set the Record ID — this is the key step.</strong> The update action updates one specific Salesforce record, and you must tell it <em>which</em> Case. In the action's <strong>Record ID</strong> input, add the data pill for <strong><code>u_ebond_sf_case_id</code></strong> (the Salesforce Case Id stored on the Incident). The spoke does not guess or auto-match on <code>Snow_Sys_Id__c</code> — you supply the record Id here.</li>
 <li><strong>Map the fields.</strong> Tell the action which Incident value goes into which Case field:
 <ul>
 <li>Case <strong>Subject</strong> ← Incident <strong>short_description</strong></li>
 <li>Case <strong>Description</strong> ← Incident <strong>description</strong></li>
 <li>Case <strong>Snow_Number__c</strong> ← Incident <strong>number</strong></li>
 <li>Case <strong>Snow_Sync_Source__c</strong> ← the fixed text <strong>servicenow</strong></li>
-</ul>
-The spoke updates the Case that this Incident is linked to. Identify that Case by the Incident's <strong><code>u_ebond_sf_case_id</code></strong> — the Salesforce Case Id stored on the Incident. (If your spoke exposes an external-ID lookup instead, the equivalent is <code>Snow_Sys_Id__c</code> = the Incident's <code>sys_id</code>, which is what the coded path in Section 3 uses.) Do not match <code>Snow_Sys_Id__c</code> to <code>u_ebond_sf_case_id</code> — those are different identifiers.</li>
+</ul></li>
 <li><strong>Save, activate, and test.</strong> Save and activate the Flow, then edit an Incident's short description by hand (with <code>u_sync_source</code> blank or <code>servicenow</code>) and confirm the matching Case updates.</li>
 </ol>
 
