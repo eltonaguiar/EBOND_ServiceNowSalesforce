@@ -162,7 +162,18 @@ Setup → Quick Find `named credentials`. Open **Named Credentials** under Secur
 </div>
 
 Open the permission set. In the settings list, click **External Credential Principal Access**. Click **Edit**. The principal starts on the left, under Available. Select `EBONDServiceNow - PDI_admin` and click the Add arrow so it moves to Enabled on the right. Click **Save**. A checkmark is not how this screen works. The arrow is. Then, still on the permission set, click **Manage Assignments**. The list is empty until you click **Add Assignment**. Check your user. The profile is System Administrator. Click Next, then Assign. One assignment is enough. Expires On can stay blank. To see which user you are, click the round picture at the top right, click your name, then **User Detail**. That is the user the permission set must list. Being System Administrator does not skip this step. Without it, the call fails even though the credential exists. Salesforce will not say the password was wrong. It will say you are not allowed to use the principal.
-5. The Related Named Credentials list is empty until you do this step. Back on the **Named Credentials** tab → **New**. Label `EBOND ServiceNow`. Name `EBOND_ServiceNow`. No space in Name. URL is your own ServiceNow dev instance, not this lab's. This run used `https://dev296154.service-now.com`. Yours is the instance URL from the Developer Site, `https://devNNNNN.service-now.com`, with no path on the end. External Credential: pick the one you just saved. On this run its name is `EBONDServiceNow`. Enable **Generate Authorization Header**. Save. The callout uses the Named Credential name, `EBOND_ServiceNow`, not the External Credential name.
+5. The Related Named Credentials list is empty until you do this step. Back on the **Named Credentials** tab → **New**.
+   - Label can be `EBOND ServiceNow` or `EBOND_ServiceNow`.
+   - Name must be `EBOND_ServiceNow`, with the underscore. The callout uses this box, not the Label. If the box shows `EBONDServiceNow`, type the underscore in before Save.
+   - URL is your own ServiceNow dev instance, not this lab's. This run used `https://dev296154.service-now.com`. A trailing slash is fine. No path after the host.
+   - Enabled for Callouts: on.
+   - External Credential: `EBOND ServiceNow`.
+   - Client Certificate: leave blank.
+   - Generate Authorization Header: checked.
+   - Allow Formulas in HTTP Header and HTTP Body: leave unchecked.
+   - Outbound Network Connection: leave `--None--`.
+   - Allowed Namespaces for Callouts: leave empty. `namespaceA, namespaceB` is placeholder text, not a value to type.
+   Save.
 6. You do not also need a Remote Site Setting for that host.
 
 ## Flow path (no Apex) {#flow}
