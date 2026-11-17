@@ -30,6 +30,7 @@ permalink: /labs/03-snow-to-salesforce/
       <li><a href="#prove">5. Prove it <span class="req">[R]</span></a></li>
       <li><a href="#bulk">6. Linking existing tickets (bulk) <span class="req">[O]</span></a></li>
       <li><a href="#notes">7. Post-lab notes <span class="req">[O]</span></a></li>
+      <li><a href="#research">8. Integration complexity research <span class="req">[O]</span></a></li>
     </ol>
   </div>
 </nav>
@@ -314,5 +315,71 @@ An un-scoped link of <em>all</em> Incidents is usually wrong: many are unrelated
 <li>Never overwrite an existing <code>u_ebond_sf_case_id</code> blindly. If a ticket is already linked, decide whether a re-link is intended before writing over it.</li>
 <li>Keep credentials out of repos and screenshots. The External Client App consumer secret and the ServiceNow basic-auth password never belong in code or in a committed image.</li>
 <li>Test exclusions explicitly: create a confidential Incident, confirm the integration leaves it untouched (no link, no call, no log of a write).</li>
+</ul>
+</details>
+
+## 8. Integration complexity research <span class="req">[O]</span> {#research}
+
+<details>
+<summary><strong>Integration complexity — OOTB options, the true cost of insert/update/delete, and field authority</strong> <em>(tap to open)</em></summary>
+
+<h4>Is there out-of-the-box functionality for this?</h4>
+<p>Yes, in both platforms — but it covers the <strong>common, well-typed</strong> cases, not every combination. The key realization is that <strong>no vendor ships a "sync my tickets both ways forever" button</strong>; even prebuilt connectors are config, not zero work.</p>
+<ul>
+<li><strong>ServiceNow IntegrationHub + spokes</strong> are the OOTB low-code layer. The official <strong>Salesforce spoke</strong> (and similar spokes for common systems) provides actions like "Create Case", "Update Case", "Get Case", etc. This directly covers <strong>insert and update of a linked record</strong> — the two operations these labs already do. You map fields in the Flow, and the spoke handles auth and the REST call. That is the simplest supported path for "Case → Incident" and "Incident → linked Case".</li>
+<li><strong>Salesforce Connect and external objects</strong> let Salesforce read/write external data (including other systems) as if it were custom objects, without copying records. Useful when you want Salesforce to <em>see</em> ServiceNow data live, but it is a read/linked view, not a general event-driven sync.</li>
+<li><strong>Event-driven triggers (flows / business rules)</strong> are what make it "automatic". Both platforms support record-triggered flows with conditions — that is exactly the trigger/guard pattern you built. Deleting and complex transforms are where you leave OOTB and start writing logic.</li>
+</ul>
+
+<h4>Why Lab 2 and Lab 3 feel like "a lot of steps"</h4>
+<p>You are not doing one simple call — you are wiring up <strong>four separate concerns</strong>, and the first time you configure any of them it is heavy:</p>
+<ol>
+<li><strong>Authentication/credentials</strong> (OAuth client credentials) — done once, reused by everything.</li>
+<li><strong>The link between records</strong> (<code>u_ebond_sf_case_id</code> / <code>Snow_Sys_Id__c</code>) — the matching key that makes update possible at all.</li>
+<li><strong>One operation per direction</strong> (insert in Lab 2; update-the-linked-Case in Lab 3) — the mapping and the trigger.</li>
+<li><strong>Loop guard and direction control</strong> (<code>u_sync_source</code>) so you do not create an infinite write-back loop.</li>
+</ol>
+<p>The good news: <strong>steps 1 and 2 are done once</strong> and are reusable. Adding another operation (e.g. delete, or a second field set) is incremental — you add one more spoke action / REST method / rule, not a second full setup. The "lot of steps" is a one-time front-loaded cost, not a per-operation cost.</p>
+
+<h4>What about update, delete, and other methods — is it that much work again?</h4>
+<ul>
+<li><strong>Update of an already-linked record</strong> — what Lab 3 does. It is one more method/action (PATCH) on the same credential and same link. Moderate extra work, not a redo.</li>
+<li><strong>Delete</strong> — this is the genuinely awkward one. Deleting a Case in Salesforce should arguably cancel/close the Incident; deleting an Incident should arguably detach the Case. Neither platform's OOTB "create/update" spoke covers delete for you, and delete is often handled by <em>state change</em> (close/cancel) rather than a hard delete, because hard deletes complicate audit trails and the link itself. Expect this to need real design, not just a connector switch.</li>
+<li><strong>Other methods</strong> (PATCH vs PUT vs DELETE vs multi-record) — each additional REST method is its own endpoint/spec, but they all reuse the same credential and the same record link. With the spoke, you get many of these actions "for free" in the action picker; with coded REST you add a method per operation.</li>
+</ul>
+
+<h4>Is there a simpler way than hand-wiring every REST method?</h4>
+<ul>
+<li><strong>Use the spoke and iPaaS for the standard verbs.</strong> If your integration is the usual "this record → create/update that record", a spoke (1.1A) or an iPaaS recipe (1.1B) gives you insert and update with almost no REST plumbing. This is the simpler path for the common case.</li>
+<li><strong>Use a single integration tool for a direction.</strong> Don't mix a hand-built REST message for insert and a spoke for update for the same flow — pick one mechanism per integration so there is one place to look and debug.</li>
+<li><strong>Push complexity into the source of the trigger, not the sink.</strong> The trigger/guard logic lives comfortably on the side where the record changes (ServiceNow for Incident changes, Salesforce for Case changes). Keep the "what happens" decision close to the change, and keep the "how to call the other side" as the thinnest possible adapter.</li>
+<li><strong>Consider event/state synchronization instead of raw CRUD mirroring.</strong> Very often you don't need a literal delete; you need "when Case is closed, mark the Incident resolved". That is an update, which the existing mechanisms already handle. Prefer mapping state transitions over trying to mirror every REST verb.</li>
+</ul>
+
+<h4>Mass mapping: "any Incident of category/config_item/priority → a Case", and "any Case → an Incident"</h4>
+<p>What you described — <em>if an Incident has category X, or configuration_item Y, or priority Z, create a Case; and maybe all Cases create an Incident</em> — is a <strong>routing/transformation policy</strong>, not a technical blocker. It is achievable, but it changes the design from "explicit link on create" to "rule-based generation":</p>
+<ul>
+<li><strong>Rule-based generation.</strong> Instead of only creating a Case when a user explicitly links, you add a trigger with conditions: e.g. Flow/business-rule on Incident where <code>category = inquiry</code> (or a config-item list, or a priority threshold) → create a Case and store the link back. This is the same spoke/REST flow you already built, just with a different (broader) filter and a <em>create</em> action.</li>
+<li><strong>Watch for duplicates and loops.</strong> Rule-based generation makes the loop guard even more important — if "all Cases create an Incident" and "all Incidents of category X create a Case", you can create a feedback storm. You need explicit direction/guard fields (<code>u_sync_source</code>) and a dedup check (does a link already exist?) before creating.</li>
+<li><strong>It's still "one rule per pattern".</strong> Each new pattern (one category, one priority band, one config-item) is a condition you add to the trigger, not a new integration. The heavy setup you already did is reused.</li>
+</ul>
+
+<h4>Field authority and overrides (which system wins on which field)</h4>
+<p>A very real requirement: <strong>"System A is authoritative for field F, System B for field G."</strong> This is the classic <strong>bidirectional sync conflict</strong> problem, and there is no OOTB "resolve it for me" setting — you design it:</p>
+<ul>
+<li><strong>Declare a system of record per field.</strong> For each synchronized field, decide which side is the source of truth. The non-authoritative side must <em>not</em> push its value back, or you'll fight. Implement this as a guard: only send a field from the side that owns it.</li>
+<li><strong>Use the direction/guard field to enforce it.</strong> The <code>u_sync_source</code> pattern you built is exactly the tool — it says "this record came from the other side, so don't echo it back." Extend that: when you receive an update from the authoritative side, apply it; when the local value changes, only push it if this side owns that field.</li>
+<li><strong>Handle the conflict case explicitly.</strong> If two sides edit different fields, that's fine (each is authoritative for its own). If two sides edit the <em>same</em> field, you must pick a winner — last-write-wins is the default but is rarely what you want for important fields; a rule (e.g. priority always comes from ServiceNow) is cleaner.</li>
+</ul>
+
+<h4>Official vendor guidance</h4>
+<p>These are the canonical references from the vendors; each is the authoritative source for the patterns named above:</p>
+<ul>
+<li><strong>ServiceNow — IntegrationHub overview:</strong> <a href="https://docs.servicenow.com/bundle/washingtondc-integrate-applications/page/administer/integrationhub/concept/integrationhub.html">docs.servicenow.com — IntegrationHub</a></li>
+<li><strong>ServiceNow — Spokes (incl. Salesforce spoke):</strong> <a href="https://docs.servicenow.com/bundle/washingtondc-integrate-applications/page/administer/integrationhub/concept/use-a-spoke.html">docs.servicenow.com — Use a spoke</a></li>
+<li><strong>ServiceNow — Table API / REST (for coded path):</strong> <a href="https://developer.servicenow.com/dev.m?/reference/api/rest/c_TableAPI.html">developer.servicenow.com — Table API</a></li>
+<li><strong>Salesforce — External Client App / OAuth client credentials:</strong> <a href="https://help.salesforce.com/s/articleView?id=sf.connected_app_oauth_client_credentials.htm&type=5">help.salesforce.com — Client Credentials flow</a></li>
+<li><strong>Salesforce — Connect (external objects, linked live data):</strong> <a href="https://help.salesforce.com/s/articleView?id=sf.platform_connect_about.htm&type=5">help.salesforce.com — Salesforce Connect</a></li>
+<li><strong>Salesforce — REST API (for coded path):</strong> <a href="https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/intro_what_is_rest_api.htm">developer.salesforce.com — REST API</a></li>
 </ul>
 </details>
