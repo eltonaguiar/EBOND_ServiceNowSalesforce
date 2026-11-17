@@ -276,7 +276,7 @@ Use this only if you picked Flow above.
    ```
 
    On New Resource, API Name `IncidentBody`. Leave Description blank. Data Type stays Apex-Defined. Apex Class stays the generated body class. Leave Allow multiple values unchecked. Leave both Availability boxes unchecked. This dialog does not contain the six fields. Click **Done**. The Value box should then show `IncidentBody`. The six fields are set in the next step, on an Assignment before this action.
-   - Leave **Manually assign variables** unchecked.
+   - Leave **Manually assign variables** unchecked. That checkbox is not the request assignment. It only lets you store the reply yourself. The automatic outputs, 2XX, Default Exception, and Response Code, are enough. Checking it does not fill `short_description` or the other request fields.
    - Under Show advanced options, leave Transaction Control on **Let the flow decide**. Do not pick Always continue in current transaction. That can fail the call.
    - Click Done.
 5. Save the returned `sys_id` into `Snow_Sys_Id__c` and `number` into `Snow_Number__c` with an Update Records element. Set `Snow_Sync_Source__c` to `salesforce`.
