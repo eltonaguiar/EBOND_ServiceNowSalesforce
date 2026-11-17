@@ -81,6 +81,18 @@ permalink: /labs/03-snow-to-salesforce/
 <h4>Realistic best practice</h4>
 <p>For a <strong>simple, one-direction, few-field</strong> integration like this lab, the maintainable production answer is usually <strong>1.1A</strong> (inside ServiceNow, no third system) or <strong>1.1B</strong> (iPaaS) — not the coded path. Choose the coded path only when business logic exceeds what a declarative tool can express, or when no extra platform/license is acceptable. In real projects a common pattern is also to run a small number of coded or spoke flows for the few high-complexity integrations and let an iPaaS handle the long tail of simple ones.</p>
 
+<h4>When code is effectively required</h4>
+<p>ServiceNow flows and spokes are declarative: they are great at "one record triggers one call, with fixed field mapping." They become impractical, or effectively impossible, when the requirement is not that shape. Concrete situations that push you to 1.1C (coded):</p>
+<ul>
+<li><strong>Request signing / custom authentication headers.</strong> The spoke sets its own OAuth header. If the target expects a header you must <em>calculate</em> at runtime — an HMAC signature, a per-request token, a digest of the payload — the spoke cannot compute it. You need code to build that header. (e.g. calling a partner API that signs every request with <code>HMAC-SHA256</code> over the body.)</li>
+<li><strong>Non-deterministic or dynamic payloads.</strong> The spoke maps a fixed set of fields. If which fields go in the request depends on the record — e.g. include <code>invoice_lines</code> only when a subtype flag is set, or build a nested array of line items from several related records — you are hand-assembling JSON the spoke cannot express. Code lets you construct exactly the document the API wants.</li>
+<li><strong>Bulk / batch / scheduled sweeping.</strong> Flows run per record (or per schedule with limited looping). To link a whole table (e.g. reconcile 10,000 Incidents nightly, or backfill the link from Section 6) a scripted scheduled job or a Script Include is the normal tool. A flow "loop" over thousands of records is slow and brittle.</li>
+<li><strong>Multi-call orchestration with compensation/retry.</strong> If one update must coordinate three downstream calls and roll back or retry with backoff on a partial failure, declarative error paths are too coarse. Code gives you try/catch, retries, and a transaction boundary.</li>
+<li><strong>Parsing irregular inbound data.</strong> Receiving a CSV/XML/JSON with variable shape, extracting values with regex, or normalizing messy text is scripting territory. Spokes are built for well-formed structured calls, not parsing.</li>
+<li><strong>Complex lookups and derived values.</strong> Deriving a value that needs several GlideRecord lookups, date math, or string transformation (e.g. "if the owner group is X and the category is Y, prefix the subject with …") gets unreadable in a flow but is a few clear lines in code.</li>
+</ul>
+<p>For all of these, the trigger may still be a flow/business rule — but the <em>heavy lifting</em> belongs in a Script Include or a scripted step. So "code is necessary" does not mean the whole integration is code; it usually means one hard step is code, and the rest stays declarative.</p>
+
 <h4>What you learn by trying each other type</h4>
 <ul>
 <li>Try <strong>1.1C</strong> (coded) if you want to understand exactly what every option does under the hood: the OAuth token exchange, the REST/HTTP mechanics, the PATCH, and the loop guard. It is the best for debugging when a spoke or iPaaS misbehaves.</li>
