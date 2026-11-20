@@ -497,6 +497,16 @@ http://orgfarm-e1f47f3d5e-dev-ed.develop.my.salesforce.com/services/data/latest
 <h4>Step 3 — set the request body (ServiceNow)</h4>
 <p><strong>ServiceNow —</strong> set the body. Do not put <code>Snow_Sys_Id__c</code> in the JSON — it is already in the URL as the external-ID lookup key.</p>
 
+| Salesforce Case field | ServiceNow Incident field / value |
+|---|---|
+| Subject | `${subject}` (Incident short_description) |
+| Description | `${description}` (Incident description) |
+| Snow_Number__c | `${number}` (Incident number) |
+| Snow_Sync_Source__c | `servicenow` (fixed text) |
+
+<details>
+<summary><strong>Full JSON body (copy-paste)</strong> <em>(tap to open)</em></summary>
+
 ```json
 {
   "Subject": "${subject}",
@@ -505,6 +515,9 @@ http://orgfarm-e1f47f3d5e-dev-ed.develop.my.salesforce.com/services/data/latest
   "Snow_Sync_Source__c": "servicenow"
 }
 ```
+</details>
+
+<p>In ServiceNow, paste this into the **Content** text area under **HTTP Query Parameters** on the HTTP Method record.</p>
 
 <h4>Step 4 — validate the method (ServiceNow + Salesforce)</h4>
 <p><strong>ServiceNow —</strong> use the <strong>Test</strong> button on the HTTP method with a real <code>sys_id</code> from Lab 2 (the Incident's unique ID) and a real <code>Snow_Sys_Id__c</code> Case link.</p>
