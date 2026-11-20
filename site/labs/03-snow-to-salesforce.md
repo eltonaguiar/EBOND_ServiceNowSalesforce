@@ -276,6 +276,23 @@ ServiceNow wants an <strong>OAuth 2.0 profile</strong> record (called "OAuth Ent
 | Client Secret | The **Consumer Secret** from your Salesforce External Client App |
 | Default Grant type | **Client Credentials** (change from the default "Resource Owner Password Credentials") |
 | Token URL | `https://YOUR_DOMAIN.my.salesforce.com/services/oauth2/token` |
+
+<details>
+<summary><strong>Default Grant type dropdown — every option explained</strong> <em>(tap to open)</em></summary>
+<p>When you click the Default Grant type dropdown, you see these options:</p>
+
+| Option | What it does | Use it for this lab? |
+|---|---|---|
+| **Authorization Code** | User signs in via a browser redirect; Salesforce returns an authorization code that ServiceNow exchanges for a token. Needs a human to log in. | No — that's interactive user login |
+| **Resource Owner Password Credentials** | ServiceNow sends the user's Salesforce username + password directly to get a token. Less secure; being phased out. | No — we don't want to handle passwords |
+| **Client Credentials** | Machine-to-machine. ServiceNow authenticates as the app itself using Client ID + Client Secret. No user involved. | **Yes — this is what we need** ✅ |
+| **JWT Bearer** | ServiceNow sends a signed JWT token instead of a client secret to get an access token. Advanced; needs certificate setup. | No — overkill for this lab |
+| **SAML2 Bearer** | ServiceNow sends a SAML assertion to get a token. Used for enterprise SSO scenarios. | No — not for server-to-server |
+| **Token Exchange** | ServiceNow exchanges one token it already has for a different token with different scope/audience. | No — not needed here |
+
+<p>Choose <strong>Client Credentials</strong> — it's the machine-to-machine flow where ServiceNow authenticates as the app itself, which is exactly what this lab needs (ServiceNow calling Salesforce's API without a human logging in).</p>
+</details>
+
 | Authorize URL | `https://YOUR_DOMAIN.my.salesforce.com/services/oauth2/authorize` |
 | Token Revocation URL | `https://YOUR_DOMAIN.my.salesforce.com/services/oauth2/revoke` |
 | Redirect URL | Leave as-is (`.../oauth_redirect.do`) |
