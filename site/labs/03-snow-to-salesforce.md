@@ -382,10 +382,34 @@ ServiceNow wants an <strong>OAuth 2.0 profile</strong> record (called "OAuth Ent
 <p>The OAuth Resource is the <strong>base URL of the Salesforce API</strong> that this OAuth Provider is authorizing ServiceNow to access. It's the same domain you've been using, plus the REST API path:</p>
 
 ```text
-https://YOUR_DOMAIN.my.salesforce.com/services/data/v68.0
+https://YOUR_DOMAIN.my.salesforce.com/services/data/latest
 ```
 
 Replace `YOUR_DOMAIN` with your actual Salesforce domain (from your browser address bar, e.g. `orgfarm-e14f73d3e-dev-ed`). Use `latest` as the API version — Salesforce resolves this to the most recent version automatically.
+
+<details>
+<summary><strong>Troubleshooting: “Invalid reference” on the OAuth Resource field</strong> <em>(tap to open)</em></summary>
+<p>If ServiceNow shows “Invalid reference” when you paste the URL, check these two things:</p>
+
+<ul>
+<li><strong>Use https://, not http://</strong> — Salesforce requires HTTPS. <code>http://orgfarm-...</code> will be rejected; use <code>https://orgfarm-...</code>.</li>
+<li><strong>Use .my.salesforce.com, not .develop.my.salesforce.com</strong> — the “.develop” segment is not part of the standard My Domain format. Your domain comes straight from your browser address bar: <code>https://YOUR_DOMAIN.my.salesforce.com/lightning/...</code>.</li>
+</ul>
+
+<p><strong>Correct format:</strong></p>
+
+```text
+https://YOUR_DOMAIN.my.salesforce.com/services/data/latest
+```
+
+<p><strong>Wrong (will fail):</strong></p>
+
+```text
+http://orgfarm-e1f47f3d5e-dev-ed.develop.my.salesforce.com/services/data/latest
+```
+
+<p>If it still errors, make sure you’re inserting a new row on the **OAuth Entity Resources tab** and pasting into the **OAuth Resource** field — not trying to link to an existing record (which would trigger a “reference” validation error).</p>
+</details>
 
 <strong>Why this matters:</strong> This resource URL tells ServiceNow which Salesforce API the credentials on this provider are allowed to access. When ServiceNow requests an access token, it pairs the scope (`api`) with this resource, so Salesforce knows the token is valid for calling its REST API.
 
