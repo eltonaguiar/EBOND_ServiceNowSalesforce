@@ -213,13 +213,53 @@ https://YOUR_DOMAIN.my.salesforce.com/services/oauth2/token
 <p><strong>How to get there:</strong> in your ServiceNow instance, open the left navigation menu (the "All" menu, top-left) and go to <strong>System Web Services → Outbound → REST Message</strong>, then click <strong>New</strong>.</p>
 
 <h4>Step 1 — define the REST Message (ServiceNow)</h4>
+
+<p><strong>First, find your Salesforce domain.</strong></p>
+<ol>
+<li>Log into Salesforce. Look at the address bar in your browser — it looks like:</li>
+</ol>
+
+```text
+https://YOUR_DOMAIN.my.salesforce.com/lightning/setup/...
+```
+
+<p>The part before <code>.my.salesforce.com</code> is your domain. For example, if the URL is <code>https://mycompany1234.my.salesforce.com/...</code>, your domain is <code>mycompany1234</code>.</p>
+
+<ol start="2">
+<li>Or confirm it in Salesforce: go to <strong>Setup → Quick Find: "Domain" → Domain Management → My Domain</strong>. Your domain name is listed there.</li>
+</ol>
+
 <p><strong>ServiceNow —</strong> create the REST Message record:</p>
 
 | Field | Value |
-|-------|-------|
+|---|---|
 | Name | `EBOND Salesforce Case` |
-| Endpoint | `https://YOUR_DOMAIN.my.salesforce.com/services/data/v68.0` |
-| Authentication | OAuth 2.0, profile pointed at the token URL above |
+| Endpoint | `https://YOUR_DOMAIN.my.salesforce.com/services/data/v68.0` <br>(replace `YOUR_DOMAIN` with your actual domain from above) |
+| Authentication | OAuth 2.0 (select an OAuth 2.0 profile — see below) |
+
+<p><strong>What to put in the Authentication field (`OAuth 2.0, ??`):</strong></p>
+
+ServiceNow wants an <strong>OAuth 2.0 profile</strong> record that holds your Salesforce credentials. Create it like this:
+
+1. In ServiceNow, open the REST Message record you just created (<code>EBOND Salesforce Case</code>).
+2. In the <strong>Authentication</strong> field, choose <strong>OAuth 2.0</strong>.
+3. Click the <strong>OAuth 2.0 profile</strong> lookup field that appears next to it, then click <strong>New</strong> to create a profile.
+4. Fill in the OAuth profile record:
+
+| Profile field | Value |
+|---|---|
+| Name | `Salesforce OAuth Client Credentials` |
+| Client ID | The **Consumer Key** from your Salesforce External Client App |
+| Client Secret | The **Consumer Secret** from your Salesforce External Client App |
+| Token URL | `https://YOUR_DOMAIN.my.salesforce.com/services/oauth2/token` <br>(replace `YOUR_DOMAIN` with your actual domain) |
+| Grant type | Client Credentials |
+
+5. Save the OAuth profile, then select it back on the REST Message record's Authentication field.
+
+<details>
+<summary><strong>What the ?? means</strong> <em>(tap to open)</em></summary>
+<p>The Authentication field shows <code>OAuth 2.0</code> plus a profile name — e.g. <code>OAuth 2.0, Salesforce OAuth Client Credentials</code>. The profile is the reusable credential block. You create it once here and reuse it for every REST Message that calls this same Salesforce org.</p>
+</details>
 
 <h4>Step 2 — define the HTTP method (ServiceNow)</h4>
 <p><strong>ServiceNow —</strong> on the REST Message record, open the <strong>HTTP Methods</strong> tab and click <strong>New</strong>:</p>
