@@ -267,39 +267,65 @@ ServiceNow wants an <strong>OAuth 2.0 profile</strong> record (called "OAuth Ent
 
 4. <strong>Create the OAuth Provider first (if one for Salesforce doesn't exist):</strong>
    - In ServiceNow, open the left navigation ("All" menu) and go to **System OAuth → OAuth Providers**. If that option doesn't exist on your instance (some releases use a different name), try **System OAuth → Application Registry** instead — that's where OAuth provider/consumer records live on some PDI instances.
-   - Click **New** and fill in:
+   - Click **New** and fill in the **OAuth Provider** form:
 
 | Field | Value |
 |---|---|
 | Name | `Salesforce` |
+| Client ID | The **Consumer Key** from your Salesforce External Client App |
+| Client Secret | The **Consumer Secret** from your Salesforce External Client App |
+| Default Grant type | **Client Credentials** (change from the default "Resource Owner Password Credentials") |
 | Token URL | `https://YOUR_DOMAIN.my.salesforce.com/services/oauth2/token` |
 | Authorize URL | `https://YOUR_DOMAIN.my.salesforce.com/services/oauth2/authorize` |
-| Revoke URL | `https://YOUR_DOMAIN.my.salesforce.com/services/oauth2/revoke` |
+| Token Revocation URL | `https://YOUR_DOMAIN.my.salesforce.com/services/oauth2/revoke` |
+| Redirect URL | Leave as-is (`.../oauth_redirect.do`) |
 
    - Replace `YOUR_DOMAIN` with your actual Salesforce domain. Click **Submit** to save the provider.
-   - If neither "OAuth Providers" nor "Application Registry" has an editable provider record, the **OAuth provider** field on the profile below may be optional — leave it blank and continue.
 
-5. <strong>Fill in the OAuth Entity Profile record</strong> exactly as shown below:
+5. <strong>Fill in the three tabs on the saved provider:</strong>
 
+**OAuth Entity Profiles tab** — click **+** → insert a new row:
 | Field | Value |
 |---|---|
 | Name | `Salesforce OAuth Client Credentials` |
-| OAuth provider | Lookup: select the **Salesforce** provider you just created |
-| Grant type | **Client Credentials** (critical — do not leave it on the default, which may be "Resource Owner Password") |
-| OAuth Entity Profile Scopes | Add scope `api` |
+| Is default | ✅ checked |
+| Grant type | **Client Credentials** |
+
+**OAuth Entity Scopes tab** — click **+** → insert a new row:
+| Field | Value |
+|---|---|
+| Name | `api` |
+| OAuth scope | `api` |
+
+**OAuth Entity Resources tab** — click **+** → insert a new row (the resource URL for your Salesforce API).
+
+   - Click **Submit** on the provider after filling all three tabs.
 
 <details>
-<summary><strong>Why Grant type must be Client Credentials</strong> <em>(tap to open)</em></summary>
-<p>The form may default to "Resource Owner Password" (user login flow). That requires a username + password, which is not what this lab uses. We use machine-to-machine auth, so the grant type must be <strong>Client Credentials</strong>. If you leave it on the wrong value, ServiceNow will try to authenticate as a user instead of as the app, and the token exchange will fail.</p>
+<summary><strong>Client ID / Client Secret = Consumer Key / Consumer Secret</strong> <em>(tap to open)</em></summary>
+<p>Yes — they're the same values with different names. Salesforce calls them <strong>Consumer Key</strong> and <strong>Consumer Secret</strong>; ServiceNow calls them <strong>Client ID</strong> and <strong>Client Secret</strong>. Copy them from your Salesforce External Client App (the ones you wrote down when you created the app) into the corresponding ServiceNow fields.</p>
 </details>
+
+<details>
+<summary><strong>Why Default Grant type must be Client Credentials</strong> <em>(tap to open)</em></summary>
+<p>The provider form may default to "Resource Owner Password Credentials" (user login flow). That requires a username + password, which is not what this lab uses. We use machine-to-machine auth, so the grant type must be <strong>Client Credentials</strong> on both the provider and the profile. If you leave it on the wrong value, ServiceNow will try to authenticate as a user instead of as the app, and the token exchange will fail.</p>
+</details>
+
+6. <strong>Back on the OAuth Entity Profile (on your REST Message):</strong>
+   - In the REST Message record, set **Authentication** = **OAuth 2.0**
+   - Click the **OAuth 2.0 profile** lookup → **New**
+   - Name: `Salesforce OAuth Client Credentials`
+   - OAuth provider: select the **Salesforce** provider you just created
+   - Grant type: **Client Credentials**
+   - OAuth Entity Profile Scopes: add scope `api`
+   - Save the profile, then select it back on the REST Message record's Authentication field.
+
+7. After saving the profile, confirm the <strong>Client ID</strong> (Consumer Key from Salesforce) and <strong>Client Secret</strong> (Consumer Secret from Salesforce) are populated on the profile.
 
 <details>
 <summary><strong>What the ?? means</strong> <em>(tap to open)</em></summary>
 <p>The Authentication field shows <code>OAuth 2.0</code> plus a profile name — e.g. <code>OAuth 2.0, Salesforce OAuth Client Credentials</code>. The profile is the reusable credential block. You create it once here and reuse it for every REST Message that calls this same Salesforce org.</p>
 </details>
-
-6. Save the OAuth profile, then select it back on the REST Message record's Authentication field.
-7. After saving the profile, confirm the <strong>Client ID</strong> (Consumer Key from Salesforce) and <strong>Client Secret</strong> (Consumer Secret from Salesforce) are populated on the profile — these may appear as fields after the initial save or on a related section of the profile record.
 
 <h4>Step 2 — define the HTTP method (ServiceNow)</h4>
 <p><strong>ServiceNow —</strong> on the REST Message record, open the <strong>HTTP Methods</strong> tab and click <strong>New</strong>:</p>
