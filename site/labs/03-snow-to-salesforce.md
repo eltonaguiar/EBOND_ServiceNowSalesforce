@@ -379,7 +379,7 @@ ServiceNow wants an <strong>OAuth 2.0 profile</strong> record (called "OAuth Ent
 
 <details>
 <summary><strong>OAuth Resource — what is this URL?</strong> <em>(tap to open)</em></summary>
-<p>The OAuth Resource is the <strong>base URL of the Salesforce API</strong> that this OAuth Provider is authorizing ServiceNow to access. It's the same domain you've been using, plus the REST API path:</p>
+<p>The OAuth Resource is the <strong>base URL of the Salesforce API</strong> that this OAuth Provider is authorizing ServiceNow to access. It must use the <strong>same domain</strong> as the Token URL on your OAuth Provider form — e.g. if your Token URL is `https://orgfarm-e1f47f3d5e-dev-ed.my.salesforce.com/services/oauth2/token`, your OAuth Resource must be `https://orgfarm-e1f47f3d5e-dev-ed.my.salesforce.com/services/data/latest`.</p>
 
 ```text
 https://YOUR_DOMAIN.my.salesforce.com/services/data/latest
