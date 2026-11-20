@@ -544,7 +544,8 @@ http://orgfarm-e1f47f3d5e-dev-ed.develop.my.salesforce.com/services/data/latest
 <h4>If you still get "Invalid null response" or authentication errors</h4>
 <ul>
 <li>Confirm the endpoint URL ends with `/services/data/latest/sobjects/Case/Snow_Sys_Id__c/${snow_sys_id}` (no `.develop`, no extra segments)</li>
-<li>Click **"Get OAuth Token"** on the yellow banner, then click **Test** again</li>
+<li>Click **“Get OAuth Token”** on the yellow banner, then click **Test** again</li>
+<li>When testing, replace `${snow_sys_id}` with a real Incident `sys_id` from Lab 2 — you can't test with the variable placeholder</li>
 <li>Verify your OAuth Entity Profile has Grant type = **Client Credentials** and Is default = ✅ checked</li>
 <li>Verify the OAuth Entity Scopes tab has scope `api`</li>
 <li>Verify the OAuth Entity Resources tab has OAuth Resource = `https://YOUR_DOMAIN.my.salesforce.com/services/data/latest`</li>
