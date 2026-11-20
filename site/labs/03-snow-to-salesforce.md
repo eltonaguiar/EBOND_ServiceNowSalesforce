@@ -323,8 +323,13 @@ ServiceNow wants an <strong>OAuth 2.0 profile</strong> record (called "OAuth Ent
 | Field | Value |
 |---|---|
 | Name | `Salesforce OAuth Client Credentials` |
-| Is default | ✅ checked |
-| Grant type | **Client Credentials** |
+| Is default | **✅ Must be checked** |
+| Grant type | **Client Credentials** (change from the default "Resource Owner Password Credentials") |
+
+<details>
+<summary><strong>Critical: fix the Grant type on the profile</strong> <em>(tap to open)</em></summary>
+<p>The OAuth Entity Profile form may default to "Resource Owner Password Credentials" — that is <strong>wrong</strong> for this lab. That flow requires a username + password. We need machine-to-machine auth, so change it to <strong>Client Credentials</strong>.</p>
+</details>
 
 <details>
 <summary><strong>OAuth Entity Profile Grant type dropdown — every option explained</strong> <em>(tap to open)</em></summary>
@@ -407,7 +412,8 @@ Replace `YOUR_DOMAIN` with your actual Salesforce domain (from your browser addr
    - Click the **OAuth 2.0 profile** lookup → **New**
    - Name: `Salesforce OAuth Client Credentials`
    - OAuth provider: select the **Salesforce** provider you just created
-   - Grant type: **Client Credentials**
+   - Grant type: **Client Credentials** (not Resource Owner Password Credentials)
+   - Is default: **✅ checked**
    - OAuth Entity Profile Scopes: add scope `api`
    - Save the profile, then select it back on the REST Message record's Authentication field.
 
