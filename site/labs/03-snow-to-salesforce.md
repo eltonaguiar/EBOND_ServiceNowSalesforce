@@ -247,12 +247,25 @@ ServiceNow wants an <strong>OAuth 2.0 profile</strong> record (called "OAuth Ent
 1. In ServiceNow, open the REST Message record you just created (<code>EBOND Salesforce Case</code>).
 2. In the <strong>Authentication</strong> field, choose <strong>OAuth 2.0</strong>.
 3. Click the <strong>OAuth 2.0 profile</strong> lookup field that appears next to it, then click <strong>New</strong> to create a profile.
-4. Fill in the OAuth Entity Profile record exactly as shown below:
+4. <strong>Create the OAuth Provider first (if one for Salesforce doesn't exist):</strong>
+   - In ServiceNow, open the left navigation ("All" menu) and go to **System OAuth → OAuth Providers** (or Quick Find: "OAuth Providers").
+   - Click **New** and fill in:
+
+| Field | Value |
+|---|---|
+| Name | `Salesforce` |
+| Token URL | `https://YOUR_DOMAIN.my.salesforce.com/services/oauth2/token` |
+| Authorize URL | `https://YOUR_DOMAIN.my.salesforce.com/services/oauth2/authorize` |
+| Revoke URL | `https://YOUR_DOMAIN.my.salesforce.com/services/oauth2/revoke` |
+
+   - Replace `YOUR_DOMAIN` with your actual Salesforce domain. Click **Submit** to save the provider.
+
+5. <strong>Fill in the OAuth Entity Profile record</strong> exactly as shown below:
 
 | Field | Value |
 |---|---|
 | Name | `Salesforce OAuth Client Credentials` |
-| OAuth provider | Lookup: select or create an OAuth Provider for Salesforce. The provider record holds the token/auth URLs — set its Token URL to `https://YOUR_DOMAIN.my.salesforce.com/services/oauth2/token` |
+| OAuth provider | Lookup: select the **Salesforce** provider you just created |
 | Grant type | **Client Credentials** (critical — do not leave it on the default, which may be "Resource Owner Password") |
 | OAuth Entity Profile Scopes | Add scope `api` |
 
@@ -266,8 +279,8 @@ ServiceNow wants an <strong>OAuth 2.0 profile</strong> record (called "OAuth Ent
 <p>The Authentication field shows <code>OAuth 2.0</code> plus a profile name — e.g. <code>OAuth 2.0, Salesforce OAuth Client Credentials</code>. The profile is the reusable credential block. You create it once here and reuse it for every REST Message that calls this same Salesforce org.</p>
 </details>
 
-5. Save the OAuth profile, then select it back on the REST Message record's Authentication field.
-6. After saving the profile, confirm the <strong>Client ID</strong> (Consumer Key from Salesforce) and <strong>Client Secret</strong> (Consumer Secret from Salesforce) are populated on the profile — these may appear as fields after the initial save or on a related section of the profile record.
+6. Save the OAuth profile, then select it back on the REST Message record's Authentication field.
+7. After saving the profile, confirm the <strong>Client ID</strong> (Consumer Key from Salesforce) and <strong>Client Secret</strong> (Consumer Secret from Salesforce) are populated on the profile — these may appear as fields after the initial save or on a related section of the profile record.
 
 <h4>Step 2 — define the HTTP method (ServiceNow)</h4>
 <p><strong>ServiceNow —</strong> on the REST Message record, open the <strong>HTTP Methods</strong> tab and click <strong>New</strong>:</p>
