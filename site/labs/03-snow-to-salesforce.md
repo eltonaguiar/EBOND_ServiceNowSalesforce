@@ -330,6 +330,25 @@ ServiceNow wants an <strong>OAuth 2.0 profile</strong> record (called "OAuth Ent
 | Name | `api` |
 | OAuth scope | `api` |
 
+<details>
+<summary><strong>OAuth scope column — what does it need to match?</strong> <em>(tap to open)</em></summary>
+<p><strong>The OAuth scope value must match a scope that Salesforce actually recognizes.</strong> It's not a free-text label you can make up.</p>
+
+<p>When ServiceNow requests an access token from Salesforce, it sends the scope value in the token request body. Salesforce's OAuth server checks that scope against its list of valid scopes for your org. If you typed <code>abcd</code>, Salesforce would reject the token request because <code>abcd</code> isn't a scope it knows about.</p>
+
+<p><strong>The Name column</strong> is just a local ServiceNow label — you could call it anything there. <strong>The OAuth scope column</strong> is the actual value sent to Salesforce, so it must be a real scope.</p>
+
+| Scope value | What it means | Use it? |
+|---|---|---|
+| `api` | Manage user data via APIs — read, create, update, delete records via REST/Bulk API | **Yes — this is what we need** ✅ |
+| `full` | Full access to all data the user can reach | No — too broad, and doesn't return a refresh token |
+| `web` | Access Salesforce web pages / Visualforce | No — browser-based flows only |
+| `refresh_token` / `offline_access` | Return a refresh token for long-lived access | Optional — usually unnecessary for client credentials |
+| `abcd` (or anything made up) | Not a real Salesforce scope | **No — Salesforce will reject it** |
+
+<p>So you <strong>cannot</strong> use "abcd" — it must be `api` (or another scope Salesforce actually publishes). `api` is the narrowest scope that lets ServiceNow update Cases via REST API, which is exactly what this lab does.</p>
+</details>
+
 **OAuth Entity Resources tab** — click **+** → insert a new row (the resource URL for your Salesforce API).
 
    - Click **Submit** on the provider after filling all three tabs.
