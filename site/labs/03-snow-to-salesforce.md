@@ -177,27 +177,29 @@ https://YOUR_DOMAIN.my.salesforce.com/services/oauth2/token
 
 <details>
 <summary><strong>Every OAuth scope option, and what each one means</strong> <em>(tap to open)</em></summary>
-<p>Scopes cap what an access token is allowed to do. For this client-credentials (server-to-server) lab, only <code>api</code> is required; the client-credentials flow only accepts <code>api</code>, <code>lightning</code>, or <code>web</code> scopes, and <code>api</code> is the narrowest that covers REST API updates to Cases.</p>
-<table>
-  <thead>
-    <tr><th>Scope (name you see)</th><th>API value</th><th>What it allows</th><th>Use it for this lab?</th></tr>
-  </thead>
-  <tbody>
-    <tr><td>Manage user data via APIs</td><td><code>api</code></td><td>Access Salesforce REST/Bulk/etc. APIs as the logged-in user — read, create, update, delete records the user's profile/permission sets allow.</td><td><strong>Yes — required.</strong> This is the one to select.</td></tr>
-    <tr><td>Full access</td><td><code>full</code></td><td>Access all data the logged-in user can reach; encompasses all other scopes. <strong>Does not return a refresh token by itself.</strong> Overly broad for a lab.</td><td>No — too broad, and no refresh token.</td></tr>
-    <tr><td>Manage user data via Web browsers</td><td><code>web</code></td><td>Use the access token in a browser; includes Visualforce access. Only needed for browser-based UI flows.</td><td>No — not for server-to-server.</td></tr>
-    <tr><td>Access Lightning applications</td><td><code>lightning</code></td><td>Access Lightning apps/components. Acceptable with client credentials but not needed here.</td><td>No — not needed.</td></tr>
-    <tr><td>Perform requests at any time</td><td><code>refresh_token</code> / <code>offline_access</code></td><td>Return a refresh token so the app can keep accessing after the session ends. Not how client credentials normally works (it issues an access token directly).</td><td>Optional — usually unnecessary here.</td></tr>
-    <tr><td>Access the identity URL service</td><td><code>id</code></td><td>Access the identity/userinfo endpoint (whoami).</td><td>No.</td></tr>
-    <tr><td>Access unique user identifiers</td><td><code>openid</code></td><td>OpenID Connect ID token identifying the user.</td><td>No.</td></tr>
-    <tr><td>Access basic profile / email / address / phone</td><td><code>profile</code>, <code>email</code>, <code>address</code>, <code>phone</code></td><td>Read the user's profile, email, address, phone.</td><td>No.</td></tr>
-    <tr><td>Access Visualforce applications</td><td><code>visualforce</code></td><td>Access custom Visualforce pages (included in <code>web</code>).</td><td>No.</td></tr>
-    <tr><td>Access Connect REST API resources</td><td><code>chatter_api</code></td><td>Chatter/Connect REST API.</td><td>No.</td></tr>
-    <tr><td>Access chatbot services</td><td><code>chatbot_api</code></td><td>Einstein Bot API.</td><td>No.</td></tr>
-  </tbody>
-</table>
-<p><strong>Key rules:</strong> <code>full</code> does not return a refresh token — request <code>refresh_token</code>/<code>offline_access</code> explicitly if you need long-lived access. Scopes are org-wide permissions; fine-grained control (who can edit Case) still comes from the integration user's profile/permission sets and sharing rules, not from scopes.</p>
+<p>Scopes cap what an access token is allowed to do. For this client-credentials (server-to-server) lab, only `api` is required; the client-credentials flow only accepts `api`, `lightning`, or `web` scopes, and `api` is the narrowest that covers REST API updates to Cases.</p>
+
+| Scope (name you see) | API value | What it allows | Use it for this lab? |
+|---|---|---|---|
+| Manage user data via APIs | `api` | Access Salesforce REST/Bulk/etc. APIs as the logged-in user — read, create, update, delete records the user's profile/permission sets allow. | **Yes — required.** This is the one to select. |
+| Full access | `full` | Access all data the logged-in user can reach; encompasses all other scopes. **Does not return a refresh token by itself.** Overly broad for a lab. | No — too broad, and no refresh token. |
+| Manage user data via Web browsers | `web` | Use the access token in a browser; includes Visualforce access. Only needed for browser-based UI flows. | No — not for server-to-server. |
+| Access Lightning applications | `lightning` | Access Lightning apps/components. Acceptable with client credentials but not needed here. | No — not needed. |
+| Perform requests at any time | `refresh_token` / `offline_access` | Return a refresh token so the app can keep accessing after the session ends. Not how client credentials normally works (it issues an access token directly). | Optional — usually unnecessary here. |
+| Access the identity URL service | `id` | Access the identity/userinfo endpoint (whoami). | No. |
+| Access unique user identifiers | `openid` | OpenID Connect ID token identifying the user. | No. |
+| Access basic profile / email / address / phone | `profile`, `email`, `address`, `phone` | Read the user's profile, email, address, phone. | No. |
+| Access Visualforce applications | `visualforce` | Access custom Visualforce pages (included in `web`). | No. |
+| Access Connect REST API resources | `chatter_api` | Chatter/Connect REST API. | No. |
+| Access chatbot services | `chatbot_api` | Einstein Bot API. | No. |
+
+<p><strong>Key rules:</strong> `full` does not return a refresh token — request `refresh_token`/`offline_access` explicitly if you need long-lived access. Scopes are org-wide permissions; fine-grained control (who can edit Case) still comes from the integration user's profile/permission sets and sharing rules, not from scopes.</p>
 </details>
+
+<div class="note">
+<span class="label">What's next</span>
+<p>You're done with Section 2 (Salesforce). Once you have the <strong>Consumer Key</strong> and <strong>Consumer Secret</strong> written down, move to <strong>Section 3 — REST Message</strong>, which is done <strong>in ServiceNow</strong>. You'll create the outbound REST Message and its PATCH method using those credentials.</p>
+</div>
 
 <h2 id="rest">3. REST Message <span class="req">[R · C]</span></h2>
 
