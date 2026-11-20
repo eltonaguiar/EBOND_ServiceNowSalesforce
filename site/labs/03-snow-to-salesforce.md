@@ -326,7 +326,7 @@ https://YOUR_DOMAIN.my.salesforce.com/services/oauth2/token
 
 <div class="note">
 <span class="label">Screenshot</span>
-<p>Save <code>03-external-client-app.png</code>, <code>03-rest-message-200.png</code>, and <code>03-case-after-update.png</code> into <a href="https://github.com/eltonaguiar/EBOND_ServiceNowSalesforce_RUN/blob/main/README.MD">the run repo</a>. Cover the consumer secret.</p>
+<p>Save <code>03-external-client-app.png</code>, <code>03-rest-message-200.png</code>, and <code>03-case-after-update.png</code> into <a href="https://github.com/eltonaguiar/EBOND_ServiceNowSalesforce_RUN/blob/main/README.MD">the run repo</a>. Before saving any screenshot, <strong>cover/redact the Consumer Secret and any email address shown</strong> (e.g. the Contact Email field on the External Client App form) — never publish credentials or personal email addresses.</p>
 </div>
 
 <h2 id="prove">5. Prove it <span class="req">[R]</span></h2>
