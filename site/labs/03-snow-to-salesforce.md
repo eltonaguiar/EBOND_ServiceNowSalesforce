@@ -232,6 +232,41 @@ https://YOUR_DOMAIN.my.salesforce.com/lightning/setup/...
 <li>Or confirm it in Salesforce: go to <strong>Setup → Quick Find: "Domain" → Domain Management → My Domain</strong>. Your domain name is listed there.</li>
 </ol>
 
+<details>
+<summary><strong>How to verify your Salesforce REST API URL within Salesforce</strong> <em>(tap to open)</em></summary>
+<p>Salesforce doesn't have a built-in "REST Explorer" inside Setup, but there are two ways to confirm your API endpoint:</p>
+
+<h4>Option 1 — API Versions endpoint (no auth required)</h4>
+<p>In your browser, go to:</p>
+
+```text
+https://YOUR_DOMAIN.my.salesforce.com/services/data/
+```
+
+<p>This returns a JSON list of all available API versions with their version numbers, labels, and links. Pick the highest version number, or just use <code>latest</code> — Salesforce resolves it automatically.</p>
+
+<h4>Option 2 — Workbench (recommended for exploring)</h4>
+<p><strong>Workbench</strong> (https://workbench.developerforce.com) is the standard tool for exploring Salesforce's REST API. It's not part of Salesforce Setup — it's a free third-party tool you log into with your Salesforce credentials.</p>
+
+<ul>
+<li>Log in with your Salesforce username and password</li>
+<li>Go to <strong>Utilities → REST Explorer</strong></li>
+<li>Enter a path like <code>/services/data/latest/sobjects/Case/describe</code> to see the Case object's fields and metadata</li>
+<li>This confirms your domain and API path are correct before you configure ServiceNow</li>
+</ul>
+
+<h4>Putting it together</h4>
+<p>Your full REST API endpoint combines your domain with the API path:</p>
+
+| Part | Value |
+|---|---|
+| Domain | `https://YOUR_DOMAIN.my.salesforce.com` (from your browser address bar or Setup → My Domain) |
+| API base path | `/services/data/latest` (or a specific version like `/services/data/v68.0`) |
+| Resource | `/sobjects/Case/Snow_Sys_Id__c/${snow_sys_id}` |
+
+<p><strong>Full endpoint:</strong> `https://YOUR_DOMAIN.my.salesforce.com/services/data/latest/sobjects/Case/Snow_Sys_Id__c/${snow_sys_id}`</p>
+</details>
+
 <p><strong>ServiceNow —</strong> create the REST Message record:</p>
 
 | Field | Value |
