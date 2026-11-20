@@ -247,6 +247,24 @@ ServiceNow wants an <strong>OAuth 2.0 profile</strong> record (called "OAuth Ent
 1. In ServiceNow, open the REST Message record you just created (<code>EBOND Salesforce Case</code>).
 2. In the <strong>Authentication</strong> field, choose <strong>OAuth 2.0</strong>.
 3. Click the <strong>OAuth 2.0 profile</strong> lookup field that appears next to it, then click <strong>New</strong> to create a profile.
+
+<details>
+<summary><strong>What kind of OAuth application?</strong> — dialog options, explained <em>(tap to open)</em></summary>
+<p>After clicking New, ServiceNow shows a dialog asking what kind of OAuth application you're configuring. Here are the options and which to pick:</p>
+
+| Dialog option | What it's for | Use it for this lab? |
+|---|---|---|
+| New Inbound Integration Experience | External systems calling **into** ServiceNow | No — that's the reverse direction |
+| Connect to a third party OAuth Provider - Outbound | ServiceNow calling **out to** a third party (Salesforce) | **Yes — pick this one** |
+| Connect to an OAuth Provider (simplified) - Outbound | Simplified outbound flow | Could work, but the standard option gives you all fields |
+| Configure a Client ID Metadata Document (CIMD) client | Metadata document setup | No |
+| [Deprecated UI] Create an OAuth API endpoint for external clients | Old UI path | No |
+| [Deprecated UI] Create an OAuth JWT API endpoint for external clients | Old UI path | No |
+| [Deprecated UI] Configure an OIDC provider to verify ID tokens | OIDC setup | No |
+
+<p>Since Salesforce is a third party and ServiceNow is calling **out** to it (client credentials / machine-to-machine), choose <strong>Connect to a third party OAuth Provider - Outbound</strong>.</p>
+</details>
+
 4. <strong>Create the OAuth Provider first (if one for Salesforce doesn't exist):</strong>
    - In ServiceNow, open the left navigation ("All" menu) and go to **System OAuth → OAuth Providers**. If that option doesn't exist on your instance (some releases use a different name), try **System OAuth → Application Registry** instead — that's where OAuth provider/consumer records live on some PDI instances.
    - Click **New** and fill in:
