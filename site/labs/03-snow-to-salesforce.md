@@ -237,8 +237,26 @@ https://YOUR_DOMAIN.my.salesforce.com/lightning/setup/...
 | Field | Value |
 |---|---|
 | Name | `EBOND Salesforce Case` |
-| Endpoint | `https://YOUR_DOMAIN.my.salesforce.com/services/data/v68.0` <br>(replace `YOUR_DOMAIN` with your actual domain from above) |
+| Endpoint | `https://YOUR_DOMAIN.my.salesforce.com/services/data/latest` <br>(replace `YOUR_DOMAIN` with your actual domain from above) |
 | Authentication | OAuth 2.0 (select an OAuth 2.0 profile — see below) |
+
+<details>
+<summary><strong>API version — why `latest` and how to verify</strong> <em>(tap to open)</em></summary>
+<p>Salesforce releases a new API version three times a year (Spring, Summer, Winter). v68.0 was the Winter '27 version, but by the time you do this lab there may be a newer one (v69.0, v70.0, etc.).</p>
+
+<p>Instead of hardcoding a version number that could go stale, use <code>latest</code> — Salesforce resolves this to the most recent API version your org supports automatically.</p>
+
+<p><strong>To verify which versions your org supports:</strong> call the Versions endpoint (no auth required):</p>
+
+```text
+https://YOUR_DOMAIN.my.salesforce.com/services/data/
+```
+
+This returns a JSON list of all available API versions with their version numbers, labels, and links. Pick the highest version number, or just use `latest`.
+
+<strong>Official documentation:</strong> <a href="https://developer.salesforce.com/docs/platform/api-rest/guide/dome-versions.html">Salesforce Developers — List Available REST API Versions</a> and <a href="https://developer.salesforce.com/docs/platform/api-rest/guide/resources-versions.html">Salesforce Developers — Versions Resource</a>.</p>
+</details>
+
 
 <p><strong>What to put in the Authentication field (`OAuth 2.0, ??`):</strong></p>
 
@@ -352,7 +370,7 @@ ServiceNow wants an <strong>OAuth 2.0 profile</strong> record (called "OAuth Ent
 **OAuth Entity Resources tab** — click **+** → insert a new row:
 | Field | Value |
 |---|---|
-| OAuth Resource | `https://YOUR_DOMAIN.my.salesforce.com/services/data/v68.0` |
+| OAuth Resource | `https://YOUR_DOMAIN.my.salesforce.com/services/data/latest` |
 
 <details>
 <summary><strong>OAuth Resource — what is this URL?</strong> <em>(tap to open)</em></summary>
@@ -362,13 +380,13 @@ ServiceNow wants an <strong>OAuth 2.0 profile</strong> record (called "OAuth Ent
 https://YOUR_DOMAIN.my.salesforce.com/services/data/v68.0
 ```
 
-Replace `YOUR_DOMAIN` with your actual Salesforce domain (from your browser address bar, e.g. `orgfarm-e14f7f3d3e-dev-ed`).
+Replace `YOUR_DOMAIN` with your actual Salesforce domain (from your browser address bar, e.g. `orgfarm-e14f73d3e-dev-ed`). Use `latest` as the API version — Salesforce resolves this to the most recent version automatically.
 
 <strong>Why this matters:</strong> This resource URL tells ServiceNow which Salesforce API the credentials on this provider are allowed to access. When ServiceNow requests an access token, it pairs the scope (`api`) with this resource, so Salesforce knows the token is valid for calling its REST API.
 
 <strong>Not the same as the Token URL:</strong>
 - Token URL: `https://YOUR_DOMAIN.my.salesforce.com/services/oauth2/token` — where ServiceNow goes to get the access token
-- OAuth Resource: `https://YOUR_DOMAIN.my.salesforce.com/services/data/v68.0` — the API the token will be used to call
+- OAuth Resource: `https://YOUR_DOMAIN.my.salesforce.com/services/data/latest` — the API the token will be used to call
 
 </details>
 
@@ -407,7 +425,7 @@ Replace `YOUR_DOMAIN` with your actual Salesforce domain (from your browser addr
 |-------|-------|
 | Name | `patch_case` |
 | HTTP method | PATCH |
-| Endpoint | `https://YOUR_DOMAIN.my.salesforce.com/services/data/v68.0/sobjects/Case/Snow_Sys_Id__c/${snow_sys_id}` |
+| Endpoint | `https://YOUR_DOMAIN.my.salesforce.com/services/data/latest/sobjects/Case/Snow_Sys_Id__c/${snow_sys_id}` |
 
 <p><strong>Why this endpoint works:</strong> the URL uses Salesforce's <strong>external-ID update</strong> form (<code>/sobjects/Case/{fieldName}/{fieldValue}</code>). This works <em>only</em> because <code>Snow_Sys_Id__c</code> was marked <strong>External ID</strong> (and Unique) on the Case in Lab 2. If it were a normal field, this URL would not resolve — you would instead have to use the Case's Salesforce record Id (<code>/sobjects/Case/{id}</code>).</p>
 
