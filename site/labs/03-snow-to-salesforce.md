@@ -160,6 +160,9 @@ https://YOUR_DOMAIN.my.salesforce.com/services/oauth2/token
 
 <p><code>login.salesforce.com</code> does not work for client credentials.</p>
 
+<p class="note"><span class="label">Vendor documentation</span>
+Salesforce does not display this URL in the UI — it is a standard OAuth token endpoint. See the official reference: <a href="https://help.salesforce.com/s/articleView?id=sf.remoteaccess_oauth_tokens_scopes.htm&language=en_US&type=5">Salesforce Help — OAuth Tokens and Scopes</a> and <a href="https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/intro_what_is_rest_api.htm">Salesforce Developer Guide — REST API</a>.</p>
+
 <ul class="check">
 <li><strong>Check:</strong> you wrote down the <code>Consumer Key</code> and <code>Consumer Secret</code> (or know where they are) — you will need them in ServiceNow.</li>
 <li><strong>Check:</strong> the integration user is set as an Admin-approved pre-authorized user, and that user has API access and edit rights on Case.</li>
