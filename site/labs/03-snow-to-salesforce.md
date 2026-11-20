@@ -528,6 +528,30 @@ http://orgfarm-e1f47f3d5e-dev-ed.develop.my.salesforce.com/services/data/latest
 </ul>
 
 <details>
+<summary><strong>Troubleshooting: OAuth token errors and invalid endpoint URLs</strong> <em>(tap to open)</em></summary>
+<h4>"OAuth Access or Refresh tokens are not available"</h4>
+<p>If you see a yellow banner saying <code>OAuth Access or Refresh tokens are not available. Verify the OAuth configuration and click the "Get OAuth Token" link below to request a new token.</code>, click the **"Get OAuth Token"** link on that banner to request a new access token. Then click Test again.</p>
+
+<h4>Endpoint URL must use .my.salesforce.com, NOT .develop.my.salesforce.com</h4>
+<p>Your endpoint URL must use the standard Salesforce My Domain format:</p>
+
+| Wrong (will fail) | Correct |
+|---|---|
+| `https://orgfarm-e1f47f3d5e-dev-ed.**develop**.my.salesforce.com/services/data/latest/...` | `https://orgfarm-e1f47f3d5e-dev-ed.my.salesforce.com/services/data/latest/...` |
+
+<p>Remove `.develop` from the domain. Your browser address bar shows the correct domain — use exactly what you see before `.my.salesforce.com`.</p>
+
+<h4>If you still get "Invalid null response" or authentication errors</h4>
+<ul>
+<li>Confirm the endpoint URL ends with `/services/data/latest/sobjects/Case/Snow_Sys_Id__c/${snow_sys_id}` (no `.develop`, no extra segments)</li>
+<li>Click **"Get OAuth Token"** on the yellow banner, then click **Test** again</li>
+<li>Verify your OAuth Entity Profile has Grant type = **Client Credentials** and Is default = ✅ checked</li>
+<li>Verify the OAuth Entity Scopes tab has scope `api`</li>
+<li>Verify the OAuth Entity Resources tab has OAuth Resource = `https://YOUR_DOMAIN.my.salesforce.com/services/data/latest`</li>
+</ul>
+</details>
+
+<details>
 <summary><strong>Other HTTP methods and when to use them</strong> <em>(tap to open)</em></summary>
 <ul>
 <li><strong>GET</strong> — read data from Salesforce. Use to look up a Case or record before updating.</li>
