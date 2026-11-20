@@ -132,7 +132,9 @@ permalink: /labs/03-snow-to-salesforce/
 </ul>
 <p><strong>When to use this kind of setup:</strong> whenever a server-side system (not a human) needs to call Salesforce's API automatically — e.g. ServiceNow updating Cases, a batch job syncing records, or an external portal reading data. If instead a <em>human</em> signs in through a browser, you would use a different flow (Authorization Code / PKCE), not client credentials.</p>
 
-<p><strong>How to get there:</strong> in Salesforce, click the <strong>gear icon (Setup)</strong> at the top-right, type <strong>App Manager</strong> in the Quick Find box, then open <strong>External Client App Manager</strong> and click <strong>New</strong>.</p>
+<strong>How to get there:</strong> in Salesforce, click the <strong>gear icon (Setup)</strong> at the top-right, type <strong>App Manager</strong> in the Quick Find box, then open <strong>External Client App Manager</strong> and click <strong>New</strong>.
+
+<p class="note"><strong>Order matters:</strong> steps 1–3 below are filled in on the <strong>initial "New External Client App" form</strong>. After you click <strong>Create</strong>, Salesforce takes you to the app's <strong>detail page</strong>, where steps 4–7 happen — the Consumer Key/Secret, Permitted Users, and the integration-user assignment are all on that detail page, not on the New form.</p>
 
 <h4>Steps (Salesforce)</h4>
 <ol>
@@ -144,10 +146,10 @@ permalink: /labs/03-snow-to-salesforce/
 </li>
 <li><strong>Salesforce — Contact Email:</strong> enter an email address. This is a <strong>support contact</strong> that Salesforce uses to reach you or your support team if there is an issue with the external client app (for example, a security or compliance question). It is <strong>not</strong> shared with admins who install a packaged app, and Salesforce does not email you about your data or per-call activity to it. For a lab, use your own email or a team/support alias.</li>
 <li><strong>Salesforce — Client Credentials:</strong> for a server-to-server lab, enable <strong>Client Credentials</strong>. This is the machine-to-machine login we use here.</li>
-<li><strong>Salesforce — Assign an integration user:</strong> pick a Salesforce user who has API access and edit rights on Case. This is the identity ServiceNow will act as. Callback URL can be a placeholder for this flow (not used with client credentials).</li>
-<li><strong>Salesforce — Policies → Permitted Users:</strong> choose <strong>Admin approved users are pre-authorized</strong>, then assign a permission set to that integration user (so they can actually use the app).</li>
-<li><strong>Salesforce — OAuth scopes (what to select):</strong> choose exactly <strong>Manage user data via APIs (api)</strong>. That is the scope that lets ServiceNow call Salesforce's REST API as the integration user — enough to update Cases in this lab. Do not add scopes you do not need; every extra scope widens what a leaked client secret can reach. (Detail on every scope option is in the collapsible block below.)</li>
-<li><strong>Salesforce — Consumer Key and Secret:</strong> open and write these down. They are the client id and client secret that ServiceNow will use to authenticate. They belong in ServiceNow's credential record (Sections 3/4), not in a file or repo.</li>
+<li><strong>Salesforce — Assign an integration user:</strong> (on the app's <strong>detail page</strong>, after Create) pick a Salesforce user who has API access and edit rights on Case. This is the identity ServiceNow will act as. Callback URL can be a placeholder for this flow (not used with client credentials).</li>
+<li><strong>Salesforce — Policies → Permitted Users:</strong> (on the detail page) choose <strong>Admin approved users are pre-authorized</strong>, then assign a permission set to that integration user (so they can actually use the app).</li>
+<li><strong>Salesforce — OAuth scopes (what to select):</strong> (on the New form, before Create) choose exactly <strong>Manage user data via APIs (api)</strong>. That is the scope that lets ServiceNow call Salesforce's REST API as the integration user — enough to update Cases in this lab. Do not add scopes you do not need; every extra scope widens what a leaked client secret can reach. (Detail on every scope option is in the collapsible block below.)</li>
+<li><strong>Salesforce — Consumer Key and Secret:</strong> (on the detail page, after Create) open and write these down. They are the client id and client secret that ServiceNow will use to authenticate. They belong in ServiceNow's credential record (Sections 3/4), not in a file or repo.</li>
 </ol>
 
 <p><strong>Token URL (My Domain only):</strong></p>
