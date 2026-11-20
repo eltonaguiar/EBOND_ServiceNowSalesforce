@@ -248,7 +248,7 @@ ServiceNow wants an <strong>OAuth 2.0 profile</strong> record (called "OAuth Ent
 2. In the <strong>Authentication</strong> field, choose <strong>OAuth 2.0</strong>.
 3. Click the <strong>OAuth 2.0 profile</strong> lookup field that appears next to it, then click <strong>New</strong> to create a profile.
 4. <strong>Create the OAuth Provider first (if one for Salesforce doesn't exist):</strong>
-   - In ServiceNow, open the left navigation ("All" menu) and go to **System OAuth → OAuth Providers** (or Quick Find: "OAuth Providers").
+   - In ServiceNow, open the left navigation ("All" menu) and go to **System OAuth → OAuth Providers**. If that option doesn't exist on your instance (some releases use a different name), try **System OAuth → Application Registry** instead — that's where OAuth provider/consumer records live on some PDI instances.
    - Click **New** and fill in:
 
 | Field | Value |
@@ -259,6 +259,7 @@ ServiceNow wants an <strong>OAuth 2.0 profile</strong> record (called "OAuth Ent
 | Revoke URL | `https://YOUR_DOMAIN.my.salesforce.com/services/oauth2/revoke` |
 
    - Replace `YOUR_DOMAIN` with your actual Salesforce domain. Click **Submit** to save the provider.
+   - If neither "OAuth Providers" nor "Application Registry" has an editable provider record, the **OAuth provider** field on the profile below may be optional — leave it blank and continue.
 
 5. <strong>Fill in the OAuth Entity Profile record</strong> exactly as shown below:
 
