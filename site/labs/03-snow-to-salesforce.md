@@ -136,10 +136,17 @@ permalink: /labs/03-snow-to-salesforce/
 
 <h4>Steps (Salesforce)</h4>
 <ol>
-<li><strong>Salesforce — Distribution:</strong> choose <strong>Local</strong>. Enable <strong>OAuth</strong>.</li>
+<li><strong>Salesforce — Distribution State:</strong> choose <strong>Local</strong>, then enable <strong>OAuth</strong>.
+  <ul>
+    <li><strong>Local</strong> — the app lives and works in this single Salesforce org. It cannot be distributed to other orgs, and the choice is permanent: you <strong>cannot</strong> promote a Local app to Packaged later. Local apps are also <strong>not copied into cloned or refreshed sandboxes</strong>, so recreate the app in each sandbox you use. Pick this for a one-org lab like this one.</li>
+    <li><strong>Packaged</strong> — build the app to ship to other orgs as a second-generation (2GP) managed package. The developer-controlled settings (OAuth flows, callback URLs, scopes) travel with the package, while subscriber policies (permitted users, IP relaxation) stay local to each installing org. Pick this only if you plan to distribute this integration as a product to other Salesforce orgs. Not needed for this lab.</li>
+  </ul>
+</li>
+<li><strong>Salesforce — Contact Email:</strong> enter an email address. This is a <strong>support contact</strong> that Salesforce uses to reach you or your support team if there is an issue with the external client app (for example, a security or compliance question). It is <strong>not</strong> shared with admins who install a packaged app, and Salesforce does not email you about your data or per-call activity to it. For a lab, use your own email or a team/support alias.</li>
 <li><strong>Salesforce — Client Credentials:</strong> for a server-to-server lab, enable <strong>Client Credentials</strong>. This is the machine-to-machine login we use here.</li>
 <li><strong>Salesforce — Assign an integration user:</strong> pick a Salesforce user who has API access and edit rights on Case. This is the identity ServiceNow will act as. Callback URL can be a placeholder for this flow (not used with client credentials).</li>
 <li><strong>Salesforce — Policies → Permitted Users:</strong> choose <strong>Admin approved users are pre-authorized</strong>, then assign a permission set to that integration user (so they can actually use the app).</li>
+<li><strong>Salesforce — OAuth scopes (what to select):</strong> choose exactly <strong>Manage user data via APIs (api)</strong>. That is the scope that lets ServiceNow call Salesforce's REST API as the integration user — enough to update Cases in this lab. Do not add scopes you do not need; every extra scope widens what a leaked client secret can reach. (Detail on every scope option is in the collapsible block below.)</li>
 <li><strong>Salesforce — Consumer Key and Secret:</strong> open and write these down. They are the client id and client secret that ServiceNow will use to authenticate. They belong in ServiceNow's credential record (Sections 3/4), not in a file or repo.</li>
 </ol>
 
@@ -161,10 +168,33 @@ https://YOUR_DOMAIN.my.salesforce.com/services/oauth2/token
 <ul>
 <li><strong>Connected App instead of External Client App</strong> — use if you need interactive user login (a human signing in via browser). For machine-to-machine (our case), the External Client App with client credentials is the right choice.</li>
 <li><strong>Different OAuth flows</strong> — client credentials (server-to-server, no user) vs Authorization Code / PKCE (user-driven). Use client credentials when no human is involved.</li>
-<li><strong>Scopes / OAuth scopes</strong> — you can limit exactly what the app may do (e.g. only <code>api</code>, only <code>refresh_token</code>). Use the narrowest scope that works.</li>
 <li><strong>IP restrictions / allowed origins</strong> — for production, restrict which IPs may use this app. For a lab, leave unrestricted.</li>
 <li><strong>Multiple integration users</strong> — you can assign more than one user; each becomes a separate identity. Use one for this lab.</li>
 </ul>
+</details>
+
+<details>
+<summary><strong>Every OAuth scope option, and what each one means</strong> <em>(tap to open)</em></summary>
+<p>Scopes cap what an access token is allowed to do. For this client-credentials (server-to-server) lab, only <code>api</code> is required; the client-credentials flow only accepts <code>api</code>, <code>lightning</code>, or <code>web</code> scopes, and <code>api</code> is the narrowest that covers REST API updates to Cases.</p>
+<table>
+  <thead>
+    <tr><th>Scope (name you see)</th><th>API value</th><th>What it allows</th><th>Use it for this lab?</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Manage user data via APIs</td><td><code>api</code></td><td>Access Salesforce REST/Bulk/etc. APIs as the logged-in user — read, create, update, delete records the user's profile/permission sets allow.</td><td><strong>Yes — required.</strong> This is the one to select.</td></tr>
+    <tr><td>Full access</td><td><code>full</code></td><td>Access all data the logged-in user can reach; encompasses all other scopes. <strong>Does not return a refresh token by itself.</strong> Overly broad for a lab.</td><td>No — too broad, and no refresh token.</td></tr>
+    <tr><td>Manage user data via Web browsers</td><td><code>web</code></td><td>Use the access token in a browser; includes Visualforce access. Only needed for browser-based UI flows.</td><td>No — not for server-to-server.</td></tr>
+    <tr><td>Access Lightning applications</td><td><code>lightning</code></td><td>Access Lightning apps/components. Acceptable with client credentials but not needed here.</td><td>No — not needed.</td></tr>
+    <tr><td>Perform requests at any time</td><td><code>refresh_token</code> / <code>offline_access</code></td><td>Return a refresh token so the app can keep accessing after the session ends. Not how client credentials normally works (it issues an access token directly).</td><td>Optional — usually unnecessary here.</td></tr>
+    <tr><td>Access the identity URL service</td><td><code>id</code></td><td>Access the identity/userinfo endpoint (whoami).</td><td>No.</td></tr>
+    <tr><td>Access unique user identifiers</td><td><code>openid</code></td><td>OpenID Connect ID token identifying the user.</td><td>No.</td></tr>
+    <tr><td>Access basic profile / email / address / phone</td><td><code>profile</code>, <code>email</code>, <code>address</code>, <code>phone</code></td><td>Read the user's profile, email, address, phone.</td><td>No.</td></tr>
+    <tr><td>Access Visualforce applications</td><td><code>visualforce</code></td><td>Access custom Visualforce pages (included in <code>web</code>).</td><td>No.</td></tr>
+    <tr><td>Access Connect REST API resources</td><td><code>chatter_api</code></td><td>Chatter/Connect REST API.</td><td>No.</td></tr>
+    <tr><td>Access chatbot services</td><td><code>chatbot_api</code></td><td>Einstein Bot API.</td><td>No.</td></tr>
+  </tbody>
+</table>
+<p><strong>Key rules:</strong> <code>full</code> does not return a refresh token — request <code>refresh_token</code>/<code>offline_access</code> explicitly if you need long-lived access. Scopes are org-wide permissions; fine-grained control (who can edit Case) still comes from the integration user's profile/permission sets and sharing rules, not from scopes.</p>
 </details>
 
 <h2 id="rest">3. REST Message <span class="req">[R · C]</span></h2>
