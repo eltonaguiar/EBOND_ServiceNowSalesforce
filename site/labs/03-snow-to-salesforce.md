@@ -349,7 +349,28 @@ ServiceNow wants an <strong>OAuth 2.0 profile</strong> record (called "OAuth Ent
 <p>So you <strong>cannot</strong> use "abcd" — it must be `api` (or another scope Salesforce actually publishes). `api` is the narrowest scope that lets ServiceNow update Cases via REST API, which is exactly what this lab does.</p>
 </details>
 
-**OAuth Entity Resources tab** — click **+** → insert a new row (the resource URL for your Salesforce API).
+**OAuth Entity Resources tab** — click **+** → insert a new row:
+| Field | Value |
+|---|---|
+| OAuth Resource | `https://YOUR_DOMAIN.my.salesforce.com/services/data/v68.0` |
+
+<details>
+<summary><strong>OAuth Resource — what is this URL?</strong> <em>(tap to open)</em></summary>
+<p>The OAuth Resource is the <strong>base URL of the Salesforce API</strong> that this OAuth Provider is authorizing ServiceNow to access. It's the same domain you've been using, plus the REST API path:</p>
+
+```text
+https://YOUR_DOMAIN.my.salesforce.com/services/data/v68.0
+```
+
+Replace `YOUR_DOMAIN` with your actual Salesforce domain (from your browser address bar, e.g. `orgfarm-e14f7f3d3e-dev-ed`).
+
+<strong>Why this matters:</strong> This resource URL tells ServiceNow which Salesforce API the credentials on this provider are allowed to access. When ServiceNow requests an access token, it pairs the scope (`api`) with this resource, so Salesforce knows the token is valid for calling its REST API.
+
+<strong>Not the same as the Token URL:</strong>
+- Token URL: `https://YOUR_DOMAIN.my.salesforce.com/services/oauth2/token` — where ServiceNow goes to get the access token
+- OAuth Resource: `https://YOUR_DOMAIN.my.salesforce.com/services/data/v68.0` — the API the token will be used to call
+
+</details>
 
    - Click **Submit** on the provider after filling all three tabs.
 
