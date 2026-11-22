@@ -40,6 +40,41 @@ a { color:var(--accent); }
 code { background:var(--code); padding:.12em .35em; border-radius:4px; font-size:.9em; }
 pre { background:var(--pre-bg); color:var(--pre-ink); padding:1rem 1.1rem; border-radius:8px; overflow-x:auto; font-size:.86rem; line-height:1.5; }
 pre code { background:none; padding:0; color:inherit; }
+
+/* Rouge syntax highlighting (light + dark) */
+.highlight .c, .highlight .c1, .highlight .cm { color:#6a737d; font-style:italic; } /* comments */
+.highlight .k, .highlight .kc, .highlight .kd, .highlight .kn, .highlight .kp, .highlight .kr, .highlight .kt { color:#d73a49; } /* keywords */
+.highlight .s, .highlight .s1, .highlight .s2, .highlight .sx { color:#032f62; } /* strings */
+.highlight .mi, .highlight .mf, .highlight .mh, .highlight .mo { color:#005cc5; } /* numbers */
+.highlight .nf, .highlight .na, .highlight .nb { color:#6f42c1; } /* functions / attrs */
+.highlight .o, .highlight .ow { color:#d73a49; } /* operators */
+.highlight .p { color:#24292e; } /* punctuation */
+.highlight .err { color:#b31d28; background:#ffeef0; } /* errors */
+
+[data-theme="dark"] .highlight .c,
+[data-theme="dark"] .highlight .c1,
+[data-theme="dark"] .highlight .cm { color:#8b949e; }
+[data-theme="dark"] .highlight .k,
+[data-theme="dark"] .highlight .kc,
+[data-theme="dark"] .highlight .kd,
+[data-theme="dark"] .highlight .kn,
+[data-theme="dark"] .highlight .kp,
+[data-theme="dark"] .highlight .kr,
+[data-theme="dark"] .highlight .kt { color:#ff7b72; }
+[data-theme="dark"] .highlight .s,
+[data-theme="dark"] .highlight .s1,
+[data-theme="dark"] .highlight .s2,
+[data-theme="dark"] .highlight .sx { color:#a5d6ff; }
+[data-theme="dark"] .highlight .mi,
+[data-theme="dark"] .highlight .mf,
+[data-theme="dark"] .highlight .mh,
+[data-theme="dark"] .highlight .mo { color:#79c0ff; }
+[data-theme="dark"] .highlight .nf,
+[data-theme="dark"] .highlight .na,
+[data-theme="dark"] .highlight .nb { color:#d2a8ff; }
+[data-theme="dark"] .highlight .o,
+[data-theme="dark"] .highlight .ow { color:#ff7b72; }
+[data-theme="dark"] .highlight .p { color:#c9d1d9; }
 table { width:100%; border-collapse:collapse; margin:1rem 0; font-size:.94rem; }
 th, td { text-align:left; padding:.5rem .6rem; border-bottom:1px solid var(--line); vertical-align:top; }
 th { color:var(--muted); font-weight:600; font-size:.84rem; text-transform:uppercase; letter-spacing:.03em; }
