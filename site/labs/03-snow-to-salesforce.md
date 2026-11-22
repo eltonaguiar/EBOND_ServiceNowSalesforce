@@ -591,6 +591,7 @@ http://orgfarm-e1f47f3d5e-dev-ed.develop.my.salesforce.com/services/data/latest
 <td style="border:1px solid #333; padding:8px; vertical-align:top;"><strong>Step 1 — configure the rule (ServiceNow)</strong></td>
 <td style="border:1px solid #333; padding:8px; vertical-align:top;">Set the rule's basics</td>
 <td style="border:1px solid #333; padding:8px; vertical-align:top;">
+<strong>Name:</strong> <code>EBOND Salesforce Incident Async</code> (or any descriptive name)<br>
 <strong>Table:</strong> <code>incident</code><br>
 <strong>When to run:</strong> <code>async</code><br>
 <strong>Advanced:</strong> check <strong>Insert</strong> and <strong>Update</strong><br>
