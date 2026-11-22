@@ -51,8 +51,12 @@ pre code { background:none; padding:0; color:inherit; }
 .highlight .nf, .highlight .na, .highlight .nb, .highlight .nx { color:#d2a8ff; } /* functions, attributes, names */
 .highlight .o, .highlight .ow { color:#ff8a80; } /* operators */
 .highlight .nt { color:#7ee787; } /* html tags */
-.highlight .p { color:#c9d1d9; } /* punctuation */
-.highlight .err { color:#ffa198; text-decoration:underline wavy; }
+.highlight .err { color:#ffa198; }
+
+/* Keep code blocks inside table cells: scroll the block, never the page */
+td pre, td .highlight pre { max-width:100%; overflow-x:auto; }
+td .highlight, td details { max-width:100%; }
+td { overflow-wrap:anywhere; }
 
 table { width:100%; border-collapse:collapse; margin:1rem 0; font-size:.94rem; }
 th, td { text-align:left; padding:.5rem .6rem; border-bottom:1px solid var(--line); vertical-align:top; }

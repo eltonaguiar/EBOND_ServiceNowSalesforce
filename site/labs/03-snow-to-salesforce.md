@@ -578,12 +578,12 @@ http://orgfarm-e1f47f3d5e-dev-ed.develop.my.salesforce.com/services/data/latest
 
 <p><strong>How to get there:</strong> in your ServiceNow instance, open the left navigation menu (the "All" menu, top-left) and go to <strong>System Definition → Business Rules</strong>, then click <strong>New</strong>.</p>
 
-<table style="border-collapse:collapse; width:100%; margin:1rem 0; border:2px solid #333;">
+<table style="border-collapse:collapse; width:100%; margin:1rem 0; border:2px solid #333; table-layout:fixed;">
 <thead>
 <tr style="background:#f5f5f5;">
-<th style="border:1px solid #333; padding:8px; text-align:left;">Step</th>
-<th style="border:1px solid #333; padding:8px; text-align:left;">Action</th>
-<th style="border:1px solid #333; padding:8px; text-align:left;">Details</th>
+<th style="border:1px solid #333; padding:8px; text-align:left; width:17%;">Step</th>
+<th style="border:1px solid #333; padding:8px; text-align:left; width:15%;">Action</th>
+<th style="border:1px solid #333; padding:8px; text-align:left; width:68%;">Details</th>
 </tr>
 </thead>
 <tbody>
