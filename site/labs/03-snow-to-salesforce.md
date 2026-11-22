@@ -614,7 +614,35 @@ http://orgfarm-e1f47f3d5e-dev-ed.develop.my.salesforce.com/services/data/latest
  *   Whenever an Incident linked to a Salesforce Case is inserted or updated,
  *   this async business rule calls the REST Message "EBOND Salesforce Case"
  *   (method "patch_case") to PATCH the matching Case in Salesforce.
- *   The match key is Snow_Sys_Id__c (external ID) on the Case.
+ *
+ *   CRUD EQUIVALENT
+ *     PATCH is the HTTP verb that performs a **partial update** — it only
+ *     changes the fields you send in the request body; every other field on
+ *     the target record is left untouched.  In CRUD terms:
+ *       C = POST (create)   |  R = GET (read)
+ *       U = PATCH or PUT    |  D = DELETE
+ *     We use PATCH because we only want to overwrite Subject, Description,
+ *     Snow_Number__c and Snow_Sync_Source__c; we do not want to risk wiping
+ *     any other Salesforce-managed fields on the Case.
+ *
+ *   HOW THE PATCH ACTUALLY HAPPENS
+ *     1. The business rule instantiates a RESTMessageV2 client that points to
+ *        a **pre-configured** REST Message record named "EBOND Salesforce Case".
+ *     2. That record already contains:
+ *        - the Salesforce endpoint template that ends in
+ *          /sobjects/Case/Snow_Sys_Id__c/${snow_sys_id}
+ *        - the JSON body template that lists the four fields to send
+ *        - the OAuth 2.0 credential profile that supplies the bearer token
+ *     3. When the rule calls r.execute(), ServiceNow performs an HTTP PATCH
+ *        request to Salesforce using the values substituted at runtime.
+ *     4. Salesforce locates the Case via the External ID (Snow_Sys_Id__c)
+ *        and applies only the sent fields.
+ *
+ *   BREADCRUMB — where the REST plumbing lives
+ *     System Web Services → Outbound → REST Message →
+ *     record "EBOND Salesforce Case" → HTTP Methods tab → method "patch_case"
+ *     (created in Section 3 of this lab).  If that method does not exist the
+ *     business rule will fail at runtime with "REST message not found".
  *
  * FLOW (what actually happens on every qualifying Incident save)
  *   1. Guard 1 — if u_sync_source == 'salesforce', bail (Lab 2 echo, avoid loop).
@@ -674,6 +702,23 @@ http://orgfarm-e1f47f3d5e-dev-ed.develop.my.salesforce.com/services/data/latest
 
     // Bind three more placeholders used in the JSON request body (see REST Message Content).
     // If the field is null/undefined, fall back to empty string so the JSON stays valid.
+    //
+    // EXAMPLE — what setStringParameterNoEscape actually does at runtime
+    //   Suppose the Incident's short_description is:  Acme "Widget" — 50% off!
+    //   The REST Message body template contains the literal text:
+    //     "Subject": "${subject}"
+    //   After substitution the outbound JSON becomes:
+    //     "Subject": "Acme \"Widget\" — 50% off!"
+    //   The double-quote inside the value is escaped to \" so the JSON parser
+    //   on the Salesforce side does not see an unterminated string.
+    //
+    // WHY ESCAPING IS REQUIRED
+    //   Without NoEscape (or if you used a naïve string replace) the same value
+    //   would produce the illegal JSON:
+    //     "Subject": "Acme "Widget" — 50% off!"
+    //   Salesforce would reject the request with HTTP 400 / INVALID_JSON.
+    //   The *NoEscape* variant also prevents HTML entity encoding (e.g. & → &amp;)
+    //   which would corrupt data that legitimately contains those characters.
     r.setStringParameterNoEscape('subject', current.getValue('short_description') || '');
     r.setStringParameterNoEscape('description', current.getValue('description') || '');
     r.setStringParameterNoEscape('number', current.getValue('number') || '');
