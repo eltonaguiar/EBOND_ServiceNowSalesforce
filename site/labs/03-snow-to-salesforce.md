@@ -611,7 +611,10 @@ http://orgfarm-e1f47f3d5e-dev-ed.develop.my.salesforce.com/services/data/latest
 <tr>
 <td style="border:1px solid #333; padding:8px; vertical-align:top;"><strong>Step 2 — add the script (ServiceNow)</strong></td>
 <td style="border:1px solid #333; padding:8px; vertical-align:top;">Paste into the rule's <strong>Script</strong> field</td>
-<td style="border:1px solid #333; padding:8px; vertical-align:top;">
+<td style="border:1px solid #333; padding:8px; vertical-align:top;">The code is printed full-width in the next row of this table &mdash; copy the version you prefer.</td>
+</tr>
+<tr>
+<td colspan="3" style="border:1px solid #333; padding:8px; vertical-align:top;">
 
 <details markdown="1">
 <summary><strong>CODE WITH COMMENTS</strong> <em>(click to expand — fully annotated version)</em></summary>
