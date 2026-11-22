@@ -602,20 +602,83 @@ http://orgfarm-e1f47f3d5e-dev-ed.develop.my.salesforce.com/services/data/latest
 <td style="border:1px solid #333; padding:8px; vertical-align:top;"><strong>Step 2 — add the script (ServiceNow)</strong></td>
 <td style="border:1px solid #333; padding:8px; vertical-align:top;">Paste into the rule's <strong>Script</strong> field</td>
 <td style="border:1px solid #333; padding:8px; vertical-align:top;">
-<pre style="margin:0; white-space:pre-wrap; font-size:0.85em;"><code>(function executeRule(current, previous) {
+<pre style="margin:0; white-space:pre-wrap; font-size:0.80em;"><code>/**
+ * EBOND — ServiceNow → Salesforce (return path)
+ *
+ * PURPOSE
+ *   Whenever an Incident linked to a Salesforce Case is inserted or updated,
+ *   this async business rule calls the REST Message "EBOND Salesforce Case"
+ *   (method "patch_case") to PATCH the matching Case in Salesforce.
+ *   The match key is Snow_Sys_Id__c (external ID) on the Case.
+ *
+ * FLOW (what actually happens on every qualifying Incident save)
+ *   1. Guard 1 — if u_sync_source == 'salesforce', bail (Lab 2 echo, avoid loop).
+ *   2. Guard 2 — if u_ebond_sf_case_id is empty, bail (no Case to update).
+ *   3. Build a RESTMessageV2 client bound to the saved REST Message + method.
+ *   4. For each ${param} in the method's endpoint/body, call setStringParameterNoEscape.
+ *      - 'snow_sys_id' receives the *Incident* sys_id (current.getUniqueValue()).
+ *        The REST Message endpoint template uses it as the external-ID lookup value
+ *        in the Salesforce URL: /sobjects/Case/Snow_Sys_Id__c/${snow_sys_id}
+ *        → no HTTP body is sent here; it's a path substitution only.
+ *   5. Execute the call (PATCH) with a 20 s timeout.
+ *   6. On non-2xx, log an Application Error (visible in System Logs → Application Logs).
+ *
+ * SYNTAX NOTES (ServiceNow server-side JS)
+ *   - Business rule signature is always: executeRule(current, previous)
+ *   - For async rules, previous is null — do not rely on it.
+ *   - current is a GlideRecord of the triggering row; use getValue()/getUniqueValue().
+ *   - RESTMessageV2(name, method) looks up the saved REST Message definition.
+ *   - setStringParameterNoEscape(k, v) substitutes ${k} safely (no HTML escaping).
+ *   - execute() is synchronous from the script's perspective even though the rule is async.
+ *
+ * TWEAKS YOU MAY NEED
+ *   - Different REST Message name or method name → change the two strings in new sn_ws.RESTMessageV2(...).
+ *   - Different Incident fields → change the getValue('short_description') etc. lines.
+ *   - Different Salesforce Case fields → update the JSON body in the REST Message Content.
+ *   - Longer timeout or retry logic → wrap execute() in a try/catch + setHttpTimeout().
+ *   - Logging destination → gs.error(...) writes to Application Logs; use gs.info() for lighter noise.
+ *   - If your link field is named differently (e.g., u_sf_case), update the guard and the param name.
+ */
+
+(function executeRule(current, previous) {
+    // Guard 1: skip if this Incident change came FROM Salesforce (Lab 2 direction)
+    // Prevents an infinite echo: SF → SN → SF → SN ...
     if (current.u_sync_source == 'salesforce') {
         return;
     }
+
+    // Guard 2: skip if there is no linked Salesforce Case
+    // u_ebond_sf_case_id holds the 18-char SF Case Id (populated by Lab 2)
     if (!current.u_ebond_sf_case_id) {
         return;
     }
+
+    // Create a client for the saved REST Message "EBOND Salesforce Case"
+    // and its HTTP method "patch_case" (defined in Section 3 of this lab)
     var r = new sn_ws.RESTMessageV2('EBOND Salesforce Case', 'patch_case');
+
+    // Bind the Incident sys_id to the placeholder ${snow_sys_id} in the REST endpoint.
+    // The endpoint template is:
+    //   https://.../services/data/latest/sobjects/Case/Snow_Sys_Id__c/${snow_sys_id}
+    // Salesforce treats Snow_Sys_Id__c as an External ID (Unique) and locates the Case.
+    // This value travels in the URL path, NOT the JSON body.
     r.setStringParameterNoEscape('snow_sys_id', current.getUniqueValue());
+
+    // Bind three more placeholders used in the JSON request body (see REST Message Content).
+    // If the field is null/undefined, fall back to empty string so the JSON stays valid.
     r.setStringParameterNoEscape('subject', current.getValue('short_description') || '');
     r.setStringParameterNoEscape('description', current.getValue('description') || '');
     r.setStringParameterNoEscape('number', current.getValue('number') || '');
+
+    // Safety: abort the HTTP call after 20 seconds so a slow Salesforce does not
+    // hang the (already async) business rule thread.
     r.setHttpTimeout(20000);
+
+    // Fire the PATCH. The call is synchronous from this script's point of view.
     var resp = r.execute();
+
+    // Basic error logging. Non-2xx means Salesforce rejected the update.
+    // Check System Logs → Application Logs for "EBOND patch failed NNN".
     if (resp.getStatusCode() &lt; 200 || resp.getStatusCode() &gt;= 300) {
         gs.error('EBOND patch failed ' + resp.getStatusCode());
     }
