@@ -578,20 +578,30 @@ http://orgfarm-e1f47f3d5e-dev-ed.develop.my.salesforce.com/services/data/latest
 
 <p><strong>How to get there:</strong> in your ServiceNow instance, open the left navigation menu (the "All" menu, top-left) and go to <strong>System Definition → Business Rules</strong>, then click <strong>New</strong>.</p>
 
-<h4>Step 1 — configure the rule (ServiceNow)</h4>
-<p><strong>ServiceNow —</strong> set the rule's basics:</p>
-<ul>
-<li><strong>Table:</strong> <code>incident</code></li>
-<li><strong>When to run:</strong> <code>async</code></li>
-<li><strong>Advanced:</strong> check <strong>Insert</strong> and <strong>Update</strong></li>
-<li><strong>Filter (condition):</strong> <code>u_ebond_sf_case_id</code> is not empty — so the rule only runs for linked Incidents.</li>
-</ul>
-
-<h4>Step 2 — add the script (ServiceNow)</h4>
-<p><strong>ServiceNow —</strong> paste this into the rule's <strong>Script</strong> field:</p>
-
-```javascript
-(function executeRule(current, previous) {
+<table style="border-collapse:collapse; width:100%; margin:1rem 0; border:2px solid #333;">
+<thead>
+<tr style="background:#f5f5f5;">
+<th style="border:1px solid #333; padding:8px; text-align:left;">Step</th>
+<th style="border:1px solid #333; padding:8px; text-align:left;">Action</th>
+<th style="border:1px solid #333; padding:8px; text-align:left;">Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="border:1px solid #333; padding:8px; vertical-align:top;"><strong>Step 1 — configure the rule (ServiceNow)</strong></td>
+<td style="border:1px solid #333; padding:8px; vertical-align:top;">Set the rule's basics</td>
+<td style="border:1px solid #333; padding:8px; vertical-align:top;">
+<strong>Table:</strong> <code>incident</code><br>
+<strong>When to run:</strong> <code>async</code><br>
+<strong>Advanced:</strong> check <strong>Insert</strong> and <strong>Update</strong><br>
+<strong>Filter (condition):</strong> <code>u_ebond_sf_case_id</code> is not empty — so the rule only runs for linked Incidents.
+</td>
+</tr>
+<tr>
+<td style="border:1px solid #333; padding:8px; vertical-align:top;"><strong>Step 2 — add the script (ServiceNow)</strong></td>
+<td style="border:1px solid #333; padding:8px; vertical-align:top;">Paste into the rule's <strong>Script</strong> field</td>
+<td style="border:1px solid #333; padding:8px; vertical-align:top;">
+<pre style="margin:0; white-space:pre-wrap; font-size:0.85em;"><code>(function executeRule(current, previous) {
     if (current.u_sync_source == 'salesforce') {
         return;
     }
@@ -605,11 +615,14 @@ http://orgfarm-e1f47f3d5e-dev-ed.develop.my.salesforce.com/services/data/latest
     r.setStringParameterNoEscape('number', current.getValue('number') || '');
     r.setHttpTimeout(20000);
     var resp = r.execute();
-    if (resp.getStatusCode() < 200 || resp.getStatusCode() >= 300) {
+    if (resp.getStatusCode() &lt; 200 || resp.getStatusCode() &gt;= 300) {
         gs.error('EBOND patch failed ' + resp.getStatusCode());
     }
-})(current, previous);
-```
+})(current, previous);</code></pre>
+</td>
+</tr>
+</tbody>
+</table>
 
 <p><strong>What the script does:</strong> the first two lines are <strong>guards</strong> — they stop the rule if the Incident came from Salesforce (<code>u_sync_source = salesforce</code>, i.e. our Lab 2 echo, so we don't call back) or has no Case link. Then it calls the <code>patch_case</code> REST message, passing the Incident's <code>sys_id</code> (to find the Case) and the values to write. A non-2xx response logs <code>EBOND patch failed</code>.</p>
 
