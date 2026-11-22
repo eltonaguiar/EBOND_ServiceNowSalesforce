@@ -491,8 +491,16 @@ http://orgfarm-e1f47f3d5e-dev-ed.develop.my.salesforce.com/services/data/latest
 | Name | `patch_case` |
 | HTTP method | PATCH |
 | Endpoint | `https://YOUR_DOMAIN.my.salesforce.com/services/data/latest/sobjects/Case/Snow_Sys_Id__c/${snow_sys_id}` |
+| HTTP Header | `Content-Type` = `application/json` (required — Salesforce rejects the body without it) |
 
 <p><strong>Why this endpoint works:</strong> the URL uses Salesforce's <strong>external-ID update</strong> form (<code>/sobjects/Case/{fieldName}/{fieldValue}</code>). This works <em>only</em> because <code>Snow_Sys_Id__c</code> was marked <strong>External ID</strong> (and Unique) on the Case in Lab 2. If it were a normal field, this URL would not resolve — you would instead have to use the Case's Salesforce record Id (<code>/sobjects/Case/{id}</code>).</p>
+<div class="warn">
+<span class="label">Three things that silently break this call</span>
+<p><strong>1. The endpoint must end in <code>${snow_sys_id}</code>, not a literal word.</strong> A common mistake is testing with <code>/sobjects/Case/Snow_Sys_Id__c/servicenow</code>. That runs green and updates nothing, because Salesforce looks for a Case whose <code>Snow_Sys_Id__c</code> is the literal text <code>servicenow</code> — not your Incident. The real Incident's <code>sys_id</code> is a 32-character hex string (for example <code>6b9981eec3205394310abf0d0501318a</code>). Keep the placeholder and let <code>setStringParameterNoEscape('snow_sys_id', …)</code> fill it in.</p>
+<p><strong>2. The method name must be the one that exists in YOUR instance.</strong> The script passes <code>new sn_ws.RESTMessageV2('EBOND Salesforce Case', 'patch_case')</code>. If you named the HTTP Method <code>patch_case_test</code> (very common when you test before going live), the call throws immediately and the Case never changes. Open the REST Message → <strong>HTTP Methods</strong> tab and copy the <strong>Name</strong> column exactly into the second argument.</p>
+<p><strong>3. The method needs a <code>Content-Type</code> header.</strong> Add an <strong>HTTP Header</strong> on the method: name <code>Content-Type</code>, value <code>application/json</code>. Without it Salesforce answers <code>400 INVALID_CONTENT_TYPE</code> even though the body is valid JSON.</p>
+</div>
+
 
 <h4>Step 3 — set the request body (ServiceNow)</h4>
 <p><strong>ServiceNow —</strong> set the body. Do not put <code>Snow_Sys_Id__c</code> in the JSON — it is already in the URL as the external-ID lookup key.</p>
