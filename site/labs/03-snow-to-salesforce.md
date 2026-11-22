@@ -594,8 +594,18 @@ http://orgfarm-e1f47f3d5e-dev-ed.develop.my.salesforce.com/services/data/latest
 <strong>Name:</strong> <code>EBOND Salesforce Incident Async</code> (or any descriptive name)<br>
 <strong>Table:</strong> <code>incident</code><br>
 <strong>When to run:</strong> <code>async</code><br>
-<strong>Advanced:</strong> check <strong>Insert</strong> and <strong>Update</strong><br>
+<strong>Advanced:</strong> check <strong>Update</strong> only — leave <strong>Insert</strong> <em>unchecked</em><br>
 <strong>Filter (condition):</strong> <code>u_ebond_sf_case_id</code> is not empty — so the rule only runs for linked Incidents.
+<div class="warn">
+<span class="label">Why Update only, and why NOT <code>u_sync_source</code> as a guard</span>
+<p>Lab 2's Flow creates the Incident <em>from</em> the Case and stamps <code>u_sync_source = salesforce</code> on it. That value is <strong>permanent</strong> — it records where the record was born, not what changed just now. If you guard on it (<code>if (current.u_sync_source == 'salesforce') return;</code>), then every later human edit of a Flow-created Incident bails out and the Case is <strong>never</strong> updated. The return path silently never runs for exactly the records that have a Case to update — which looks like "Sync Source says salesforce on everything" and no write-backs.</p>
+<p>Two fixes are applied here:</p>
+<ul>
+<li><strong>Insert is unchecked</strong> — at creation the Case already holds these values (it created the Incident), so there is nothing to push back. That removes the only echo the guard was protecting against.</li>
+<li><strong>Guard on the writer, not on a data field</strong> — skip only when the update came from the integration user (Lab 2's callout account). A human editing in ServiceNow always passes.</li>
+</ul>
+<p>Keep <code>u_sync_source</code> as a <em>provenance badge</em> for reporting. Never use it as a loop guard.</p>
+</div>
 </td>
 </tr>
 <tr>
@@ -645,7 +655,9 @@ http://orgfarm-e1f47f3d5e-dev-ed.develop.my.salesforce.com/services/data/latest
  *     business rule will fail at runtime with "REST message not found".
  *
  * FLOW (what actually happens on every qualifying Incident save)
- *   1. Guard 1 — if u_sync_source == 'salesforce', bail (Lab 2 echo, avoid loop).
+ *   1. Guard 1 — this rule is Update-only, so there is no create-echo to suppress.
+ *      u_sync_source is NOT tested: it stays 'salesforce' forever, so testing it would
+ *      block every later human edit and the Case would never be updated.
  *   2. Guard 2 — if u_ebond_sf_case_id is empty, bail (no Case to update).
  *   3. Build a RESTMessageV2 client bound to the saved REST Message + method.
  *   4. For each ${param} in the method's endpoint/body, call setStringParameterNoEscape.
@@ -674,11 +686,16 @@ http://orgfarm-e1f47f3d5e-dev-ed.develop.my.salesforce.com/services/data/latest
  */
 
 (function executeRule(current, previous) {
-    // Guard 1: skip if this Incident change came FROM Salesforce (Lab 2 direction)
-    // Prevents an infinite echo: SF → SN → SF → SN ...
-    if (current.u_sync_source == 'salesforce') {
-        return;
-    }
+    // Guard 1 — only run for genuine ServiceNow-side changes.
+    // This rule is Update-only (Insert is unchecked), so there is no create-echo to suppress.
+    // u_sync_source is deliberately NOT tested here: it is a permanent provenance badge
+    // ('salesforce' = this Incident was born in Salesforce), so testing it would return on
+    // every later human edit and permanently kill the write-back for every linked Incident.
+    //
+    // HARDENING (optional): if your Flow later also UPDATES Incidents, uncomment the next
+    // line and point it at a dedicated integration user - the same login the Salesforce
+    // Named Credential from Lab 2 authenticates as.
+    // if (current.getDisplayValue('sys_updated_by') === 'ebond.integration') { return; }
 
     // Guard 2: skip if there is no linked Salesforce Case
     // u_ebond_sf_case_id holds the 18-char SF Case Id (populated by Lab 2)
@@ -758,9 +775,10 @@ http://orgfarm-e1f47f3d5e-dev-ed.develop.my.salesforce.com/services/data/latest
 
 ```javascript
 (function executeRule(current, previous) {
-    if (current.u_sync_source == 'salesforce') {
-        return;
-    }
+    // Update-only rule: no create-echo to suppress. u_sync_source is a provenance badge,
+    // not a loop guard - testing it would block every human edit.
+    // Hardening: if the Flow also updates Incidents, add
+    //   if (current.getDisplayValue('sys_updated_by') === 'ebond.integration') { return; }
     if (!current.u_ebond_sf_case_id) {
         return;
     }
@@ -783,12 +801,12 @@ http://orgfarm-e1f47f3d5e-dev-ed.develop.my.salesforce.com/services/data/latest
 </tbody>
 </table>
 
-<p><strong>What the script does:</strong> the first two lines are <strong>guards</strong> — they stop the rule if the Incident came from Salesforce (<code>u_sync_source = salesforce</code>, i.e. our Lab 2 echo, so we don't call back) or has no Case link. Then it calls the <code>patch_case</code> REST message, passing the Incident's <code>sys_id</code> (to find the Case) and the values to write. A non-2xx response logs <code>EBOND patch failed</code>.</p>
+<p><strong>What the script does:</strong> the rule runs on <strong>Update only</strong>, so a Case that was just created (and created its Incident) is never written straight back. The remaining guard stops the rule when the Incident has no Case link. <code>u_sync_source</code> is deliberately <strong>not</strong> tested — it is a permanent provenance value, and guarding on it would block every human edit. Then it calls the <code>patch_case</code> REST message, passing the Incident's <code>sys_id</code> (to find the Case) and the values to write. A non-2xx response logs <code>EBOND patch failed</code>.</p>
 
 <h4>Step 3 — validate the rule fires (ServiceNow + Salesforce)</h4>
 <ul class="check">
-<li><strong>ServiceNow — Check the rule config:</strong> Table = <code>incident</code>, When = <code>async</code>, checked = Insert and Update, Filter set to <code>u_ebond_sf_case_id</code> is not empty.</li>
-<li><strong>ServiceNow — Test it fires:</strong> edit a linked Incident's short description by hand (with <code>u_sync_source</code> blank or <code>servicenow</code>) and save. If nothing happens, open <strong>System Logs → Application Logs</strong> and look for an <code>EBOND patch failed</code> entry — that tells you the rule ran but the call errored.</li>
+<li><strong>ServiceNow — Check the rule config:</strong> Table = <code>incident</code>, When = <code>async</code>, <strong>Update checked, Insert unchecked</strong>, Filter set to <code>u_ebond_sf_case_id</code> is not empty.</li>
+<li><strong>ServiceNow — Test it fires:</strong> edit a linked Incident's short description by hand and save. Because Insert is unchecked, Flow-created Incidents pass the guard even though <code>u_sync_source</code> still reads <code>salesforce</code>. If nothing happens, open <strong>System Logs → Application Logs</strong> and look for an <code>EBOND patch failed</code> entry — that tells you the rule ran but the call errored.</li>
 <li><strong>Salesforce — Confirm the Case updated:</strong> open the linked Case and check its Subject/Description changed.</li>
 </ul>
 
@@ -813,7 +831,7 @@ http://orgfarm-e1f47f3d5e-dev-ed.develop.my.salesforce.com/services/data/latest
 <p>These checks apply no matter which path you chose. Do them to confirm your integration actually works end-to-end:</p>
 
 <ul class="check">
-<li><strong>Edit the Incident short description by hand.</strong> Set <code>u_sync_source</code> to blank or <code>servicenow</code> first (otherwise the loop guard skips the update), then change the short description and save.</li>
+<li><strong>Edit the Incident short description by hand.</strong> Change it and save — you do not need to touch <code>u_sync_source</code> (the rule no longer tests it).</li>
 <li><strong>The matching Case updates.</strong> Open the Salesforce Case linked via <code>u_ebond_sf_case_id</code> and confirm its Subject reflects what you typed on the Incident.</li>
 <li><strong><code>Snow_Sync_Source__c</code> becomes <code>servicenow</code></strong> on the Case.</li>
 <li><strong>No second Case was created.</strong> This integration updates the existing Case — it must not create a duplicate.</li>
