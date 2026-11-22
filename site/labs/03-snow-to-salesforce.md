@@ -53,7 +53,7 @@ permalink: /labs/03-snow-to-salesforce/
 
 <p>This lab is the return path to Lab 2. In Lab 2 a Salesforce Case created an Incident and stored the Case link on the Incident in <code>u_ebond_sf_case_id</code>. This lab makes a change on the Incident flow back and update that Case. The match key is <code>Snow_Sys_Id__c</code> on the Case.</p>
 
-<details class="note" id="unlinked">
+<details class="note" id="unlinked" markdown="1">
 <summary><strong>What if an Incident has no <code>u_ebond_sf_case_id</code></strong> <em>(tap to open)</em></summary>
 <p><code>u_ebond_sf_case_id</code> is the link between an Incident and a Salesforce Case. It holds the Salesforce record Id (the 18-character <code>500…</code> value) of the Case that created the Incident.</p>
 <ul>
@@ -68,7 +68,7 @@ permalink: /labs/03-snow-to-salesforce/
 
 <p>Several ways exist to make ServiceNow update Salesforce. They all need the same OAuth setup in Section 2, but they differ in how much code you write. <strong>For this lab on a free Personal Developer Instance (PDI), use path 1.1 (coded)</strong> — it is the only one that works on a free PDI without extra licensing. The other options (Salesforce spoke, iPaaS) are in <strong>Appendix A</strong> for reference.</p>
 
-<details class="note">
+<details class="note" markdown="1">
 <summary><strong>Which one to pick — realistic guidance</strong> <em>(tap to open)</em></summary>
 
 <h4>What this lab was originally for</h4>
@@ -105,7 +105,7 @@ permalink: /labs/03-snow-to-salesforce/
 </ul>
 </details>
 
-<details id="optC">
+<details id="optC" markdown="1">
 <summary><strong>1.1 — Coded REST Message + business rule</strong> (recommended for this lab)</summary>
 <p>This is the recommended path: a hand-written <strong>REST Message</strong> and an <strong>async business rule</strong> in JavaScript that PATCHes the Case. It is the only path that works on a free PDI without extra licensing. The other two options (Salesforce spoke, iPaaS) are documented in <strong>Appendix A</strong> for reference.</p>
 <p><strong>Order of work — it spans both systems:</strong></p>
@@ -168,7 +168,7 @@ Salesforce does not display this URL in the UI — it is a standard OAuth token 
 <li><strong>Check:</strong> the integration user is set as an Admin-approved pre-authorized user, and that user has API access and edit rights on Case.</li>
 </ul>
 
-<details>
+<details markdown="1">
 <summary><strong>Other things you can do here (and when to use them)</strong> <em>(tap to open)</em></summary>
 <ul>
 <li><strong>Connected App instead of External Client App</strong> — use if you need interactive user login (a human signing in via browser). For machine-to-machine (our case), the External Client App with client credentials is the right choice.</li>
@@ -178,7 +178,7 @@ Salesforce does not display this URL in the UI — it is a standard OAuth token 
 </ul>
 </details>
 
-<details>
+<details markdown="1">
 <summary><strong>Every OAuth scope option, and what each one means</strong> <em>(tap to open)</em></summary>
 <p>Scopes cap what an access token is allowed to do. For this client-credentials (server-to-server) lab, only `api` is required; the client-credentials flow only accepts `api`, `lightning`, or `web` scopes, and `api` is the narrowest that covers REST API updates to Cases.</p>
 
@@ -232,7 +232,7 @@ https://YOUR_DOMAIN.my.salesforce.com/lightning/setup/...
 <li>Or confirm it in Salesforce: go to <strong>Setup → Quick Find: "Domain" → Domain Management → My Domain</strong>. Your domain name is listed there.</li>
 </ol>
 
-<details>
+<details markdown="1">
 <summary><strong>How to verify your Salesforce REST API URL within Salesforce</strong> <em>(tap to open)</em></summary>
 <p>Salesforce doesn't have a built-in "REST Explorer" inside Setup, but there are two ways to confirm your API endpoint:</p>
 
@@ -275,7 +275,7 @@ https://YOUR_DOMAIN.my.salesforce.com/services/data/
 | Endpoint | `https://YOUR_DOMAIN.my.salesforce.com/services/data/latest` <br>(replace `YOUR_DOMAIN` with your actual domain from above) |
 | Authentication | OAuth 2.0 (select an OAuth 2.0 profile — see below) |
 
-<details>
+<details markdown="1">
 <summary><strong>API version — why `latest` and how to verify</strong> <em>(tap to open)</em></summary>
 <p>Salesforce releases a new API version three times a year (Spring, Summer, Winter). v68.0 was the Winter '27 version, but by the time you do this lab there may be a newer one (v69.0, v70.0, etc.).</p>
 
@@ -301,7 +301,7 @@ ServiceNow wants an <strong>OAuth 2.0 profile</strong> record (called "OAuth Ent
 2. In the <strong>Authentication</strong> field, choose <strong>OAuth 2.0</strong>.
 3. Click the <strong>OAuth 2.0 profile</strong> lookup field that appears next to it, then click <strong>New</strong> to create a profile.
 
-<details>
+<details markdown="1">
 <summary><strong>What kind of OAuth application?</strong> — dialog options, explained <em>(tap to open)</em></summary>
 <p>After clicking New, ServiceNow shows a dialog asking what kind of OAuth application you're configuring. Here are the options and which to pick:</p>
 
@@ -330,7 +330,7 @@ ServiceNow wants an <strong>OAuth 2.0 profile</strong> record (called "OAuth Ent
 | Default Grant type | **Client Credentials** (change from the default "Resource Owner Password Credentials") |
 | Token URL | `https://YOUR_DOMAIN.my.salesforce.com/services/oauth2/token` |
 
-<details>
+<details markdown="1">
 <summary><strong>Default Grant type dropdown — every option explained</strong> <em>(tap to open)</em></summary>
 <p>When you click the Default Grant type dropdown, you see these options:</p>
 
@@ -361,12 +361,12 @@ ServiceNow wants an <strong>OAuth 2.0 profile</strong> record (called "OAuth Ent
 | Is default | **✅ Must be checked** |
 | Grant type | **Client Credentials** (change from the default "Resource Owner Password Credentials") |
 
-<details>
+<details markdown="1">
 <summary><strong>Critical: fix the Grant type on the profile</strong> <em>(tap to open)</em></summary>
 <p>The OAuth Entity Profile form may default to "Resource Owner Password Credentials" — that is <strong>wrong</strong> for this lab. That flow requires a username + password. We need machine-to-machine auth, so change it to <strong>Client Credentials</strong>.</p>
 </details>
 
-<details>
+<details markdown="1">
 <summary><strong>OAuth Entity Profile Grant type dropdown — every option explained</strong> <em>(tap to open)</em></summary>
 <p>When you click the Grant type dropdown on the OAuth Entity Profile tab, you see these options:</p>
 
@@ -388,7 +388,7 @@ ServiceNow wants an <strong>OAuth 2.0 profile</strong> record (called "OAuth Ent
 | Name | `api` |
 | OAuth scope | `api` |
 
-<details>
+<details markdown="1">
 <summary><strong>OAuth scope column — what does it need to match?</strong> <em>(tap to open)</em></summary>
 <p><strong>The OAuth scope value must match a scope that Salesforce actually recognizes.</strong> It's not a free-text label you can make up.</p>
 
@@ -412,7 +412,7 @@ ServiceNow wants an <strong>OAuth 2.0 profile</strong> record (called "OAuth Ent
 |---|---|
 | OAuth Resource | `https://YOUR_DOMAIN.my.salesforce.com/services/data/latest` |
 
-<details>
+<details markdown="1">
 <summary><strong>OAuth Resource — what is this URL?</strong> <em>(tap to open)</em></summary>
 <p>The OAuth Resource is the <strong>base URL of the Salesforce API</strong> that this OAuth Provider is authorizing ServiceNow to access. It must use the <strong>same domain</strong> as the Token URL on your OAuth Provider form — e.g. if your Token URL is `https://orgfarm-e1f47f3d5e-dev-ed.my.salesforce.com/services/oauth2/token`, your OAuth Resource must be `https://orgfarm-e1f47f3d5e-dev-ed.my.salesforce.com/services/data/latest`.</p>
 
@@ -422,7 +422,7 @@ https://YOUR_DOMAIN.my.salesforce.com/services/data/latest
 
 Replace `YOUR_DOMAIN` with your actual Salesforce domain (from your browser address bar, e.g. `orgfarm-e14f73d3e-dev-ed`). Use `latest` as the API version — Salesforce resolves this to the most recent version automatically.
 
-<details>
+<details markdown="1">
 <summary><strong>Troubleshooting: “Invalid reference” on the OAuth Resource field</strong> <em>(tap to open)</em></summary>
 <p>If ServiceNow shows “Invalid reference” when you paste the URL, check these two things:</p>
 
@@ -456,12 +456,12 @@ http://orgfarm-e1f47f3d5e-dev-ed.develop.my.salesforce.com/services/data/latest
 
    - Click **Submit** on the provider after filling all three tabs.
 
-<details>
+<details markdown="1">
 <summary><strong>Client ID / Client Secret = Consumer Key / Consumer Secret</strong> <em>(tap to open)</em></summary>
 <p>Yes — they're the same values with different names. Salesforce calls them <strong>Consumer Key</strong> and <strong>Consumer Secret</strong>; ServiceNow calls them <strong>Client ID</strong> and <strong>Client Secret</strong>. Copy them from your Salesforce External Client App (the ones you wrote down when you created the app) into the corresponding ServiceNow fields.</p>
 </details>
 
-<details>
+<details markdown="1">
 <summary><strong>Why Default Grant type must be Client Credentials</strong> <em>(tap to open)</em></summary>
 <p>The provider form may default to "Resource Owner Password Credentials" (user login flow). That requires a username + password, which is not what this lab uses. We use machine-to-machine auth, so the grant type must be <strong>Client Credentials</strong> on both the provider and the profile. If you leave it on the wrong value, ServiceNow will try to authenticate as a user instead of as the app, and the token exchange will fail.</p>
 </details>
@@ -478,7 +478,7 @@ http://orgfarm-e1f47f3d5e-dev-ed.develop.my.salesforce.com/services/data/latest
 
 7. After saving the profile, confirm the <strong>Client ID</strong> (Consumer Key from Salesforce) and <strong>Client Secret</strong> (Consumer Secret from Salesforce) are populated on the profile.
 
-<details>
+<details markdown="1">
 <summary><strong>What the ?? means</strong> <em>(tap to open)</em></summary>
 <p>The Authentication field shows <code>OAuth 2.0</code> plus a profile name — e.g. <code>OAuth 2.0, Salesforce OAuth Client Credentials</code>. The profile is the reusable credential block. You create it once here and reuse it for every REST Message that calls this same Salesforce org.</p>
 </details>
@@ -504,7 +504,7 @@ http://orgfarm-e1f47f3d5e-dev-ed.develop.my.salesforce.com/services/data/latest
 | Snow_Number__c | `${number}` (Incident number) |
 | Snow_Sync_Source__c | `servicenow` (fixed text) |
 
-<details>
+<details markdown="1">
 <summary><strong>Full JSON body (copy-paste)</strong> <em>(tap to open)</em></summary>
 
 ```json
@@ -527,7 +527,7 @@ http://orgfarm-e1f47f3d5e-dev-ed.develop.my.salesforce.com/services/data/latest
 <li><strong>Salesforce — Check the Case actually changed:</strong> open that Case in Salesforce and confirm its Subject/Description reflected the test values you sent.</li>
 </ul>
 
-<details>
+<details markdown="1">
 <summary><strong>Troubleshooting: OAuth token errors and invalid endpoint URLs</strong> <em>(tap to open)</em></summary>
 <h4>"OAuth Access or Refresh tokens are not available"</h4>
 <p>If you see a yellow banner saying <code>OAuth Access or Refresh tokens are not available. Verify the OAuth configuration and click the "Get OAuth Token" link below to request a new token.</code>, click the **"Get OAuth Token"** link on that banner to request a new access token. Then click Test again.</p>
@@ -555,7 +555,7 @@ http://orgfarm-e1f47f3d5e-dev-ed.develop.my.salesforce.com/services/data/latest
 </ul>
 </details>
 
-<details>
+<details markdown="1">
 <summary><strong>Other HTTP methods and when to use them</strong> <em>(tap to open)</em></summary>
 <ul>
 <li><strong>GET</strong> — read data from Salesforce. Use to look up a Case or record before updating.</li>
@@ -620,7 +620,7 @@ http://orgfarm-e1f47f3d5e-dev-ed.develop.my.salesforce.com/services/data/latest
 <li><strong>Salesforce — Confirm the Case updated:</strong> open the linked Case and check its Subject/Description changed.</li>
 </ul>
 
-<details>
+<details markdown="1">
 <summary><strong>When to use a business rule vs a Flow, and other trigger options</strong> <em>(tap to open)</em></summary>
 <ul>
 <li><strong>Business rule (async)</strong> — best for server-side, must-run logic on record change; part of the coded path. Use when you need to call a REST message or manipulate data directly.</li>
@@ -652,7 +652,7 @@ http://orgfarm-e1f47f3d5e-dev-ed.develop.my.salesforce.com/services/data/latest
 
 <h2 id="bulk">6. Linking existing tickets (bulk) <span class="req">[O]</span></h2>
 
-<details>
+<details markdown="1">
 <summary>Rough steps to link existing Salesforce Cases to existing Incidents</summary>
 <p>This lab links one Incident at a time as it is created. If you already have Cases in both systems and want to link them retroactively, here is the rough shape. Scope it to your need — do not blindly link everything.</p>
 <ol>
@@ -675,7 +675,7 @@ An un-scoped link of <em>all</em> Incidents is usually wrong: many are unrelated
 
 <h2 id="notes">7. Post-lab notes <span class="req">[O]</span></h2>
 
-<details>
+<details markdown="1">
 <summary><strong>So it runs — now what? What to keep out, and how to trust it</strong> <em>(tap to open)</em></summary>
 
 <p>Practical notes for going beyond the lab. These apply whichever path you chose in Section 1. The recurring theme: the integration only acts on Incidents that are <em>meant</em> to be linked, and you keep that "who is eligible" decision explicit so it is easy to audit and change.</p>
@@ -700,7 +700,7 @@ An un-scoped link of <em>all</em> Incidents is usually wrong: many are unrelated
 
 <h2 id="research">8. Integration complexity research <span class="req">[O]</span></h2>
 
-<details>
+<details markdown="1">
 <summary><strong>Integration complexity — OOTB options, the true cost of insert/update/delete, and field authority</strong> <em>(tap to open)</em></summary>
 
 <h4>Is there out-of-the-box functionality for this?</h4>
@@ -768,7 +768,7 @@ An un-scoped link of <em>all</em> Incidents is usually wrong: many are unrelated
 
 <p>Two other ways exist to make ServiceNow update Salesforce. They are not used in this lab — the <strong>Salesforce spoke</strong> is <span class="unavailable">not available on the free PDI</span>, and the <strong>iPaaS</strong> needs a separate third-party platform. They are kept here for reference and for environments where they are available.</p>
 
-<details>
+<details markdown="1">
 <summary><strong>Option A — ServiceNow Flow Designer + Salesforce spoke</strong> <span class="unavailable">(not available on the free PDI)</span></summary>
 <p>The Salesforce spoke ships with <strong>Integration Hub</strong>, a paid subscription. On a free Personal Developer Instance (PDI) the spoke install reports <em>"This application is unavailable on developer instances."</em> So this path cannot be completed on the free PDI. It applies only to instances where IntegrationHub is licensed.</p>
 
@@ -801,7 +801,7 @@ An un-scoped link of <em>all</em> Incidents is usually wrong: many are unrelated
 <p><strong>Then:</strong> skip Sections 3 and 4 (they are the coded path) and go to Section 5, Prove it. You can confirm the flow ran under <strong>Process Automation → Flow Administration → Today's Executions</strong>.</p>
 </details>
 
-<details>
+<details markdown="1">
 <summary><strong>Option B — Integration platform / iPaaS connector</strong> (no-code)</summary>
 <p><strong>System:</strong> this option runs on a <strong>third-party integration platform</strong> (not in ServiceNow or Salesforce). It hosts the connector that talks to both systems, so you do not build REST Messages or business rules in ServiceNow at all.</p>
 <p><strong>How to get there:</strong> sign in to your chosen platform (e.g. Workato, Tray.io, Zapier, Automate.io, Dell Boomi) and create a new recipe/integration that connects your ServiceNow instance and your Salesforce org.</p>
