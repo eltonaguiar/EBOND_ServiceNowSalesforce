@@ -602,7 +602,12 @@ http://orgfarm-e1f47f3d5e-dev-ed.develop.my.salesforce.com/services/data/latest
 <td style="border:1px solid #333; padding:8px; vertical-align:top;"><strong>Step 2 — add the script (ServiceNow)</strong></td>
 <td style="border:1px solid #333; padding:8px; vertical-align:top;">Paste into the rule's <strong>Script</strong> field</td>
 <td style="border:1px solid #333; padding:8px; vertical-align:top;">
-<pre style="margin:0; white-space:pre-wrap; font-size:0.80em;"><code>/**
+
+<details markdown="1">
+<summary><strong>CODE WITH COMMENTS</strong> <em>(click to expand — fully annotated version)</em></summary>
+
+```javascript
+/**
  * EBOND — ServiceNow → Salesforce (return path)
  *
  * PURPOSE
@@ -654,7 +659,10 @@ http://orgfarm-e1f47f3d5e-dev-ed.develop.my.salesforce.com/services/data/latest
     }
 
     // Create a client for the saved REST Message "EBOND Salesforce Case"
-    // and its HTTP method "patch_case" (defined in Section 3 of this lab)
+    // and its HTTP method "patch_case" (defined in Section 3 of this lab).
+    // BREADCRUMB: open the REST Message record you created earlier (name "EBOND Salesforce Case"),
+    // then open its "HTTP Methods" tab (or sub-list) and confirm a method named "patch_case" exists.
+    // If it is missing, go back to Section 3 Step 2 and create it before using this business rule.
     var r = new sn_ws.RESTMessageV2('EBOND Salesforce Case', 'patch_case');
 
     // Bind the Incident sys_id to the placeholder ${snow_sys_id} in the REST endpoint.
@@ -679,10 +687,38 @@ http://orgfarm-e1f47f3d5e-dev-ed.develop.my.salesforce.com/services/data/latest
 
     // Basic error logging. Non-2xx means Salesforce rejected the update.
     // Check System Logs → Application Logs for "EBOND patch failed NNN".
-    if (resp.getStatusCode() &lt; 200 || resp.getStatusCode() &gt;= 300) {
+    if (resp.getStatusCode() < 200 || resp.getStatusCode() >= 300) {
         gs.error('EBOND patch failed ' + resp.getStatusCode());
     }
-})(current, previous);</code></pre>
+})(current, previous);
+```
+</details>
+
+<details open markdown="1">
+<summary><strong>CODE</strong> <em>(production-ready — see "CODE WITH COMMENTS" above for annotations)</em></summary>
+
+```javascript
+(function executeRule(current, previous) {
+    if (current.u_sync_source == 'salesforce') {
+        return;
+    }
+    if (!current.u_ebond_sf_case_id) {
+        return;
+    }
+    var r = new sn_ws.RESTMessageV2('EBOND Salesforce Case', 'patch_case');
+    r.setStringParameterNoEscape('snow_sys_id', current.getUniqueValue());
+    r.setStringParameterNoEscape('subject', current.getValue('short_description') || '');
+    r.setStringParameterNoEscape('description', current.getValue('description') || '');
+    r.setStringParameterNoEscape('number', current.getValue('number') || '');
+    r.setHttpTimeout(20000);
+    var resp = r.execute();
+    if (resp.getStatusCode() < 200 || resp.getStatusCode() >= 300) {
+        gs.error('EBOND patch failed ' + resp.getStatusCode());
+    }
+})(current, previous);
+```
+</details>
+
 </td>
 </tr>
 </tbody>
