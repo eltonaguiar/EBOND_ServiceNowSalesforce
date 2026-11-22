@@ -604,7 +604,7 @@ http://orgfarm-e1f47f3d5e-dev-ed.develop.my.salesforce.com/services/data/latest
 <li><strong>Insert is unchecked</strong> — at creation the Case already holds these values (it created the Incident), so there is nothing to push back. That removes the only echo the guard was protecting against.</li>
 <li><strong>Guard on the writer, not on a data field</strong> — skip only when the update came from the integration user (Lab 2's callout account). A human editing in ServiceNow always passes.</li>
 </ul>
-<p>Keep <code>u_sync_source</code> as a <em>provenance badge</em> for reporting. Never use it as a loop guard.</p>
+<p>Keep <code>u_sync_source</code> as a <em>birth label</em> — it answers "which system created this record?", nothing else. Never use it as a loop guard.</p>
 </div>
 </td>
 </tr>
@@ -688,7 +688,7 @@ http://orgfarm-e1f47f3d5e-dev-ed.develop.my.salesforce.com/services/data/latest
 (function executeRule(current, previous) {
     // Guard 1 — only run for genuine ServiceNow-side changes.
     // This rule is Update-only (Insert is unchecked), so there is no create-echo to suppress.
-    // u_sync_source is deliberately NOT tested here: it is a permanent provenance badge
+    // u_sync_source is deliberately NOT tested here: it is a birth label that never changes
     // ('salesforce' = this Incident was born in Salesforce), so testing it would return on
     // every later human edit and permanently kill the write-back for every linked Incident.
     //
@@ -775,7 +775,7 @@ http://orgfarm-e1f47f3d5e-dev-ed.develop.my.salesforce.com/services/data/latest
 
 ```javascript
 (function executeRule(current, previous) {
-    // Update-only rule: no create-echo to suppress. u_sync_source is a provenance badge,
+    // Update-only rule: no create-echo to suppress. u_sync_source is a birth label,
     // not a loop guard - testing it would block every human edit.
     // Hardening: if the Flow also updates Incidents, add
     //   if (current.getDisplayValue('sys_updated_by') === 'ebond.integration') { return; }
@@ -801,7 +801,7 @@ http://orgfarm-e1f47f3d5e-dev-ed.develop.my.salesforce.com/services/data/latest
 </tbody>
 </table>
 
-<p><strong>What the script does:</strong> the rule runs on <strong>Update only</strong>, so a Case that was just created (and created its Incident) is never written straight back. The remaining guard stops the rule when the Incident has no Case link. <code>u_sync_source</code> is deliberately <strong>not</strong> tested — it is a permanent provenance value, and guarding on it would block every human edit. Then it calls the <code>patch_case</code> REST message, passing the Incident's <code>sys_id</code> (to find the Case) and the values to write. A non-2xx response logs <code>EBOND patch failed</code>.</p>
+<p><strong>What the script does:</strong> the rule runs on <strong>Update only</strong>, so a Case that was just created (and created its Incident) is never written straight back. The remaining guard stops the rule when the Incident has no Case link. <code>u_sync_source</code> is deliberately <strong>not</strong> tested — it is a birth label that never changes, and guarding on it would block every human edit. Then it calls the <code>patch_case</code> REST message, passing the Incident's <code>sys_id</code> (to find the Case) and the values to write. A non-2xx response logs <code>EBOND patch failed</code>.</p>
 
 <h4>Step 3 — validate the rule fires (ServiceNow + Salesforce)</h4>
 <ul class="check">

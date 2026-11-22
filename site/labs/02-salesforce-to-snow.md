@@ -60,7 +60,7 @@ On the Columns related list, click **New**.
 
 1. Table `Incident [incident]`. Type **String**.
 2. Column label **EBOND SF Case Id**. Column name `u_ebond_sf_case_id`. Max length 18. This is the stand-in. It is not a second copy of `correlation_id` for fun.
-3. Repeat for **Sync source**, column name `u_sync_source`, length 20. That one records provenance (which system created the record), not the external id. It is **not** a loop guard — it is permanent, so guarding on it would block every later human edit. Lab 3 explains the correct guard.
+3. Repeat for **Sync source**, column name `u_sync_source`, length 20. That one is a birth label — it records which system created the record — not the external id. It is **not** a loop guard — it is permanent, so guarding on it would block every later human edit. Lab 3 explains the correct guard.
 
 ### Why `x_snc_` is rejected
 
@@ -334,7 +334,7 @@ Use this only if you picked Flow above.
 
     <div class="eli5">
     <span class="label">ELI5</span>
-    <p>Assignment here is not homework. It is the earlier Flow element named <strong>Set Incident Body</strong>. That element already sent lowercase <code>salesforce</code> to ServiceNow in the field <code>u_sync_source</code>. This third row writes the same word onto the Case, so both records say Salesforce started this sync. Lab 3 does <strong>not</strong> guard on this field: it never changes after creation, so testing it would return on every human edit and the Case would never be updated. Keep the lowercase value as a provenance badge; Lab 3 relies on an Update-only rule plus the Case-link check instead.</p>
+    <p>Assignment here is not homework. It is the earlier Flow element named <strong>Set Incident Body</strong>. That element already sent lowercase <code>salesforce</code> to ServiceNow in the field <code>u_sync_source</code>. This third row writes the same word onto the Case, so both records say Salesforce started this sync. Lab 3 does <strong>not</strong> guard on this field: it never changes after creation, so testing it would return on every human edit and the Case would never be updated. Keep the lowercase value as a birth label; Lab 3 relies on an Update-only rule plus the Case-link check instead.</p>
     </div>
 
      This panel has no **Done**. Click the **X** at the top right of the panel. Then click **Save**. **Activate** stays gray until the panel is closed and the flow is saved.

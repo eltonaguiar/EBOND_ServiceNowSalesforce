@@ -38,8 +38,8 @@ Most stops are one of these four: the PDI is asleep, the Salesforce host is the 
 | `x_snc_ebond_*` will not save | Reserved scope | Use `u_ebond_sf_case_id`. |
 | Two Incidents per Case | Lookup field empty on the first write | Confirm `u_ebond_sf_case_id` is in the POST body. |
 | Updates bounce | Flag not set | Lab 4. Both guards must be in place. |
-| Case never updates after a human edit in ServiceNow | The Lab 3 rule is guarded on `u_sync_source`, which Lab 2 stamps `salesforce` at creation and never changes | Remove that guard. Run the rule **Update only** (Insert unchecked); guard on the Case link, not on provenance. |
-| `u_sync_source` reads `salesforce` on every linked Incident | Expected — Lab 2 writes it as a provenance badge | Leave it. It is not a loop guard; the return path works from Update-only + the Case-link check. |
+| Case never updates after a human edit in ServiceNow | The Lab 3 rule is guarded on `u_sync_source`, which Lab 2 stamps `salesforce` at creation and never changes | Remove that guard. Run the rule **Update only** (Insert unchecked); guard on the Case link, not on which system created the record. |
+| `u_sync_source` reads `salesforce` on every linked Incident | Expected — Lab 2 writes it as a birth label | Leave it. It is not a loop guard; the return path works from Update-only + the Case-link check. |
 | REST step missing in Flow Designer | Integration Hub not on the PDI | Stay on Table API. That is not a failed lab. |
 
 ## Where to look {#logs}
