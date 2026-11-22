@@ -71,6 +71,8 @@ Read the result:
 | `401` | OAuth token rejected | Re-check the OAuth profile and the External Client App consumer key/secret. |
 | `404` | Wrong My Domain, or `Snow_Sys_Id__c` is not the External ID on the Case | Confirm the Case shows **ServiceNow Sys Id** filled in. |
 | `400` | Body rejected — usually a missing `Content-Type: application/json` or a broken `${param}` | Compare the Content field to Lab 3 Step 3. |
+| `405` `METHOD_NOT_ALLOWED` | The URL ended at `/Snow_Sys_Id__c/` with an empty value, so it addressed the Case *collection*. PATCH is not allowed there | You did not supply parameters. Fill the **Parameters** box or use the background script below. |
+| `404` `NOT_FOUND` (after a 200 test) | The external-ID value does not match any Case | Check the Case's **ServiceNow Sys Id** equals the Incident `sys_id` exactly. |
 | Exception, no status | The REST Message or method name does not resolve | Names are case sensitive: `EBOND Salesforce Case` / `patch_case`. |
 
 **2. If step 1 returned 200, check the rule.** All four must be true:
