@@ -688,9 +688,23 @@ http://orgfarm-e1f47f3d5e-dev-ed.develop.my.salesforce.com/services/data/latest
 
     // Create a client for the saved REST Message "EBOND Salesforce Case"
     // and its HTTP method "patch_case" (defined in Section 3 of this lab).
-    // BREADCRUMB: open the REST Message record you created earlier (name "EBOND Salesforce Case"),
-    // then open its "HTTP Methods" tab (or sub-list) and confirm a method named "patch_case" exists.
-    // If it is missing, go back to Section 3 Step 2 and create it before using this business rule.
+    //
+    // RESTMessageV2(first, second) — what each parameter must match
+    //
+    // FIRST parameter  →  REST Message record NAME
+    //   Must exactly equal the Name field on the REST Message record.
+    //   BREADCRUMB: System Web Services → Outbound → REST Message →
+    //               record whose Name column = "EBOND Salesforce Case"
+    //   (created in Section 3 Step 1 of this lab; see the bordered table at line ~274)
+    //
+    // SECOND parameter →  HTTP Method NAME on that REST Message
+    //   Must exactly equal the Name field on the HTTP Method child record.
+    //   BREADCRUMB: open the REST Message above → HTTP Methods (related list / tab) →
+    //               method whose Name = "patch_case"
+    //   (created in Section 3 Step 2; see the bordered table at line ~491)
+    //
+    // If either string is misspelled or the records do not exist, execute() fails
+    // at runtime with "REST message not found" or "HTTP method not found".
     var r = new sn_ws.RESTMessageV2('EBOND Salesforce Case', 'patch_case');
 
     // Bind the Incident sys_id to the placeholder ${snow_sys_id} in the REST endpoint.
