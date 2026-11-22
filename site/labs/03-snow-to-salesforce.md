@@ -654,19 +654,20 @@ http://orgfarm-e1f47f3d5e-dev-ed.develop.my.salesforce.com/services/data/latest
  *     (created in Section 3 of this lab).  If that method does not exist the
  *     business rule will fail at runtime with "REST message not found".
  *
- * FLOW (what actually happens on every qualifying Incident save)
- *   1. Guard 1 — this rule is Update-only, so there is no create-echo to suppress.
- *      u_sync_source is NOT tested: it stays 'salesforce' forever, so testing it would
- *      block every later human edit and the Case would never be updated.
- *   2. Guard 2 — if u_ebond_sf_case_id is empty, bail (no Case to update).
- *   3. Build a RESTMessageV2 client bound to the saved REST Message + method.
- *   4. For each ${param} in the method's endpoint/body, call setStringParameterNoEscape.
+ * FLOW (what actually happens on every qualifying Incident update)
+ *   0. No echo guard is needed: the rule runs on UPDATE only (Insert is unchecked),
+ *      and the Lab 2 Flow only fires when a Case is CREATED. u_sync_source is NOT
+ *      tested — it is a birth label that never changes, so testing it would block
+ *      every human edit and the Case would never be updated.
+ *   1. Guard — if u_ebond_sf_case_id is empty, bail (no Case to update).
+ *   2. Build a RESTMessageV2 client bound to the saved REST Message + method.
+ *   3. For each ${param} in the method's endpoint/body, call setStringParameterNoEscape.
  *      - 'snow_sys_id' receives the *Incident* sys_id (current.getUniqueValue()).
  *        The REST Message endpoint template uses it as the external-ID lookup value
  *        in the Salesforce URL: /sobjects/Case/Snow_Sys_Id__c/${snow_sys_id}
  *        → no HTTP body is sent here; it's a path substitution only.
- *   5. Execute the call (PATCH) with a 20 s timeout.
- *   6. On non-2xx, log an Application Error (visible in System Logs → Application Logs).
+ *   4. Execute the call (PATCH) with a 20 s timeout.
+ *   5. On non-2xx, log an Application Error (visible in System Logs → Application Logs).
  *
  * SYNTAX NOTES (ServiceNow server-side JS)
  *   - Business rule signature is always: executeRule(current, previous)
@@ -682,22 +683,23 @@ http://orgfarm-e1f47f3d5e-dev-ed.develop.my.salesforce.com/services/data/latest
  *   - Different Salesforce Case fields → update the JSON body in the REST Message Content.
  *   - Longer timeout or retry logic → wrap execute() in a try/catch + setHttpTimeout().
  *   - Logging destination → gs.error(...) writes to Application Logs; use gs.info() for lighter noise.
- *   - If your link field is named differently (e.g., u_sf_case), update the guard and the param name.
+ *   - If your link field is named differently (e.g., u_sf_case), update the guard field and the param name.
  */
 
 (function executeRule(current, previous) {
-    // Guard 1 — only run for genuine ServiceNow-side changes.
-    // This rule is Update-only (Insert is unchecked), so there is no create-echo to suppress.
-    // u_sync_source is deliberately NOT tested here: it is a birth label that never changes
-    // ('salesforce' = this Incident was born in Salesforce), so testing it would return on
-    // every later human edit and permanently kill the write-back for every linked Incident.
+    // NOTE — no echo guard here, on purpose.
+    // This rule runs on UPDATE only (Insert is unchecked) and the Lab 2 Flow only fires
+    // when a Case is CREATED, so there is no create-echo to suppress.
+    // Do NOT test u_sync_source: it is a birth label ('salesforce' = born in Salesforce)
+    // that never changes, so testing it would return on every human edit and the
+    // write-back would never fire for the Incidents that actually have a Case.
     //
-    // HARDENING (optional): if your Flow later also UPDATES Incidents, uncomment the next
-    // line and point it at a dedicated integration user - the same login the Salesforce
-    // Named Credential from Lab 2 authenticates as.
+    // HARDENING (optional): if your Flow later also UPDATES Incidents, uncomment the
+    // next line and point it at the integration user the Salesforce Named Credential
+    // (Lab 2) authenticates as.
     // if (current.getDisplayValue('sys_updated_by') === 'ebond.integration') { return; }
 
-    // Guard 2: skip if there is no linked Salesforce Case
+    // Guard: skip if there is no linked Salesforce Case
     // u_ebond_sf_case_id holds the 18-char SF Case Id (populated by Lab 2)
     if (!current.u_ebond_sf_case_id) {
         return;
@@ -775,8 +777,8 @@ http://orgfarm-e1f47f3d5e-dev-ed.develop.my.salesforce.com/services/data/latest
 
 ```javascript
 (function executeRule(current, previous) {
-    // Update-only rule: no create-echo to suppress. u_sync_source is a birth label,
-    // not a loop guard - testing it would block every human edit.
+    // No echo guard needed: Update-only rule + the Flow only fires on Case creation.
+    // u_sync_source is a birth label, not a loop guard.
     // Hardening: if the Flow also updates Incidents, add
     //   if (current.getDisplayValue('sys_updated_by') === 'ebond.integration') { return; }
     if (!current.u_ebond_sf_case_id) {
